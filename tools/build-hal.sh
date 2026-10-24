@@ -18,6 +18,7 @@ source build/envsetup.sh
 breakfast billie2
 mka hybris-hal 2>&1 | tee n100-build-logs/hybris-hal.log
 python3 "$port_dir/tools/n100.py" check-kernel out/target/product/billie2/obj/KERNEL_OBJ/.config
+perl hybris/mer-kernel-check/mer_verify_kernel_config out/target/product/billie2/obj/KERNEL_OBJ/.config 2>&1 | tee n100-build-logs/kernel-config-check.log
 python3 "$port_dir/tools/n100.py" inspect-boot out/target/product/billie2/hybris-boot.img
 repo manifest -r > n100-build-logs/resolved-manifest.xml
 echo 'HAL build finished. RPM, middleware, rootfs and hardware bring-up remain separate stages.'

@@ -1,10 +1,12 @@
 import importlib.util
+import hashlib
 import json
 from pathlib import Path
 import struct
 import subprocess
 import tempfile
 import unittest
+import zipfile
 from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
@@ -234,6 +236,83 @@ class ReportTests(unittest.TestCase):
         self.assertIn("selinux=1 androidboot.selinux=permissive",result)
 
 
+class ConfigurationTests(unittest.TestCase):
+    def test_v2_identifies_real_fstab_paths_and_vendor_baseline(self):
+        report=json.loads((ROOT/"tests/fixtures/be2013-stock11-v2.json").read_text())
+        result=n100.analyze_report(report)
+        self.assertEqual(result["vendor_sdk"],"30")
+        self.assertEqual(result["vndk_version"],"30")
+        self.assertEqual(result["firmware_display"],"BE2013_7_231009")
+        self.assertEqual(result["selinux_compatibility_version"],"30.0")
+        self.assertEqual(result["fstab_paths_discovered"],["/vendor/etc/fstab.default",
+                         "/vendor/etc/fstab.emmc","/vendor/etc/fstab_nodata.qcom"])
+        self.assertFalse(result["fstab_collected"])
+        self.assertEqual(len(result["vendor_vintf"]["hals"]),63)
+        audio=next(h for h in result["vendor_vintf"]["hals"] if h["name"]=="android.hardware.audio")
+        self.assertEqual(audio["versions"],["6.0"])
+        self.assertEqual(audio["transport"],"hwbinder")
+        self.assertFalse(result["deployable"])
+
+    def test_equivalent_vintf_fqname_and_interface_forms_are_deduplicated(self):
+        prefix='<manifest type="device" target-level="4"><hal format="hidl"><name>test.audio</name><transport>hwbinder</transport>'
+        version='<version>6.0</version><interface><name>IFactory</name><instance>default</instance></interface>'
+        fqname='<fqname>@6.0::IFactory/default</fqname>'
+        end='</hal></manifest>'
+        a=n100.vintf_inventory(prefix+version+end)
+        b=n100.vintf_inventory(prefix+version+fqname+end)
+        c=n100.vintf_inventory(prefix+fqname+end)
+        self.assertEqual(a,b)
+        self.assertEqual(b,c)
+
+    def test_malformed_or_dtd_manifest_is_not_used(self):
+        for xml in ('<manifest>','<!DOCTYPE manifest><manifest/>','<not-a-manifest/>'):
+            with self.assertRaises(n100.PortError):
+                n100.vintf_inventory(xml)
+        report={"properties":{},"diagnostics":{"vintf_vendor":"<manifest>"}}
+        self.assertEqual(n100.analyze_report(report)["vendor_vintf"]["status"],"invalid-or-incomplete")
+
+    def test_discovery_accepts_only_safe_configuration_files(self):
+        accepted=['/vendor/etc/fstab.default','/vendor/etc/vintf/manifest/android.hardware.audio@6.0.xml',
+                  '/odm/etc/vintf/manifest_2.xml','/system_ext/etc/vintf/manifest.xml']
+        rejected=['/data/user/0/private.xml','/vendor/etc/../secret.xml',
+                  '/vendor/etc/vintf/manifest/foo.xml;touch-pwned','/vendor/etc/fstab.foo bar',
+                  'ls: /odm/etc/vintf: Permission denied','/vendor/etc/vintf/manifest/../../data.xml']
+        self.assertEqual(n100.discovered_config_paths('\n'.join(accepted+rejected)),sorted(accepted))
+
+    def test_bundle_copies_configs_preserves_failures_and_never_writes_to_phone(self):
+        calls=[]
+        report={"schema":1,"properties":{"ro.product.device":"OnePlusN100"},"diagnostics":{}}
+        def fake_run(argv,**kwargs):
+            calls.append(argv)
+            if argv[-1]==n100.CONFIG_DISCOVERY_COMMAND:
+                return '/vendor/etc/fstab.default\n/vendor/etc/vintf/manifest.xml\n/data/private.xml\n'
+            self.assertEqual(argv[:2],["adb","pull"])
+            remote,local=argv[2:]
+            if remote=="/vendor/etc/fstab.default":
+                Path(local).write_text('system /system ext4 ro wait,logical\n')
+            elif remote=="/vendor/etc/vintf/manifest.xml":
+                Path(local).write_text('<manifest type="device"/>')
+            else:
+                error=n100.PortError("permission denied")
+                error.returncode=1
+                raise error
+        with tempfile.TemporaryDirectory() as tmp, patch.object(n100,"collect_report",return_value=report), patch.object(n100,"run",fake_run):
+            path=Path(tmp)/"n100-configs.zip"
+            path.write_text("old bundle")
+            output=n100.collect_configs(type("Args",(),{"serial":None,"output":str(path)})())
+            self.assertNotEqual(path,output)
+            self.assertEqual(path.read_text(),"old bundle")
+            with zipfile.ZipFile(output) as bundle:
+                self.assertIsNone(bundle.testzip())
+                self.assertEqual(bundle.read('files/vendor/etc/fstab.default'),b'system /system ext4 ro wait,logical\n')
+                inventory=json.loads(bundle.read('inventory.json'))
+                self.assertEqual(sum(f["status"]=="collected" for f in inventory["files"]),2)
+                self.assertTrue(any(f["status"]=="unavailable" for f in inventory["files"]))
+                self.assertFalse(inventory["device_writes"])
+                self.assertNotIn('files/data/private.xml',bundle.namelist())
+        self.assertTrue(all(call[:2]==["adb","pull"] or call[-1]==n100.CONFIG_DISCOVERY_COMMAND for call in calls))
+
+
 class BootTests(unittest.TestCase):
     def image(self, path, version=2, page=4096):
         header = bytearray(4096)
@@ -282,6 +361,18 @@ class ManifestTests(unittest.TestCase):
         self.assertEqual(len(paths), len(set(paths)))
         for project in lock["projects"] + lock["extensions"] + lock["packaging"]:
             self.assertRegex(project["revision"], r"^[0-9a-f]{40}$")
+        for project in lock["extensions"]:
+            element=next(x for x in manifest.findall("extend-project") if x.attrib["path"]==project["path"])
+            self.assertEqual(element.attrib["revision"],project["revision"])
+
+    def test_recorded_kernel_configuration_check_applies_to_current_source_inputs(self):
+        lock=n100.read_lock()
+        audit=json.loads((ROOT/"validation/kernel-config.json").read_text())
+        kernel=next(p for p in lock["projects"] if p["path"]=="kernel/oneplus/sm4250")
+        checker=next(p for p in lock["extensions"] if p["path"]=="hybris/mer-kernel-check")
+        self.assertEqual(audit["kernel_revision"],kernel["revision"])
+        self.assertEqual(audit["checker_revision"],checker["revision"])
+        self.assertEqual(audit["fragment_sha256"],hashlib.sha256((ROOT/"kernel/sailfish.config").read_bytes()).hexdigest())
 
 
 class SnapshotTests(unittest.TestCase):

@@ -1,0 +1,12 @@
+{
+  "scope": "vendor main XML declarations only; no binary, fragment or runtime validation",
+  "upstream_commit": "b2bde47cb6d0d737136915d65feac5cffacb1d53",
+  "actual_hal_count": 63,
+  "upstream_hal_count": 62,
+  "same_declarations": 62,
+  "different_declarations": [],
+  "upstream_only": [],
+  "stock_only": [
+    "vendor.oneplus.hardware.display"
+  ]
+}

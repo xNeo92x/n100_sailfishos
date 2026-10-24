@@ -86,8 +86,10 @@ switches root into that directory. Its direct `mount $DATA_PARTITION /data`
 does not by itself unlock Android file-based or metadata encryption.
 
 The live report confirms file encryption and F2FS with `inlinecrypt`; it does
-not reveal the actual stock fstab encryption flags because the original collector
-discarded the combined command's partial output. The new Lineage build fstab uses
+not reveal the actual stock fstab encryption flags. V2 shows that the queried
+`fstab.qcom` names are absent and instead discovers `fstab.default`, `fstab.emmc`
+and `fstab_nodata.qcom`. Collect their contents with `collect-configs` before
+choosing a data/rootfs strategy. The new Lineage build fstab uses
 `fileencryption=aes-256-xts` and a metadata-encryption key directory. Neither
 that source file nor the dm node number proves the live device uses exactly
 those parameters. A recovery being able to read data does not

@@ -64,12 +64,27 @@ The report parser distinguishes physical by-name aliases from mapper aliases,
 and the collector preserves partial stdout/stderr on nonzero exit codes.
 See [DEVICE_BE2013.md](DEVICE_BE2013.md) for observations and remaining inputs.
 
+The V2 report confirms vendor API/VNDK 30 and lists the actual stock fstab names.
+Its main VINTF XML contains all 62 HAL declarations from the pinned device tree
+with equivalent versions, transport and interfaces; one extra OnePlus display
+declaration appears in stock. This comparison covers declarations in the main
+XML only. Manifest fragments and runtime compatibility remain unverified.
+Android's [VINTF manifest documentation](https://source.android.com/docs/core/architecture/vintf/objects)
+explains the role of main manifests and their additional fragments.
+
 ## Verification boundary
 
 Host tests, syntax checks and source inspection are available. The development
-environment has about 28 GiB free, no attached N100, no proprietary firmware dump
+environment has limited scratch storage, no attached N100, no proprietary firmware dump
 and no installed Sailfish target. Full Android build, RPM resolution, rootfs
 creation, boot-image validation against stock and hardware tests remain unperformed.
+
+The pinned kernel has additionally been checked out and passed through real
+Kconfig resolution with Android Clang r416183b. After correcting DUMMY,
+STATIC_USERMODEHELPER and NLS_UTF8, both the local fragment check and the pinned
+Sailfish upstream checker pass; 47 advisory warnings remain. The exact evidence
+is recorded in `validation/kernel-config.json`. Kernel C/assembly and images
+have not been compiled.
 
 The top-level manifest and device-facing projects are pinned; other Android
 branch references and middleware fetched by build helpers still need a fully

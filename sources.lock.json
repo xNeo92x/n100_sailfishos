@@ -41,6 +41,10 @@
     {
       "path": "hybris-patches",
       "revision": "02b0452189d0f0aae1c0253132f331392f2b0fc1"
+    },
+    {
+      "path": "hybris/mer-kernel-check",
+      "revision": "e6b57641e65b8cd88b9daa92e668a2f389a32a4d"
     }
   ],
   "packaging": [

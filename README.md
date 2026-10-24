@@ -20,6 +20,9 @@ Die aktuelle Buildbasis verwendet `bengal`, passend zum ausgelesenen Gerät.
 | --- | --- |
 | Modell / Region | BE2013 / EEA |
 | Android / API | 11 / 30 |
+| Vendor-API / VNDK | 30 / 30 |
+| Firmware-Anzeige | BE2013_7_231009 |
+| Sicherheitsstand | 2023-10-05 |
 | Stock-Kernel | 4.19.152-perf+ |
 | Plattform | bengal |
 | Aktiver Slot zum Messzeitpunkt | B |
@@ -46,12 +49,35 @@ Details stehen in [docs/DEVICE_BE2013.md](docs/DEVICE_BE2013.md).
 - Auslesen der Gerätebasis über ADB, Kernel-Konfigurationsprüfung und Prüfung
   von Android-Bootimages mit Header v2.
 - Host-Tests und GitHub-Actions-Validierung.
+- Mit dem echten Kernelquellstand aufgelöste und vom Sailfish-Upstream-Checker
+  geprüfte Kernelkonfiguration: keine Fehler, 47 optionale Hinweise;
+  [Prüfumfang](docs/KERNEL_CONFIG_VALIDATION.md). Der Kernel selbst ist noch nicht kompiliert.
 
 Android-, Kernel- und Sailfish-Upstreamquellen werden über festgelegte Git-
 Revisionen eingebunden. Die großen Quellbäume, proprietäre Firmware und SDK-
 Downloads werden nicht als Kopien in dieses Repository eingecheckt.
 
-## Ergänzenden Bericht sammeln
+## Nächster Schritt: tatsächliche Konfigurationsdateien sammeln
+
+Der V2-Bericht wurde ausgewertet. Die Stock-fstab-Dateien heißen anders als
+die generische `fstab.qcom`: `fstab.default`, `fstab.emmc` und
+`fstab_nodata.qcom`. Außerdem enthält das Gerät zusätzliche VINTF-Fragmente.
+Der neue Sammler kopiert diese Dateien zusammen mit den relevanten SELinux-
+Konfigurationsdateien und einem aktuellen Bericht in ein einziges ZIP:
+
+```bash
+git pull --ff-only
+python3 tools/n100.py collect-configs --output ../n100-configs.zip
+```
+
+Die Sammlung benötigt **weder Root noch Bootloader-Entsperrung** und verändert
+keine Dateien oder Einstellungen auf dem Telefon. Sie enthält keine Nutzerdaten
+und ist kein vollständiges Firmware-Backup. Fehlgeschlagene Kopiervorgänge
+werden in `inventory.json` aufgeführt; erfolgreich kopierte Dateien erhalten
+Größe und SHA-256. Bereits vorhandene ZIPs bleiben erhalten und neue bekommen
+einen Zeitstempel. Den tatsächlich ausgegebenen ZIP-Pfad zum Hochladen verwenden.
+
+## Einzelnen Diagnosebericht sammeln
 
 Auf deinem CachyOS-Rechner mit aktiviertem USB-Debugging und freigegebenem ADB:
 
@@ -75,7 +101,7 @@ Mountpfade und Eingabegerätenamen stehen darin; Bericht vor dem Teilen prüfen.
 Für einige Diagnosepfade kann Android den Zugriff verweigern, was protokolliert
 wird. Fehlende Einträge bedeuten nicht, dass die Partition nicht existiert.
 
-Der aktualisierte Sammler liest fstab-Dateien einzeln aus und behält stdout,
+Der aktualisierte Sammler liest auch die beobachteten Stock-fstab-Namen einzeln aus und behält stdout,
 stderr und Exitcode bei fehlgeschlagenen Diagnosen. Das behebt den Verlust
 von Teilergebnissen im ersten Bericht. Zusätzlich sammelt er Vendor-API,
 Firmware-Anzeige, VINTF-Manifest, SELinux-Version und Partitionsgrößen.

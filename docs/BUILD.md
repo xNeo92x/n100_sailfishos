@@ -140,6 +140,12 @@ symbol must be investigated in the kernel source and resolved explicitly.
 Also run `hybris/mer-kernel-check` as described by HADK. Do not drop requirements
 merely to make the local checker green.
 
+A standalone resolution of the pinned kernel config has now succeeded, including
+the local fragment check and upstream checker with zero fatal errors and 47
+advisories. See [KERNEL_CONFIG_VALIDATION.md](KERNEL_CONFIG_VALIDATION.md) for exact
+scope, hashes and reproduction. This is not a kernel compilation or HAL build.
+The HAL wrapper repeats both checks against the final Android-built configuration.
+
 Output is expected in `out/target/product/billie2/`, including `hybris-boot.img`,
 `hybris-recovery.img` and Android HAL outputs. Examine the DTB/DTBO targets and
 the stock boot image with Android's unpacking tools before any boot experiment.

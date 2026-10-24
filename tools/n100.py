@@ -2,6 +2,7 @@
 """Host-side Nord N100 port tools. Python standard library; no flashing commands."""
 import argparse
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -10,6 +11,9 @@ import shutil
 import struct
 import subprocess
 import sys
+import tempfile
+import zipfile
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -72,6 +76,55 @@ def block_aliases(text):
     return physical, mapper
 
 
+def vintf_inventory(xml):
+    """Inventory declarations only; not a VINTF compatibility/runtime checker."""
+    if not xml.strip():
+        return None
+    if len(xml) > 4 * 1024 * 1024 or re.search(r"<!\s*(DOCTYPE|ENTITY)\b", xml, re.IGNORECASE):
+        raise PortError("Unsupported VINTF XML input")
+    try:
+        root = ET.fromstring(xml)
+    except ET.ParseError as exc:
+        raise PortError("Invalid VINTF XML") from exc
+    if root.tag != "manifest":
+        raise PortError("Expected a VINTF manifest element")
+    hals=[]
+    for hal in root.findall("hal"):
+        versions={x.text.strip() for x in hal.findall("version") if x.text}
+        instances={(interface.findtext("name", "").strip(), instance.text.strip())
+                   for interface in hal.findall("interface") for instance in interface.findall("instance")
+                   if instance.text}
+        for fqname in hal.findall("fqname"):
+            match=re.fullmatch(r"@(\d+\.\d+)::([^/]+)/(.+)", (fqname.text or "").strip())
+            if match:
+                versions.add(match[1])
+                instances.add((match[2],match[3]))
+        transport=hal.find("transport")
+        hals.append({"name":hal.findtext("name", "").strip(), "format":hal.get("format", "hidl"),
+                     "transport":(transport.text or "").strip() if transport is not None else "",
+                     "transport_arch":transport.get("arch", "") if transport is not None else "",
+                     "versions":sorted(versions),
+                     "instances":[{"interface":i,"instance":n} for i,n in sorted(instances)]})
+    return {"type":root.get("type"), "target_level":root.get("target-level"),
+            "sepolicy_compatibility_version":root.findtext("sepolicy/version"),
+            "hals":sorted(hals,key=lambda h:(h["name"],h["format"])),
+            "coverage":"this XML only; separate fragments and runtime services not validated"}
+
+
+def discovered_config_paths(text):
+    """Accept only configuration filenames below the specific stock directories."""
+    paths=set()
+    for line in text.splitlines():
+        path=line.strip()
+        if any(part in (".","..") for part in path.split("/")):
+            continue
+        if re.fullmatch(r"/vendor/etc/fstab[A-Za-z0-9_.-]*",path):
+            paths.add(path)
+        elif re.fullmatch(r"/(?:vendor|odm|system_ext)/etc/vintf/(?:manifest/)?[A-Za-z0-9_@.+-]+\.xml",path):
+            paths.add(path)
+    return sorted(paths)
+
+
 def analyze_report(report, lock=None):
     """Evidence summary only: a generation match never implies a bootable port."""
     if not isinstance(report, dict) or not isinstance(report.get("properties"), dict):
@@ -126,11 +179,19 @@ def analyze_report(report, lock=None):
     fstab_keys = [key for key in diagnostics if key == "fstab" or key.startswith("fstab_")]
     fstab_collected = any(re.search(r"^\s*[^#\s]\S*\s+/\S*\s+\w+\s+", diagnostic_text(diagnostics[key]), re.MULTILINE)
                           for key in fstab_keys)
+    try:
+        inventory = vintf_inventory(diagnostic_text(diagnostics.get("vintf_vendor")))
+    except PortError as exc:
+        inventory = {"status":"invalid-or-incomplete","reason":str(exc)}
     return {
         "schema": 1, "profile": lock["profile"], "source_compatibility": compatibility,
         "deployable": False, "model": props.get("ro.product.model", ""),
         "device": props.get("ro.product.device", ""), "platform": props.get("ro.board.platform", ""),
         "stock_android": release, "stock_sdk": sdk, "vendor_sdk": vendor_sdk or None,
+        "vndk_version":props.get("ro.vndk.version") or None,
+        "firmware_display":props.get("ro.build.display.id") or None,
+        "security_patch":props.get("ro.build.version.security_patch") or None,
+        "selinux_compatibility_version":diagnostic_text(diagnostics.get("selinux_vendor_version")).strip() or None,
         "fingerprint": props.get("ro.build.fingerprint", ""), "vendor_fingerprint": vendor_fingerprint,
         "kernel": diagnostic_text(diagnostics.get("kernel")), "active_slot": props.get("ro.boot.slot_suffix", ""),
         "bootloader_locked": locked, "verified_boot": props.get("ro.boot.verifiedbootstate", ""),
@@ -142,6 +203,8 @@ def analyze_report(report, lock=None):
                                      ("boot_a", "boot_b", "dtbo_a", "dtbo_b", "recovery_a", "recovery_b",
                                       "super", "metadata", "userdata")},
         "fstab_collected": fstab_collected,
+        "fstab_paths_discovered":discovered_config_paths(diagnostic_text(diagnostics.get("fstab_paths"))),
+        "vendor_vintf":inventory,
         "blockers": blockers,
         "note": "Observed dm numbers and slot are session-specific, not boot configuration."
     }
@@ -176,7 +239,7 @@ def write_new(path, content):
     path.write_text(content)
 
 
-def write_report(path, content):
+def write_report(path, content, binary=False):
     """Save each collection separately, including when the requested name exists."""
     path = Path(os.path.abspath(Path(path).expanduser()))
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -186,7 +249,7 @@ def write_report(path, content):
     while True:
         try:
             # Exclusive creation also refuses symlinks and a concurrent writer.
-            with candidate.open("x", encoding="utf-8") as stream:
+            with candidate.open("xb" if binary else "x", **({} if binary else {"encoding":"utf-8"})) as stream:
                 stream.write(content)
             return candidate
         except FileExistsError:
@@ -371,9 +434,9 @@ def identify(properties):
     return "unconfirmed"
 
 
-def probe(args):
-    adb = ["adb"] + (["-s", args.serial] if args.serial else [])
-    if not args.serial:
+def collect_report(serial=None):
+    adb = ["adb"] + (["-s", serial] if serial else [])
+    if not serial:
         lines = run(["adb", "devices"], capture=True, timeout=20).splitlines()[1:]
         if len([x for x in lines if x.strip()]) != 1 or not lines[0].endswith("\tdevice"):
             raise PortError("Connect exactly one authorized Android device, or use --serial")
@@ -385,6 +448,9 @@ def probe(args):
         "kernel": "uname -a", "mounts": "cat /proc/mounts", "filesystems": "cat /proc/filesystems",
         "partitions": "ls -l /dev/block/by-name /dev/block/bootdevice/by-name /dev/block/mapper",
         "fstab_vendor": "cat /vendor/etc/fstab.qcom",
+        "fstab_default": "cat /vendor/etc/fstab.default",
+        "fstab_emmc": "cat /vendor/etc/fstab.emmc",
+        "fstab_nodata": "cat /vendor/etc/fstab_nodata.qcom",
         "fstab_odm": "cat /odm/etc/fstab.qcom",
         "fstab_root": "cat /fstab.qcom",
         "fstab_first_stage": "cat /first_stage_ramdisk/fstab.qcom",
@@ -404,9 +470,71 @@ def probe(args):
         except PortError as exc:
             report["diagnostics"][key] = {"unavailable": str(exc), "stdout": exc.stdout,
                                           "stderr": exc.stderr, "returncode": exc.returncode}
+    return report
+
+
+def probe(args):
+    report=collect_report(args.serial)
     out = write_report(args.output, json.dumps(report, indent=2, ensure_ascii=False) + "\n")
     print(f"{report['identity']}: report saved to {out}")
     print("Review before sharing; no IMEI/serial queried.")
+
+
+CONFIG_DISCOVERY_COMMAND = ("ls -1d /vendor/etc/fstab* /vendor/etc/vintf/*.xml "
+                            "/vendor/etc/vintf/manifest/*.xml /odm/etc/vintf/*.xml "
+                            "/system_ext/etc/vintf/*.xml")
+POLICY_CONFIGS = (
+    "/vendor/etc/selinux/plat_sepolicy_vers.txt", "/vendor/etc/selinux/precompiled_sepolicy",
+    "/vendor/etc/selinux/vendor_file_contexts", "/system/etc/selinux/plat_file_contexts",
+)
+
+
+def collect_configs(args):
+    """Copy stock configuration files into a local ZIP, without root or device writes."""
+    report=collect_report(args.serial)
+    if identify(report["properties"]) != "n100-candidate":
+        raise PortError("Configuration collection requires an identified Nord N100")
+    adb=["adb"]+(["-s",args.serial] if args.serial else [])
+    try:
+        listing={"stdout":run(adb+["shell",CONFIG_DISCOVERY_COMMAND],capture=True,timeout=20),"returncode":0}
+    except PortError as exc:
+        listing={"stdout":exc.stdout,"stderr":exc.stderr,"returncode":exc.returncode}
+    paths=sorted(set(discovered_config_paths(listing["stdout"])) | set(POLICY_CONFIGS))
+    if len(paths)>256:
+        raise PortError("Unexpectedly many configuration paths")
+    inventory={"schema":1,"purpose":"stock configuration source inputs; not a firmware backup",
+               "discovery":listing,"files":[],"device_writes":False}
+    archive=io.BytesIO()
+    total=0
+    with tempfile.TemporaryDirectory(prefix="n100-configs-") as work, zipfile.ZipFile(
+            archive,"w",compression=zipfile.ZIP_DEFLATED) as bundle:
+        bundle.writestr("report.json",json.dumps(report,indent=2,ensure_ascii=False)+"\n")
+        for remote in paths:
+            local=Path(work)/remote.lstrip("/")
+            local.parent.mkdir(parents=True,exist_ok=True)
+            entry={"remote_path":remote}
+            try:
+                run(adb+["pull",remote,str(local)],capture=True,timeout=60)
+                if local.is_symlink() or not local.is_file():
+                    raise PortError("Expected a regular configuration file")
+                size=local.stat().st_size
+                if size>8*1024*1024 or total+size>32*1024*1024:
+                    raise PortError("Configuration size budget exceeded")
+                data=local.read_bytes()
+                bundle.writestr("files/"+remote.lstrip("/"),data)
+                total+=size
+                entry.update({"status":"collected","bytes":size,"sha256":hashlib.sha256(data).hexdigest()})
+            except (PortError,OSError) as exc:
+                entry.update({"status":"unavailable","reason":str(exc)})
+                if isinstance(exc,PortError):
+                    entry.update({"stdout":exc.stdout,"stderr":exc.stderr,"returncode":exc.returncode})
+            inventory["files"].append(entry)
+        bundle.writestr("inventory.json",json.dumps(inventory,indent=2,ensure_ascii=False)+"\n")
+    out=write_report(args.output,archive.getvalue(),binary=True)
+    count=sum(f["status"]=="collected" for f in inventory["files"])
+    print(f"Configuration bundle saved to {out} ({count}/{len(paths)} files collected)")
+    print("Contains device configuration and a report, not user data or a complete firmware backup.")
+    return out
 
 
 def check_kernel(args):
@@ -483,6 +611,10 @@ def main():
     p.add_argument("--serial")
     p.add_argument("--output", required=True)
     p.set_defaults(func=probe)
+    p = commands.add_parser("collect-configs", help="Copy actual fstab/VINTF/policy files into a local ZIP; no root")
+    p.add_argument("--serial")
+    p.add_argument("--output", required=True)
+    p.set_defaults(func=collect_configs)
     p = commands.add_parser("check-kernel", help="Check the resolved kernel .config")
     p.add_argument("config")
     p.set_defaults(func=check_kernel)

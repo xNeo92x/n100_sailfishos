@@ -8,7 +8,11 @@
   "platform": "bengal",
   "stock_android": "11",
   "stock_sdk": "30",
-  "vendor_sdk": null,
+  "vendor_sdk": "30",
+  "vndk_version": "30",
+  "firmware_display": "BE2013_7_231009",
+  "security_patch": "2023-10-05",
+  "selinux_compatibility_version": "30.0",
   "fingerprint": "OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys",
   "vendor_fingerprint": "OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys",
   "kernel": "Linux localhost 4.19.152-perf+ #1 SMP PREEMPT Tue Oct 10 00:10:33 CST 2023 aarch64",
@@ -129,6 +133,996 @@
     "userdata": "/dev/block/sda16"
   },
   "fstab_collected": false,
+  "fstab_paths_discovered": [
+    "/vendor/etc/fstab.default",
+    "/vendor/etc/fstab.emmc",
+    "/vendor/etc/fstab_nodata.qcom"
+  ],
+  "vendor_vintf": {
+    "type": "device",
+    "target_level": "4",
+    "sepolicy_compatibility_version": "30.0",
+    "hals": [
+      {
+        "name": "android.hardware.audio",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "6.0"
+        ],
+        "instances": [
+          {
+            "interface": "IDevicesFactory",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.audio.effect",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "6.0"
+        ],
+        "instances": [
+          {
+            "interface": "IEffectsFactory",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.bluetooth",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IBluetoothHci",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.bluetooth.audio",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.0"
+        ],
+        "instances": [
+          {
+            "interface": "IBluetoothAudioProvidersFactory",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.camera.provider",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.4"
+        ],
+        "instances": [
+          {
+            "interface": "ICameraProvider",
+            "instance": "legacy/0"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.configstore",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.1"
+        ],
+        "instances": [
+          {
+            "interface": "ISurfaceFlingerConfigs",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.drm",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.3"
+        ],
+        "instances": [
+          {
+            "interface": "ICryptoFactory",
+            "instance": "wfdhdcp"
+          },
+          {
+            "interface": "IDrmFactory",
+            "instance": "wfdhdcp"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.gatekeeper",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IGatekeeper",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.keymaster",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "4.0"
+        ],
+        "instances": [
+          {
+            "interface": "IKeymasterDevice",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.media.omx",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IOmx",
+            "instance": "default"
+          },
+          {
+            "interface": "IOmxStore",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.memtrack",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IMemtrack",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.neuralnetworks",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.2"
+        ],
+        "instances": [
+          {
+            "interface": "IDevice",
+            "instance": "qti-default"
+          },
+          {
+            "interface": "IDevice",
+            "instance": "qti-dsp"
+          },
+          {
+            "interface": "IDevice",
+            "instance": "qti-gpu"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.radio.config",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.1"
+        ],
+        "instances": [
+          {
+            "interface": "IRadioConfig",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.renderscript",
+        "format": "hidl",
+        "transport": "passthrough",
+        "transport_arch": "32+64",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IDevice",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.soundtrigger",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.3"
+        ],
+        "instances": [
+          {
+            "interface": "ISoundTriggerHw",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.tetheroffload.config",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IOffloadConfig",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "android.hardware.tetheroffload.control",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IOffloadControl",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "com.dsi.ant",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IAnt",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "com.qualcomm.qti.dpm.api",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IdpmQmi",
+            "instance": "dpmQmiService"
+          }
+        ]
+      },
+      {
+        "name": "com.qualcomm.qti.imscmservice",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.2"
+        ],
+        "instances": [
+          {
+            "interface": "IImsCmService",
+            "instance": "qti.ims.connectionmanagerservice"
+          }
+        ]
+      },
+      {
+        "name": "com.qualcomm.qti.uceservice",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.2"
+        ],
+        "instances": [
+          {
+            "interface": "IUceService",
+            "instance": "com.qualcomm.qti.uceservice"
+          }
+        ]
+      },
+      {
+        "name": "vendor.egistec.hardware.fingerprint",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "4.0"
+        ],
+        "instances": [
+          {
+            "interface": "IBiometricsFingerprintRbs",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.oneplus.engnative.engineer",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IEngineer",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.oneplus.faceunlock.hal",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IFaceUnlockNativeService",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.oneplus.fingerprint.extension",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IVendorFingerprintExtensions",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.oneplus.hardware.CameraMDMHIDL",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IOnePlusCameraMDM",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.oneplus.hardware.camera",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IOnePlusCameraProvider",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.oneplus.hardware.cwb",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "ICwbService",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.oneplus.hardware.display",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IOneplusDisplay",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.oneplus.hardware.drmkey",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IOneplusDrmKey",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.oneplus.hardware.hypnus",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IHypnusUtil",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.oneplus.hardware.ifaa",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.0"
+        ],
+        "instances": [
+          {
+            "interface": "IOneplusIfaa",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.oneplus.hardware.param",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IOneplusParam",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.oneplus.hardware.rpmb",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IOneplusRpmb",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.oneplus.hardware.wifi",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.1"
+        ],
+        "instances": [
+          {
+            "interface": "IOneplusWifi",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.data.factory",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.2"
+        ],
+        "instances": [
+          {
+            "interface": "IFactory",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.esepowermanager",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.1"
+        ],
+        "instances": [
+          {
+            "interface": "IEsePowerManager",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.alarm",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IAlarm",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.bluetooth_audio",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.0"
+        ],
+        "instances": [
+          {
+            "interface": "IBluetoothAudioProvidersFactory",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.bluetooth_sar",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.1"
+        ],
+        "instances": [
+          {
+            "interface": "IBluetoothSar",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.btconfigstore",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.0"
+        ],
+        "instances": [
+          {
+            "interface": "IBTConfigStore",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.cacert",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IService",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.camera.postproc",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IPostProcService",
+            "instance": "camerapostprocservice"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.capabilityconfigstore",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "ICapabilityConfigStore",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.data.latency",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "ILinkLatency",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.dsp",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IDspService",
+            "instance": "dspservice"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.embmssl",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.1"
+        ],
+        "instances": [
+          {
+            "interface": "IEmbms",
+            "instance": "embmsslServer0"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.factory",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.1"
+        ],
+        "instances": [
+          {
+            "interface": "IFactory",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.fm",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IFmHci",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.iop",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.0"
+        ],
+        "instances": [
+          {
+            "interface": "IIop",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.perf",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.2"
+        ],
+        "instances": [
+          {
+            "interface": "IPerf",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.qccvndhal",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IQccvndhal",
+            "instance": "qccvndhal"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.qseecom",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IQSEECom",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.qteeconnector",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IAppConnector",
+            "instance": "default"
+          },
+          {
+            "interface": "IGPAppConnector",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.sensorscalibrate",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "ISensorsCalibrate",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.soter",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "ISoter",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.tui_comm",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "ITuiComm",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.wifi.wifilearner",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IWifiStats",
+            "instance": "wifiStats"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.hardware.wifidisplaysession",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IWifiDisplaySession",
+            "instance": "wifidisplaysession"
+          },
+          {
+            "interface": "IWifiDisplaySessionAudioTrack",
+            "instance": "wifidisplaysessionaudiotrack"
+          },
+          {
+            "interface": "IWifiDisplaySessionImageTrack",
+            "instance": "wifidisplaysessionimagetrack"
+          },
+          {
+            "interface": "IWifiDisplaySessionVideoTrack",
+            "instance": "wifidisplaysessionvideotrack"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.ims.callinfo",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IService",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.ims.factory",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IImsFactory",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.imsrtpservice",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "3.0"
+        ],
+        "instances": [
+          {
+            "interface": "IRTPService",
+            "instance": "imsrtpservice"
+          }
+        ]
+      },
+      {
+        "name": "vendor.qti.qspmhal",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IQspmhal",
+            "instance": "default"
+          }
+        ]
+      }
+    ],
+    "coverage": "this XML only; separate fragments and runtime services not validated"
+  },
   "blockers": [
     "images-not-built-or-boot-tested",
     "regional-proprietary-blobs-unverified",

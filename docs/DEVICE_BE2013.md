@@ -1,4 +1,4 @@
-# BE2013: first stock-device report
+# BE2013: stock-device reports and configuration evidence
 
 The user supplied a read-only ADB report from the actual phone. A reduced
 board/firmware fixture is checked in under `tests/fixtures/`; the original report
@@ -13,6 +13,9 @@ is not published. The machine-readable assessment is
 | Product region | EEA, from the stock build fingerprint |
 | Platform / hardware | bengal / qcom |
 | Android version / SDK | 11 / 30 |
+| Vendor SDK / VNDK | 30 / 30, confirmed by the V2 report |
+| Firmware display / incremental | BE2013_7_231009 / 2310092135 |
+| Framework and vendor security patch | 2023-10-05 |
 | Build fingerprint | OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys |
 | Vendor fingerprint | Same as the build fingerprint |
 | Running kernel | 4.19.152-perf+, aarch64, built October 2023 |
@@ -89,8 +92,53 @@ instead and prints its absolute path. Use that printed filename for analysis
 and upload, so an older report is not accidentally reused. Do not delete the
 old report just to collect another one.
 
-The next inputs are the complete stock fstab/VINTF details and ultimately the
-matching stock filesystem/boot image files for proprietary extraction and boot
-header comparison. A report containing filenames and mount points is not a
-substitute for those binaries. There is still no image to flash or validate on
-this device; leave Android running for the read-only collection.
+## V2 findings
+
+The V2 report confirms Vendor SDK 30, VNDK 30 and SELinux compatibility version
+30.0. The latter is not a measurement of the compiled SELinux policy binary's
+internal version. The rootfs encryption parameters are still unknown until the
+actual stock fstabs are read.
+
+The exact `fstab.qcom` candidates do not exist on this stock build. The listing
+does expose `/vendor/etc/fstab.default`, `/vendor/etc/fstab.emmc` and
+`/vendor/etc/fstab_nodata.qcom`. Their roles must be determined from their contents;
+the nodata variant must not be assumed to be the normal boot fstab.
+
+The main vendor VINTF manifest declares 63 HALs. Canonical comparison with the
+pinned Lineage main manifest finds all 62 upstream declarations equivalent,
+plus the stock-only `vendor.oneplus.hardware.display` declaration. The inventory
+deduplicates the equivalent `<interface>` and `<fqname>` representations. It
+does not validate runtime services, binary ABIs or manifest fragments. The
+comparison is recorded in `devices/be2013-vintf-comparison.json`.
+
+Relevant declarations include audio/effects 6.0, Bluetooth 1.0 and Bluetooth
+audio 2.0, camera provider 2.4, radio config 1.1 and a vendor Egis fingerprint
+interface. Hardware features must not be marked working based on declarations.
+Several essential interfaces are represented by separate files, including
+display composer/allocator, sensors 2.0, GNSS, fingerprint, vibrator, power and
+Wi-Fi. Their filenames were listed but their contents were not collected by V2.
+
+`/odm/etc/vintf/manifest_2.xml` and `manifest_8.xml` exist despite the absence of
+a separate ODM mapper entry in the observed stock mount layout. A directory
+path is not proof of a separate partition. `/proc/partitions` and input-device
+details are explicitly denied by the current Android policy; no root bypass is
+part of the collection.
+
+The next collection obtains the actual files in one archive:
+
+```bash
+git pull --ff-only
+python3 tools/n100.py collect-configs --output ../n100-configs.zip
+```
+
+It discovers the real stock fstab and vendor/ODM/system_ext VINTF XML files,
+pulls them and the relevant SELinux policy/context files with ADB, and packages
+them locally with `report.json` and a SHA-256 `inventory.json`. No phone writes,
+root, reboot or unlock commands are used. A partial bundle remains useful:
+unavailable files are recorded instead of being silently omitted. The archive
+has per-file and aggregate size bounds, and existing archives are not overwritten.
+
+This ZIP is configuration input, not a proprietary driver dump, boot image or
+complete firmware backup. Matching stock binaries and an actual build/boot test
+are still needed. Do not publish compiled policy or binary payloads into the
+source repository automatically; retain these as local build inputs.

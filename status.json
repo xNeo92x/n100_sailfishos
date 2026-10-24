@@ -36,5 +36,21 @@
     "bootloader_locked": true,
     "userdata_encrypted": true
   },
-  "assessment": "devices/be2013-stock11-assessment.json"
+  "assessment": "devices/be2013-stock11-assessment.json",
+  "configuration_evidence": {
+    "report_version": "v2",
+    "vendor_api": 30,
+    "vndk": 30,
+    "selinux_compatibility_version": "30.0",
+    "main_vintf_declarations_matched": 62,
+    "stock_only_main_hal": "vendor.oneplus.hardware.display",
+    "stock_fstab_names_identified": true,
+    "stock_fstab_contents_collected": false,
+    "vintf_fragments_collected": false
+  },
+  "kernel_config_resolved": true,
+  "kernel_upstream_config_check_passed": true,
+  "kernel_config_optional_warnings": 47,
+  "kernel_built": false,
+  "kernel_config_validation": "validation/kernel-config.json"
 }
