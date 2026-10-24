@@ -30,6 +30,47 @@ class ConfigTests(unittest.TestCase):
 
 
 class FileTests(unittest.TestCase):
+    def test_report_creates_requested_file_and_returns_absolute_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/"new/report.json"
+            actual=n100.write_report(path,'{"report":1}\n')
+            self.assertEqual(actual,path)
+            self.assertTrue(actual.is_absolute())
+            self.assertEqual(json.loads(actual.read_text()),{"report":1})
+
+    def test_existing_report_is_preserved_and_new_collection_gets_another_name(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/"n100-device-report-v2.json"
+            path.write_text('original report\n')
+            actual=n100.write_report(path,'{"report":2}\n')
+            self.assertNotEqual(actual,path)
+            self.assertEqual(actual.parent,path.parent)
+            self.assertTrue(actual.name.startswith("n100-device-report-v2-"))
+            self.assertEqual(path.read_text(),'original report\n')
+            self.assertEqual(json.loads(actual.read_text()),{"report":2})
+
+    def test_report_collision_even_with_same_timestamp_never_overwrites(self):
+        with tempfile.TemporaryDirectory() as tmp, patch.object(n100,"datetime") as clock:
+            clock.now.return_value.strftime.return_value="fixed-timestamp"
+            path=Path(tmp)/"report.json"
+            path.write_text("original")
+            outputs=[n100.write_report(path,str(i)) for i in range(3)]
+            self.assertEqual(len(set(outputs)),3)
+            self.assertEqual([p.read_text() for p in outputs],["0","1","2"])
+            self.assertEqual(path.read_text(),"original")
+
+    def test_report_does_not_follow_existing_symlink(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target=Path(tmp)/"target"
+            target.write_text("keep")
+            link=Path(tmp)/"report.json"
+            link.symlink_to(target)
+            actual=n100.write_report(link,"new report")
+            self.assertNotEqual(actual,link)
+            self.assertTrue(link.is_symlink())
+            self.assertEqual(target.read_text(),"keep")
+            self.assertEqual(actual.read_text(),"new report")
+
     def test_idempotent_but_refuses_local_edits(self):
         with tempfile.TemporaryDirectory() as tmp:
             dest = Path(tmp) / "new/file.txt"

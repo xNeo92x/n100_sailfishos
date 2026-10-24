@@ -63,6 +63,11 @@ git pull --ff-only
 python3 tools/n100.py probe --output ../n100-device-report-v2.json
 ```
 
+Existiert die gewünschte Berichtsdatei bereits, speichert `probe` den neuen
+Durchlauf automatisch mit einem Zeitstempel im Dateinamen. Vorhandene Berichte
+bleiben erhalten. Der vollständige Speicherpfad wird am Ende angezeigt;
+`../` bezeichnet hier den Ordner oberhalb des Repositorys.
+
 Das verändert keine Einstellungen oder Partitionen am Telefon. Bei mehreren
 angeschlossenen Geräten zusätzlich `--serial DEINE_ADB_KENNUNG` angeben.
 ADB-Seriennummer und IMEI werden nicht in den Bericht übernommen. Fingerprints,

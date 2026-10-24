@@ -84,6 +84,11 @@ python3 tools/n100.py probe --output ../n100-device-report-v2.json
 python3 tools/n100.py analyze-report ../n100-device-report-v2.json
 ```
 
+If the report filename already exists, `probe` creates a timestamped sibling
+instead and prints its absolute path. Use that printed filename for analysis
+and upload, so an older report is not accidentally reused. Do not delete the
+old report just to collect another one.
+
 The next inputs are the complete stock fstab/VINTF details and ultimately the
 matching stock filesystem/boot image files for proprietary extraction and boot
 header comparison. A report containing filenames and mount points is not a

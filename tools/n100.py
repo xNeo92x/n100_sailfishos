@@ -176,6 +176,25 @@ def write_new(path, content):
     path.write_text(content)
 
 
+def write_report(path, content):
+    """Save each collection separately, including when the requested name exists."""
+    path = Path(os.path.abspath(Path(path).expanduser()))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    candidate = path
+    attempt = 0
+    while True:
+        try:
+            # Exclusive creation also refuses symlinks and a concurrent writer.
+            with candidate.open("x", encoding="utf-8") as stream:
+                stream.write(content)
+            return candidate
+        except FileExistsError:
+            attempt += 1
+            suffix = "" if attempt == 1 else f"-{attempt}"
+            candidate = path.with_name(f"{path.stem}-{stamp}{suffix}{path.suffix}")
+
+
 def parse_config(text):
     values = {}
     for line in text.splitlines():
@@ -385,9 +404,9 @@ def probe(args):
         except PortError as exc:
             report["diagnostics"][key] = {"unavailable": str(exc), "stdout": exc.stdout,
                                           "stderr": exc.stderr, "returncode": exc.returncode}
-    out = Path(args.output).expanduser()
-    write_new(out, json.dumps(report, indent=2, ensure_ascii=False) + "\n")
-    print(f"{report['identity']}: {out}. Review before sharing; no IMEI/serial queried.")
+    out = write_report(args.output, json.dumps(report, indent=2, ensure_ascii=False) + "\n")
+    print(f"{report['identity']}: report saved to {out}")
+    print("Review before sharing; no IMEI/serial queried.")
 
 
 def check_kernel(args):
