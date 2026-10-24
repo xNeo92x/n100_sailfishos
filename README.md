@@ -14,6 +14,27 @@ Das **Nord N100 ist `billie2`** (Snapdragon 460 / SM4250, Adreno 610).
 `billie` ist das Nord N10 und darf nicht als Ersatz verwendet werden.
 Die aktuelle Buildbasis verwendet `bengal`, passend zum ausgelesenen Gerät.
 
+## Weiter zum installierbaren Image auf CachyOS
+
+Der vollständige Build soll auf deinem CachyOS-PC laufen. Die neue
+[Schrittfolge](docs/CACHYOS_BUILD.md) verbindet Hostprüfung, lokale Treiber-
+Sammlung, Vendor-Extraktion, HAL-/RPM-/Rootfs-Build und die Erstellung eines
+experimentellen `userdata.img`. Beginne im Repository mit:
+
+```bash
+git pull --ff-only
+sudo pacman -S --needed git python android-tools curl tar xz e2fsprogs
+python3 tools/build-host.py --work-dir "$HOME/n100-build" --initialize
+python3 tools/firmware.py --work-dir "$HOME/n100-build" collect
+```
+
+Der PC braucht mindestens 200 GiB freien Speicher. Die Sammlung liest die
+gepinnten 1.161 Treiber-/Systemdateien über ADB und bleibt lokal; ein erneuter
+Diagnose-Upload ist dafür nicht nötig. Ein späteres Userdata-Image ersetzt die
+Android-Nutzerdaten. Die Image-Erstellung selbst schreibt ausschließlich lokale
+Dateien; die noch offene Geräte-/HAL-Integration bleibt Voraussetzung für den
+ersten Flash-Versuch.
+
 ## Ergebnis des ersten Geräteberichts
 
 | Merkmal | Ausgelesener Wert |

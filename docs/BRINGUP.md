@@ -85,21 +85,23 @@ The upstream hybris initramfs searches for `/data/.stowaways/sailfishos` and
 switches root into that directory. Its direct `mount $DATA_PARTITION /data`
 does not by itself unlock Android file-based or metadata encryption.
 
-The live report confirms file encryption and F2FS with `inlinecrypt`; it does
-not reveal the actual stock fstab encryption flags. V2 shows that the queried
-`fstab.qcom` names are absent and instead discovers `fstab.default`, `fstab.emmc`
-and `fstab_nodata.qcom`. Collect their contents with `collect-configs` before
-choosing a data/rootfs strategy. The new Lineage build fstab uses
-`fileencryption=aes-256-xts` and a metadata-encryption key directory. Neither
-that source file nor the dm node number proves the live device uses exactly
-those parameters. A recovery being able to read data does not
-prove the independent Sailfish boot chain can access it.
+The configuration bundle has now supplied the three stock fstabs. Two describe
+persistent F2FS data with different encryption flags; the nodata variant uses
+tmpfs. The active variant remains unknown. See [CONFIG_BUNDLE.md](CONFIG_BUNDLE.md).
+Neither the filesystem name nor a dm node number proves that hybris initramfs
+can unlock the existing Android filesystem.
 
-Choose and test a device-specific rootfs/data strategy. A dedicated Linux root
-partition or a deliberately prepared data filesystem may require a different
-initramfs. Formatting data, disabling encryption and shrinking/repartitioning
-storage are destructive choices and are not done by the tooling in this repo.
-Do not merely delete encryption flags and assume the existing data becomes readable.
+The new **development image path** creates a fresh unencrypted ext4 file with the
+built Sailfish rootfs in `.stowaways/sailfishos`, matching the pinned hybris init
+script without a `data_subdir` override. `tools/make-userdata-image.py` populates
+it with `mke2fs -d` and checks it with `e2fsck`. This file layout has been tested
+with fixture data; no real Sailfish userdata image or device boot has been tested.
+
+A future deployment to userdata replaces Android user data, rather than decrypting
+or migrating it. The tool performs no device writes. Actual partition capacity,
+boot compatibility, backups, restoration and the locked bootloader still require
+validation before installation. The dynamic Android HAL mounts in section 3
+remain unresolved: a userdata rootfs image alone does not supply them.
 
 ## 5. First nonpersistent boot experiment
 

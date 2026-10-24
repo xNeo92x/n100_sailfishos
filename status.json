@@ -61,5 +61,17 @@
   "dtb_built": true,
   "dtbo_built": true,
   "kernel_modules_built": 3,
-  "dtbo_host_apply_verified": true
+  "dtbo_host_apply_verified": true,
+  "local_build_workflow": {
+    "host": "CachyOS x86_64",
+    "documentation": "docs/CACHYOS_BUILD.md",
+    "firmware_collector_implemented": true,
+    "required_blob_files": 1161,
+    "pinned_blob_files": 46,
+    "user_firmware_dump_collected": false,
+    "userdata_image_builder_implemented": true,
+    "ext4_fixture_build_verified": true,
+    "real_sailfish_userdata_image_built": false,
+    "deployment_strategy": "fresh unencrypted ext4 userdata with stowaway Sailfish rootfs; unvalidated on hardware"
+  }
 }

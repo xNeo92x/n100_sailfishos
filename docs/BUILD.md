@@ -4,6 +4,8 @@ Status: **commands and integration prepared; no full build executed**.
 No Sailfish release has been certified for this device. The locked upstream
 packaging revisions are a starting point, not a tested release combination.
 Keep logs of the first real build and fix failures before proceeding to hardware.
+For the concrete CachyOS host workflow, firmware collector and experimental
+userdata-image assembly, see [CACHYOS_BUILD.md](CACHYOS_BUILD.md).
 
 ## 1. Environments
 
@@ -97,6 +99,10 @@ blobs and the extraction script's ELF fixups must be checked individually.
 Do not substitute stock Android 13/15 blobs or a different OnePlus phone. Preserve a local
 hash list and firmware fingerprint alongside the build log. Proprietary blobs
 remain local unless their redistribution rights are known.
+
+The local collector/importer now automates gathering and verifying the pinned
+blob inputs: see `tools/firmware.py` and [CACHYOS_BUILD.md](CACHYOS_BUILD.md).
+It refuses incomplete inputs or mismatches with pinned blobs before fixups.
 
 Check that both inherited files exist before continuing:
 
@@ -200,6 +206,9 @@ bash "$N100_PORT/tools/build-packages.sh" rootfs
 This invokes upstream `mic` with the generated `billie2` kickstart. It may
 require sudo inside the SDK and network access to Sailfish repositories. It
 produces a **development filesystem archive**, not an approved installer.
+`tools/make-userdata-image.py` can package a successfully built billie2 rootfs
+and boot image into regular experimental image files. It does not flash a device.
+See [CACHYOS_BUILD.md](CACHYOS_BUILD.md) for inputs and remaining deployment gates.
 There is no installer ZIP macro or partition-flashing automation in this port.
 The dynamic-partition/data issues in [BRINGUP.md](BRINGUP.md) must be solved
 before an on-device deployment can be described accurately.

@@ -1,0 +1,15 @@
+{
+  "scope": "fixture workflow only; not an actual Sailfish build or device validation",
+  "production_builder_end_to_end_fixture_passed": true,
+  "fixture_ext4_bytes": 3221225472,
+  "root_path_verified": "/data/.stowaways/sailfishos",
+  "first_boot_debug_marker_verified": true,
+  "rootfs_archive_and_elf_identity_tests_passed": true,
+  "actual_sailfish_image_built": false,
+  "boot_tested": false,
+  "pinned_blob_list_revision": "b2bde47cb6d0d737136915d65feac5cffacb1d53",
+  "blob_list_git_blob": "dd2ab595c6fb47867309c531b2714e005fc79308",
+  "blob_source_paths": 1161,
+  "remapped_paths": 10,
+  "upstream_pinned_files": 46
+}

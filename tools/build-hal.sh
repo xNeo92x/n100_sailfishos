@@ -8,6 +8,11 @@ cd "$ANDROID_ROOT"
 python3 "$port_dir/tools/n100.py" verify-tree --android-root "$ANDROID_ROOT"
 test -f rpm/droid-hal-billie2.spec
 test -f kernel/oneplus/sm4250/arch/arm64/configs/vendor/sailfish-billie2_defconfig
+test -s vendor/oneplus/billie2/billie2-vendor.mk || {
+    echo 'Missing vendor blobs: collect/import with tools/firmware.py first.' >&2
+    exit 1
+}
+test -s vendor/oneplus/billie2/BoardConfigVendor.mk
 test -f .n100-hybris-patches-applied || {
     echo 'Apply hybris-patches/apply-patches.sh --mb and record the marker as in docs/BUILD.md.' >&2
     exit 1

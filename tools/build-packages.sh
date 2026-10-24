@@ -12,6 +12,11 @@ python3 "$port_dir/tools/n100.py" verify-tree --android-root "$ANDROID_ROOT"
 test -s out/target/product/billie2/hybris-boot.img
 test -f rpm/droid-hal-billie2.spec
 case "${1:-}" in
+    all)
+        for stage in hal configs middleware media version; do
+            bash "$port_dir/tools/build-packages.sh" "$stage"
+        done
+        exec bash "$port_dir/tools/build-packages.sh" rootfs ;;
     hal) exec bash rpm/dhd/helpers/build_packages.sh -d ;;
     configs) exec bash rpm/dhd/helpers/build_packages.sh -c ;;
     middleware) exec bash rpm/dhd/helpers/build_packages.sh -m ;;
@@ -21,5 +26,5 @@ case "${1:-}" in
         command -v mic >/dev/null
         command -v createrepo_c >/dev/null
         exec bash rpm/dhd/helpers/build_packages.sh -i ;;
-    *) echo 'Usage: build-packages.sh {hal|configs|middleware|media|version|rootfs}' >&2; exit 2 ;;
+    *) echo 'Usage: build-packages.sh {all|hal|configs|middleware|media|version|rootfs}' >&2; exit 2 ;;
 esac
