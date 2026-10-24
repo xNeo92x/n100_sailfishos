@@ -90,19 +90,24 @@ it aside and retrying; it is not automatically deleted.
 ## 3. Proprietary components and hybris patches (HABUILD_SDK)
 
 The Android device tree inherits `vendor/oneplus/billie2/billie2-vendor.mk` and
-`BoardConfigVendor.mk`. Neither is included here. Extract the device's proprietary
-components with the pinned device tree's `extract-files.sh` / `setup-makefiles.sh`
-and `tools/extract-utils`. Read those scripts first and supply
-the matching Android 11 filesystem dump as their source. The pinned blob list
-was extracted from global 11.0.15.BE81AA; the BE2013 report is EEA, so the regional
-blobs and the extraction script's ELF fixups must be checked individually.
-Do not substitute stock Android 13/15 blobs or a different OnePlus phone. Preserve a local
-hash list and firmware fingerprint alongside the build log. Proprietary blobs
-remain local unless their redistribution rights are known.
+`BoardConfigVendor.mk`. Use the reviewed, pre-extracted vendor-source candidate:
 
-The local collector/importer now automates gathering and verifying the pinned
-blob inputs: see `tools/firmware.py` and [CACHYOS_BUILD.md](CACHYOS_BUILD.md).
-It refuses incomplete inputs or mismatches with pinned blobs before fixups.
+```bash
+python3 "$N100_PORT/tools/firmware.py" --work-dir "$N100_FIRMWARE_WORK" \
+  vendor-source --android-root "$ANDROID_ROOT"
+```
+
+This installs the pinned TheMuppets lineage-20 dataset as a separate Git worktree.
+Its full file inventory and declared raw-reference differences are checked again
+before HAL compilation. See [VENDOR_SOURCE.md](VENDOR_SOURCE.md). Do not apply the
+raw extraction script to this pre-extracted source or mix it with the partial
+ADB dump. It supplies build inputs, not a stock EEA compatibility certification.
+
+Manual raw extraction remains available via `extract-files.sh` and
+`tools/firmware.py import`, requiring a complete input set and reviewed fixups.
+The stock dump alone cannot satisfy all pins: the upstream WiFi Display system
+section explicitly uses donor-device `lemonadep` files. Missing ADB files and
+pinned donor blobs must not be silently ignored to force extraction through.
 
 Check that both inherited files exist before continuing:
 

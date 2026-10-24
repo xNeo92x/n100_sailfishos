@@ -89,7 +89,19 @@ def save_inventory(path, inventory):
     temporary.replace(path)
 
 
-def collect(work, serial=None):
+def adb_error_kind(stdout, stderr):
+    message = (stdout + "\n" + stderr).lower()
+    if "permission denied" in message or "operation not permitted" in message:
+        return "permission_denied"
+    if "no such file" in message or "does not exist" in message or "cannot stat" in message:
+        return "not_found"
+    if (any(term in message for term in ("device offline", "device not found", "no devices", "disconnected", "error: closed"))
+            or re.search(r"device\s+'[^']+'\s+not found", message)):
+        return "transport"
+    return "unknown"
+
+
+def collect(work, serial=None, retry_failed=False):
     if not shutil.which("adb"):
         raise n100.PortError("Install android-tools first: sudo pacman -S --needed android-tools")
     if not serial:
@@ -133,6 +145,8 @@ def collect(work, serial=None):
             if old.get("sha256") != digest(destination) or old.get("bytes") != destination.stat().st_size:
                 raise n100.PortError("Existing file differs from inventory: " + name)
             continue
+        if old.get("error_kind") in ("permission_denied", "not_found") and not retry_failed:
+            continue
         destination.parent.mkdir(parents=True, exist_ok=True)
         partial = destination.with_name(destination.name + ".partial")
         if partial.exists() or partial.is_symlink():
@@ -142,7 +156,11 @@ def collect(work, serial=None):
             result = subprocess.run(base + ["pull", "/" + name, str(partial)],
                                     capture_output=True, text=True, timeout=180)
             if result.returncode or not partial.is_file():
-                raise n100.PortError("ADB pull unavailable (exit " + str(result.returncode) + ")")
+                error = n100.PortError("ADB pull unavailable (exit " + str(result.returncode) + ")")
+                error.stdout = getattr(result, "stdout", "") or ""
+                error.stderr = getattr(result, "stderr", "") or ""
+                error.returncode = result.returncode
+                raise error
             if partial.stat().st_size > 512 * 1024**2:
                 raise n100.PortError("Unexpected blob larger than 512 MiB")
             record = {**declaration, "status": "collected", "bytes": partial.stat().st_size,
@@ -153,15 +171,39 @@ def collect(work, serial=None):
             inventory["files"][name] = record
         except (n100.PortError, subprocess.TimeoutExpired) as exc:
             partial.unlink(missing_ok=True)
-            inventory["files"][name] = {**declaration, "status": "unavailable", "error": str(exc)}
+            stdout = getattr(exc, "stdout", "") or ""
+            stderr = getattr(exc, "stderr", "") or ""
+            def clean(value):
+                if isinstance(value, bytes):
+                    value = value.decode("utf-8", errors="replace")
+                return value.replace(serial, "<device>")[-16384:]
+            stdout, stderr = clean(stdout), clean(stderr)
+            timeout = isinstance(exc, subprocess.TimeoutExpired)
+            inventory["files"][name] = {**declaration, "status": "unavailable",
+                "error": "ADB pull timed out" if timeout else str(exc),
+                "stdout": stdout, "stderr": stderr, "returncode": getattr(exc, "returncode", None),
+                "error_kind": "timeout" if timeout else adb_error_kind(stdout, stderr)}
         save_inventory(inventory_path, inventory)
         if index % 20 == 0 or index == len(wanted):
             count = sum(r["status"] == "collected" for r in inventory["files"].values())
             print(f"{index}/{len(wanted)} checked; {count} collected", flush=True)
     result = verify(work)
-    print(json.dumps(result, indent=2))
+    result["failure_kinds"] = {}
+    for record in inventory["files"].values():
+        if record.get("status") == "unavailable":
+            kind = record.get("error_kind", "unknown")
+            result["failure_kinds"][kind] = result["failure_kinds"].get(kind, 0) + 1
+    report_path = n100.write_report(output / "verification.json", json.dumps(result, indent=2) + "\n")
+    print(f"Collection: {len(wanted) - len(result['missing'])}/{len(wanted)} files; "
+          f"{len(result['upstream_pin_mismatches'])} raw-reference hash differences")
+    print("Failure kinds:", json.dumps(result["failure_kinds"]))
+    print("Details:", report_path)
     if not result["complete"]:
-        raise n100.PortError("Incomplete dump. Repeat the same command to retry unavailable files")
+        raise n100.PortError("Incomplete dump. Inspect the saved failure details. For persistent failures, "
+                             "use vendor-source; --retry-failed explicitly retries permission/path failures")
+    if not result["ready_for_extraction"]:
+        raise n100.PortError("Dump is complete but differs from raw reference pins, including donor-device blobs. "
+                             "Use the separately verified vendor-source build input")
     print("Firmware inputs saved locally. No upload of the proprietary files is required.")
 
 
@@ -187,7 +229,127 @@ def verify(work):
     return {"required": len(wanted), "missing": missing, "changed": changed,
             "upstream_pin_mismatches": mismatches, "complete": not (missing or changed),
             "ready_for_extraction": not (missing or changed or mismatches),
-            "note": "EEA vs global pinned-blob differences require review before ELF fixups"}
+            "note": "Raw reference pins include donor-device blobs (lemonadep WiFi Display); "
+                    "differences are not necessarily regional or corruption. Do not apply unreviewed ELF fixups"}
+
+
+def vendor_pin():
+    pin = json.loads((n100.ROOT / "config/vendor-source.json").read_text())
+    device = next(p for p in n100.read_lock()["projects"] if p["path"] == "device/oneplus/billie2")
+    if pin["device_revision"] != device["revision"]:
+        raise n100.PortError("Vendor source has not been assessed against the current device revision")
+    return pin
+
+
+def verify_vendor(tree, declarations, pin):
+    """Validate a pre-extracted dataset, separately from the raw stock dump."""
+    n100.require_checkout(tree, pin["revision"])
+    try:
+        n100.run(["git", "diff", "--quiet", "HEAD", "--"], cwd=tree)
+    except n100.PortError as exc:
+        raise n100.PortError("Vendor checkout has tracked changes; inspect it before continuing") from exc
+    if n100.run(["git", "ls-files", "--others", "--exclude-standard"], cwd=tree, capture=True):
+        raise n100.PortError("Unexpected untracked files in vendor checkout; inspect before continuing")
+    tracked = n100.run(["git", "ls-files", "-z"], cwd=tree, capture=True).split("\0")
+    tracked = sorted(name for name in tracked if name)
+    if len(tracked) != pin["tracked_files"] or len(declarations) != pin["required_blob_files"]:
+        raise n100.PortError("Unexpected vendor file-list size")
+    build_files = {"Android.bp", "Android.mk", "BoardConfigVendor.mk", "billie2-vendor.mk"}
+    expected = build_files | {"proprietary/" + d["destination"] for d in declarations.values()}
+    if set(tracked) != expected:
+        raise n100.PortError("Vendor checkout does not exactly cover the device's build inputs")
+    catalog = {}
+    for name in tracked:
+        file = tree / name
+        current = file
+        while current != tree.parent:
+            if current.is_symlink():
+                raise n100.PortError("Symlink in vendor source: " + name)
+            current = current.parent
+        if not file.is_file():
+            raise n100.PortError("Missing vendor source file: " + name)
+        with file.open("rb") as stream:
+            if stream.read(80).startswith(b"version https://git-lfs.github.com/spec/v1"):
+                raise n100.PortError("Vendor file is an unresolved Git LFS pointer: " + name)
+        catalog[name] = {"bytes": file.stat().st_size, "sha256": digest(file)}
+    actual = hashlib.sha256(json.dumps(catalog, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    if actual != pin["catalog_sha256"]:
+        raise n100.PortError("Vendor dataset SHA-256 inventory differs from the reviewed source")
+    matches, differences = [], []
+    for entry in declarations.values():
+        if not entry["upstream_sha1"]:
+            continue
+        name = entry["destination"]
+        sha1 = digest(tree / "proprietary" / name, "sha1")
+        if sha1 in entry["upstream_sha1"]:
+            matches.append(name)
+        else:
+            assessed = pin["packaged_reference_differences"].get(name)
+            if (not assessed or assessed["sha1"] != sha1 or
+                    assessed["input_reference_sha1"] != entry["upstream_sha1"] or
+                    assessed["sha256"] != catalog["proprietary/" + name]["sha256"]):
+                raise n100.PortError("Unassessed packaged vendor/reference difference: " + name)
+            differences.append(name)
+    if set(differences) != set(pin["packaged_reference_differences"]):
+        raise n100.PortError("Vendor reference-difference inventory changed")
+    return {"profile": pin["profile"], "repository": pin["repository"], "revision": pin["revision"],
+            "required_blob_files": len(declarations), "tracked_files_verified": len(tracked),
+            "catalog_sha256": actual, "raw_reference_pins_matched": len(matches),
+            "declared_packaged_reference_differences": differences, "build_inputs_complete": True,
+            "stock_eea_runtime_compatibility_verified": False, "hal_built": False, "boot_tested": False}
+
+
+def vendor_marker(pin):
+    return {"profile": pin["profile"], "revision": pin["revision"],
+            "pin_config_sha256": digest(n100.ROOT / "config/vendor-source.json")}
+
+
+def fetch_vendor(work, android=None):
+    if android is not None:
+        n100.require_profile(android)
+    pin = vendor_pin()
+    work.mkdir(parents=True, exist_ok=True)
+    _, text, declarations = source_tree(work)
+    if hashlib.sha256(text.encode()).hexdigest() != pin["source_list_sha256"]:
+        raise n100.PortError("Vendor source was assessed against a different proprietary file list")
+    tree = work / "vendor-source"
+    if not tree.exists():
+        n100.run(["git", "clone", "--depth", "1", "--no-checkout", "--branch", pin["branch"],
+                  "https://github.com/" + pin["repository"] + ".git", tree])
+        if n100.run(["git", "rev-parse", "HEAD"], cwd=tree, capture=True) != pin["revision"]:
+            n100.run(["git", "fetch", "--depth", "1", "origin", pin["revision"]], cwd=tree)
+        n100.run(["git", "checkout", "--detach", pin["revision"]], cwd=tree)
+    result = verify_vendor(tree, declarations, pin)
+    audit = n100.write_report(work / "vendor-source-audit.json", json.dumps(result, indent=2) + "\n")
+    print(f"Vendor source: {result['required_blob_files']} blobs verified; "
+          f"{len(result['declared_packaged_reference_differences'])} declared raw-reference differences")
+    print("Audit:", audit)
+    if android is not None:
+        n100.require_checkout(android / "device/oneplus/billie2", pin["device_revision"])
+        destination = android / "vendor/oneplus/billie2"
+        if destination.exists() or destination.is_symlink():
+            verify_vendor(destination, declarations, pin)
+        else:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            n100.run(["git", "worktree", "add", "--detach", destination, pin["revision"]], cwd=tree)
+        n100.write_new(android / ".n100-vendor-source.json", json.dumps(vendor_marker(pin), indent=2) + "\n")
+        print("Pre-extracted vendor worktree installed at", destination)
+    print("Build inputs only; EEA firmware compatibility and device boot remain unvalidated.")
+    return result
+
+
+def verify_installed_vendor(android):
+    n100.require_profile(android)
+    pin = vendor_pin()
+    marker = android / ".n100-vendor-source.json"
+    if json.loads(marker.read_text()) != vendor_marker(pin):
+        raise n100.PortError("Installed vendor-source marker differs from current reviewed inputs")
+    device = android / "device/oneplus/billie2"
+    n100.require_checkout(device, pin["device_revision"])
+    text = n100.run(["git", "show", "HEAD:proprietary-files.txt"], cwd=device, capture=True)
+    if hashlib.sha256(text.encode()).hexdigest() != pin["source_list_sha256"]:
+        raise n100.PortError("Installed device proprietary list differs from the vendor assessment")
+    return verify_vendor(android / "vendor/oneplus/billie2", parse_list(text), pin)
 
 
 def import_dump(work, android):
@@ -217,14 +379,23 @@ def main():
     sub = parser.add_subparsers(dest="command", required=True)
     p = sub.add_parser("collect")
     p.add_argument("--serial")
+    p.add_argument("--retry-failed", action="store_true")
     sub.add_parser("verify")
+    p = sub.add_parser("vendor-source", help="Fetch the reviewed complete pre-extracted vendor candidate; no ADB")
+    p.add_argument("--android-root")
+    p = sub.add_parser("verify-vendor", help="Verify an installed pre-extracted vendor worktree")
+    p.add_argument("--android-root", required=True)
     p = sub.add_parser("import")
     p.add_argument("--android-root", required=True)
     args = parser.parse_args()
     try:
         work = n100.android_path(args.work_dir)
         if args.command == "collect":
-            collect(work, args.serial)
+            collect(work, args.serial, args.retry_failed)
+        elif args.command == "vendor-source":
+            fetch_vendor(work, n100.android_path(args.android_root) if args.android_root else None)
+        elif args.command == "verify-vendor":
+            print(json.dumps(verify_installed_vendor(n100.android_path(args.android_root)), indent=2))
         elif args.command == "verify":
             result = verify(work)
             print(json.dumps(result, indent=2))

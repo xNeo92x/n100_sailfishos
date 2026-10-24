@@ -31,3 +31,10 @@ Relevant upstream repositories and exact revisions are listed in
 kernel or other GPL component, provide corresponding source, build config and
 local changes as required by its license. A future release should carry all
 applicable upstream license texts along with its build-source inventory.
+
+The optional pre-extracted vendor source is fetched separately from
+`TheMuppets/proprietary_vendor_oneplus_billie2` at the revision in
+`config/vendor-source.json`. Its proprietary binaries are not included in this
+repository and are not covered by this project's MIT license. Refer to their
+original rights and retain the external source's notices. The source selector
+records identity/integrity; it does not assert redistribution rights.

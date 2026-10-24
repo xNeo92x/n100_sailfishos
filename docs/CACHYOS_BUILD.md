@@ -23,37 +23,56 @@ Dateisystem setzen. In beiden SDKs muss der Android-Baum unter demselben Pfad
 erreichbar sein; das Home-Verzeichnis ist dafür der einfachste Ausgangspunkt.
 Die Prüfung installiert keine SDKs und führt keine Telefonbefehle aus.
 
-Lass Stock Android 11 laufen, aktiviere USB-Debugging und bestätige den
-ADB-Zugriff. Sichere dann die tatsächlich benötigten Dateien:
+Die bisherige Sammlung auf deinem BE2013 ergab 487 von 1.161 Dateien; 674
+Dateien fehlen. Die alte Ausgabe enthält die eigentlichen ADB-Fehlertexte
+nicht, deshalb lässt sich daraus kein sicherer Grund für die fehlenden Dateien
+ablesen. Ein erneuter unveränderter Sammellauf ist nicht der nächste Schritt.
+
+Verwende stattdessen die vollständige, separat geprüfte Vendor-Buildquelle:
 
 ```bash
-python3 tools/firmware.py --work-dir "$HOME/n100-build" collect
+python3 tools/firmware.py --work-dir "$HOME/n100-build" vendor-source
 ```
 
-Der Sammler verwendet die Liste aus dem **gepinnten** LineageOS-20-Gerätebaum:
-1.161 Dateien, darunter zehn Umbenennungen zwischen Stock- und Buildpfad.
-Er fragt die Geräteidentität ab, führt ausschließlich Lesezugriffe auf dem
-Telefon aus und benötigt weder Root noch eine Bootloader-Entsperrung. Dateien
-bleiben unter `~/n100-build/firmware/files`; das Inventar enthält Prüfsummen,
-Firmware-Fingerprint, fehlende Dateien und Abweichungen bei Upstream-Pins.
-Du musst diese proprietären Dateien nicht hochladen.
+Dieser Befehl benötigt **keine Telefonverbindung und kein ADB**. Er holt den
+fest gepinnten `lineage-20`-Stand von
+[TheMuppets/proprietary_vendor_oneplus_billie2](https://github.com/TheMuppets/proprietary_vendor_oneplus_billie2)
+und prüft alle 1.161 benötigten Binärdateien sowie vier Builddateien über einen
+festgelegten SHA-256-Inventarhash. Entpackt sind es rund 480 MiB an Blobs.
+Das ist eine vollständige, vorab extrahierte Buildquelle; ihre Funktion mit
+deiner EEA-Firmware oder Sailfish ist noch nicht durch einen Boot bestätigt.
 
-Bei Unterbrechungen denselben Befehl wiederholen. Bereits inventarisierte,
-unveränderte Dateien werden übersprungen; nicht verfügbare erneut versucht.
-Ein unvollständiges `.partial` nach einem Prozessabbruch wird zur Prüfung
-gemeldet. Änderungen vorhandener Dateien oder ein Firmwarewechsel werden nicht
-überschrieben. Zum Prüfen ohne Telefon:
+Der Cache liegt unter `~/n100-build/vendor-source`. Das Audit wird als
+`vendor-source-audit.json` gespeichert. Dein bisheriger Stock-Dump unter
+`~/n100-build/firmware` bleibt separat erhalten. Es werden keine Bestandteile
+beider Quellen vermischt und keine Blobs in dieses öffentliche Port-Repository
+kopiert. Nochmals ausführen prüft den unveränderten Cache erneut.
+
+Die Upstream-Liste verlangt für WiFi Display ausdrücklich `lemonadep`-Dateien
+vom OnePlus 9 Pro mit Android 12. Ein reiner N100-Stock-Dump kann diese Pins
+nicht vollständig erfüllen. Die frühere Erklärung ausschließlich über
+EEA-/Global-Unterschiede war deshalb unvollständig. Die vorab extrahierte
+Vendor-Quelle stimmt mit 34 der 46 Raw-Referenzpins überein. Zwölf WiFi-Display-
+Dateien unterscheiden sich; deren exakte Inhalte und Hashes sind separat in
+`config/vendor-source.json` festgehalten. Diese Deklaration bestätigt ihre
+Herkunft und Integrität, nicht ihre Laufzeitkompatibilität. Jede weitere oder
+veränderte Abweichung stoppt die Prüfung.
+
+Der bei deiner bisherigen Sammlung gespeicherte Bericht unter
+`~/n100-build/firmware/device-report.json` wird für die Quellinitialisierung
+wiederverwendet. Nur bei einer **neuen Einrichtung ohne vorhandenen Bericht**
+ist einmalig folgender Lesezugriff auf das laufende Stock Android nötig:
 
 ```bash
-python3 tools/firmware.py --work-dir "$HOME/n100-build" verify
+python3 tools/n100.py probe --output "$HOME/n100-build/firmware/device-report.json"
 ```
 
-46 Dateien haben Upstream-SHA-1-Pins. Unterschiede zwischen deiner EEA-Firmware
-und der globalen Referenz werden **vor** der Anwendung der ELF-Fixups gemeldet.
-Ein vollständiger Dump kann deshalb trotzdem noch eine Prüfung benötigen.
-Bei Zugriffsverweigerungen bleibt die Sammlung unvollständig; das Werkzeug
-versucht keinen Root-Zugriff. Dann ist ein passender Stock-Firmware-Dump als
-zusätzliche Quelle nötig.
+Die ursprüngliche Raw-Sammlung bleibt als Diagnose-/Extraktionswerkzeug
+verfügbar. Sie speichert nun stderr, stdout, Exitcode und Fehlerkategorie,
+meldet eine kurze Zusammenfassung und schreibt Details in `verification.json`.
+Bekannte permanente Pfad-/Zugriffsfehler werden nur mit `collect --retry-failed`
+erneut versucht. Eine unvollständige Raw-Sammlung ist keine Voraussetzung für
+`vendor-source`.
 
 ## 2. Offizielle SDKs einrichten
 
@@ -90,13 +109,15 @@ python3 "$N100_PORT/tools/n100.py" init --android-root "$ANDROID_ROOT" \
   --device-report "$N100_DEVICE_REPORT" --sync --jobs 4
 python3 "$N100_PORT/tools/n100.py" prepare --android-root "$ANDROID_ROOT"
 python3 "$N100_PORT/tools/firmware.py" --work-dir "$N100_FIRMWARE_WORK" \
-  import --android-root "$ANDROID_ROOT"
+  vendor-source --android-root "$ANDROID_ROOT"
 ```
 
-Der Import verlangt eine vollständige, unveränderte und hinsichtlich der
-gepinnten Blobs passende Sammlung. Vorhandene Vendor-Ausgaben werden nicht
-gelöscht oder überschrieben. Er führt die Original-Extraktion samt Fixups aus;
-deren Erfolg und die erzeugten Makefiles werden geprüft.
+Der Befehl prüft den vollständigen Vendor-Cache und bindet ihn als Git-Worktree
+unter `vendor/oneplus/billie2` ein. Vorhandene andere Vendor-Ausgaben werden nicht
+überschrieben. Der HAL-Build prüft den installierten Stand und Inventarhash erneut.
+Bei dieser vorab extrahierten Quelle **nicht zusätzlich `extract-files.sh` oder
+`firmware.py import` ausführen**: Die gelieferten Builddateien und Binärdateien
+werden direkt verwendet; Fixups werden nicht ein zweites Mal angewandt.
 
 Anschließend die Hybris-Patches auf den sauberen Baum anwenden:
 

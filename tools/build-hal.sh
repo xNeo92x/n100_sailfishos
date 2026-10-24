@@ -13,6 +13,9 @@ test -s vendor/oneplus/billie2/billie2-vendor.mk || {
     exit 1
 }
 test -s vendor/oneplus/billie2/BoardConfigVendor.mk
+if test -f .n100-vendor-source.json; then
+    python3 "$port_dir/tools/firmware.py" verify-vendor --android-root "$ANDROID_ROOT"
+fi
 test -f .n100-hybris-patches-applied || {
     echo 'Apply hybris-patches/apply-patches.sh --mb and record the marker as in docs/BUILD.md.' >&2
     exit 1

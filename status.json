@@ -68,10 +68,25 @@
     "firmware_collector_implemented": true,
     "required_blob_files": 1161,
     "pinned_blob_files": 46,
-    "user_firmware_dump_collected": false,
+    "user_firmware_dump_collected": true,
     "userdata_image_builder_implemented": true,
     "ext4_fixture_build_verified": true,
     "real_sailfish_userdata_image_built": false,
-    "deployment_strategy": "fresh unencrypted ext4 userdata with stowaway Sailfish rootfs; unvalidated on hardware"
+    "deployment_strategy": "fresh unencrypted ext4 userdata with stowaway Sailfish rootfs; unvalidated on hardware",
+    "user_firmware_dump_complete": false,
+    "user_firmware_dump_files": 487,
+    "user_firmware_dump_missing": 674,
+    "user_raw_reference_pin_differences": 43,
+    "complete_vendor_source_verified": true,
+    "vendor_source_validation": "validation/vendor-source.json",
+    "vendor_installed_on_user_build_host": false,
+    "observed_host": {
+      "architecture": "x86_64",
+      "free_gib": 1401.7,
+      "ram_gib": 30.3,
+      "cpus": 16,
+      "filesystem": "btrfs",
+      "host_prerequisites_passed": true
+    }
   }
 }

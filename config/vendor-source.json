@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "profile": "lineage20-pre-extracted-candidate",
+  "repository": "TheMuppets/proprietary_vendor_oneplus_billie2",
+  "branch": "lineage-20",
+  "revision": "20645052cd9a7b9907294c334cf23c4e0796ea58",
+  "device_revision": "b2bde47cb6d0d737136915d65feac5cffacb1d53",
+  "source_list_sha256": "53f0fe331e6f5f78eb8ad530fc523fe583ea85600a71a33f54fefa830a483ae7",
+  "catalog_sha256": "81494a5b85cd43bcf90cc3ea7b3a451229583efb2341c64cf656fc254f719c04",
+  "required_blob_files": 1161,
+  "tracked_files": 1165,
+  "blob_bytes": 503073022,
+  "source_firmware_note": "Upstream billie2 history identifies OOS 11.0.15.BE81AA; not a BE2013 EEA compatibility certification",
+  "packaged_reference_differences": {
+    "system_ext/lib/libmmrtpdecoder.so": {
+      "sha1": "db34a6876b6437bb419e9beedb421f6c1edbef23",
+      "sha256": "90db8a0d0efd50515338db9f9fbecbfcda8f8a95604d6b578258bb9290c8b99f",
+      "input_reference_sha1": [
+        "efe6feb1c7b57c6f40b5ecdab65662d8b88c8d7a"
+      ],
+      "scope": "Pre-extracted lineage-20 source differs from raw extraction pins; runtime compatibility unvalidated"
+    },
+    "system_ext/lib/libwfdclient.so": {
+      "sha1": "a79b97747407b71b78d65acdc763644f5c54d395",
+      "sha256": "3e59b97b4cb48128a08e2241e6d2209092d881ed5a6161836b326fb81f5821bd",
+      "input_reference_sha1": [
+        "92cb920159303b2d543bd1121c5d894f146c53d4"
+      ],
+      "scope": "Pre-extracted lineage-20 source differs from raw extraction pins; runtime compatibility unvalidated"
+    },
+    "system_ext/lib/libwfdconfigutils.so": {
+      "sha1": "45159da6ac080807e18a4f5cd6b62d6b2da37e40",
+      "sha256": "9c3df5457ce73d82de1c15959b1deb72e593d3c9d0e4c00300cd17fea324e854",
+      "input_reference_sha1": [
+        "3422166f2f4e7e8525ace1c80e057445e2f02067"
+      ],
+      "scope": "Pre-extracted lineage-20 source differs from raw extraction pins; runtime compatibility unvalidated"
+    },
+    "system_ext/lib/libwfddisplayconfig.so": {
+      "sha1": "a9fc384bf02eb58ad5e36d760dbd805f708c1c88",
+      "sha256": "2d21757d533abfc349eee3291d271e0d359c41fa4923afd88f8c61233f91fa92",
+      "input_reference_sha1": [
+        "976edd7e4376f12250c37e4f5e56936840be75fb"
+      ],
+      "scope": "Pre-extracted lineage-20 source differs from raw extraction pins; runtime compatibility unvalidated"
+    },
+    "system_ext/lib/libwfdmminterface.so": {
+      "sha1": "afa080acc6a3e342ff644b021e8b76a42f5bbe2b",
+      "sha256": "f6fc0505f9186d9d73bb7383741e5789f4273c323722385e835cef58b9bff9f0",
+      "input_reference_sha1": [
+        "7cbca60f057d851d24090205a11937bfdb131c48"
+      ],
+      "scope": "Pre-extracted lineage-20 source differs from raw extraction pins; runtime compatibility unvalidated"
+    },
+    "system_ext/lib64/libmmparser_lite.so": {
+      "sha1": "e8f17155bcea1e0e9e0d2e5aa9c6c0889adaa489",
+      "sha256": "846813528d4c72af7962841c05c5f4513f5a16ba85781ca14242cbea7f3c3356",
+      "input_reference_sha1": [
+        "e1a76ee05ddc62ddfd554aac680fdb94f26994dd"
+      ],
+      "scope": "Pre-extracted lineage-20 source differs from raw extraction pins; runtime compatibility unvalidated"
+    },
+    "system_ext/lib64/libmmrtpdecoder.so": {
+      "sha1": "4af3071ff57297051bf55ed0f04013f0c53289e6",
+      "sha256": "eea3b9393cd2a99f09b0fb6892dbcff6c77151cd35072cb409185dd6203f74c2",
+      "input_reference_sha1": [
+        "5affca38a9361d131a86af63c842807097f9a292"
+      ],
+      "scope": "Pre-extracted lineage-20 source differs from raw extraction pins; runtime compatibility unvalidated"
+    },
+    "system_ext/lib64/libwfdclient.so": {
+      "sha1": "9ca3c35940e2b12b366c9c6dadb83614a5f5e307",
+      "sha256": "09ea1ccba880fa1f50d0811a3acad92fc16042c519f2638e196a37b876c40515",
+      "input_reference_sha1": [
+        "6d4f7be9b83031ae4a33675e9f9fd04e99c6d44c"
+      ],
+      "scope": "Pre-extracted lineage-20 source differs from raw extraction pins; runtime compatibility unvalidated"
+    },
+    "system_ext/lib64/libwfdconfigutils.so": {
+      "sha1": "d1c76400ea4554173e1e75ec49837003f882d3eb",
+      "sha256": "e8d24082ff5c8455d5b5c7ff8f90ef59469ffab93f90befc57ffa72e25827fce",
+      "input_reference_sha1": [
+        "55b9467cc3a373c7f5725e5924d663a70dbf703c"
+      ],
+      "scope": "Pre-extracted lineage-20 source differs from raw extraction pins; runtime compatibility unvalidated"
+    },
+    "system_ext/lib64/libwfddisplayconfig.so": {
+      "sha1": "2b5e7a25b4f5cf4a943bf98ebb0f40752ef97261",
+      "sha256": "3c4c02a365e05811716b1a893d052f1c029b2ad8d4d3b8378f472227518f1083",
+      "input_reference_sha1": [
+        "8190c64a0e3ebf5ae09dd65c5d0398cd3001b4c9"
+      ],
+      "scope": "Pre-extracted lineage-20 source differs from raw extraction pins; runtime compatibility unvalidated"
+    },
+    "system_ext/lib64/libwfdmminterface.so": {
+      "sha1": "5a47d276642b360e9dd476dc904ea733e0073cf9",
+      "sha256": "4ecbd7197e57682ec9d930d3813ab60ef4ac6203b04f9b7320674ac454acef15",
+      "input_reference_sha1": [
+        "2e49a3d58c945dc9472a0b6b250c56e60787e62e"
+      ],
+      "scope": "Pre-extracted lineage-20 source differs from raw extraction pins; runtime compatibility unvalidated"
+    },
+    "system_ext/priv-app/WfdService/WfdService.apk": {
+      "sha1": "489ead99be4203bd20eba9e68bed2115f5260a51",
+      "sha256": "81637bb9f00695dbcd511b63c70d52def523619e510178b17d14448237e51e23",
+      "input_reference_sha1": [
+        "381e93aaa1943526cbeb9957656b5a0622b589d6"
+      ],
+      "scope": "Pre-extracted lineage-20 source differs from raw extraction pins; runtime compatibility unvalidated"
+    }
+  }
+}

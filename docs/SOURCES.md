@@ -95,3 +95,13 @@ branch references and middleware fetched by build helpers still need a fully
 resolved manifest/commit inventory from the first real build. A completely
 reproducible binary release is not claimed. The original Android-10 contribution
 remains available in Git history at commit `b5e3124`.
+
+## Optional pre-extracted vendor candidate
+
+`config/vendor-source.json` pins TheMuppets' billie2-specific `lineage-20` source
+at `20645052cd9a7b9907294c334cf23c4e0796ea58`. All 1,161 blob paths and four build
+files were retrieved and verified locally. A canonical SHA-256 inventory binds
+the complete dataset; twelve declared packaged WiFi Display/raw-reference
+hash differences are separately recorded. The raw stock dump and this dataset
+are distinct source profiles. See [VENDOR_SOURCE.md](VENDOR_SOURCE.md) for the
+provenance, observed stock-collection failure and validation boundary.

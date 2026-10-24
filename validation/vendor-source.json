@@ -1,0 +1,29 @@
+{
+  "profile": "lineage20-pre-extracted-candidate",
+  "repository": "TheMuppets/proprietary_vendor_oneplus_billie2",
+  "revision": "20645052cd9a7b9907294c334cf23c4e0796ea58",
+  "required_blob_files": 1161,
+  "tracked_files_verified": 1165,
+  "catalog_sha256": "81494a5b85cd43bcf90cc3ea7b3a451229583efb2341c64cf656fc254f719c04",
+  "raw_reference_pins_matched": 34,
+  "declared_packaged_reference_differences": [
+    "system_ext/lib/libmmrtpdecoder.so",
+    "system_ext/lib/libwfdclient.so",
+    "system_ext/lib/libwfdconfigutils.so",
+    "system_ext/lib/libwfddisplayconfig.so",
+    "system_ext/lib/libwfdmminterface.so",
+    "system_ext/lib64/libmmparser_lite.so",
+    "system_ext/lib64/libmmrtpdecoder.so",
+    "system_ext/lib64/libwfdclient.so",
+    "system_ext/lib64/libwfdconfigutils.so",
+    "system_ext/lib64/libwfddisplayconfig.so",
+    "system_ext/lib64/libwfdmminterface.so",
+    "system_ext/priv-app/WfdService/WfdService.apk"
+  ],
+  "build_inputs_complete": true,
+  "stock_eea_runtime_compatibility_verified": false,
+  "hal_built": false,
+  "boot_tested": false,
+  "worktree_install_and_repeat_verified": true,
+  "installation_validation_scope": "Real vendor dataset installed in fixture Android directory; no HAL/SDK compilation"
+}

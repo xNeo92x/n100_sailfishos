@@ -25,12 +25,13 @@ experimentellen `userdata.img`. Beginne im Repository mit:
 git pull --ff-only
 sudo pacman -S --needed git python android-tools curl tar xz e2fsprogs
 python3 tools/build-host.py --work-dir "$HOME/n100-build" --initialize
-python3 tools/firmware.py --work-dir "$HOME/n100-build" collect
+python3 tools/firmware.py --work-dir "$HOME/n100-build" vendor-source
 ```
 
-Der PC braucht mindestens 200 GiB freien Speicher. Die Sammlung liest die
-gepinnten 1.161 Treiber-/Systemdateien über ADB und bleibt lokal; ein erneuter
-Diagnose-Upload ist dafür nicht nötig. Ein späteres Userdata-Image ersetzt die
+Der PC braucht mindestens 200 GiB freien Speicher; dein gemeldeter Rechner
+erfüllt diese Voraussetzung. `vendor-source` lädt und prüft eine vollständige,
+gepinnte LineageOS-20-Vendor-Buildquelle mit 1.161 Blobs. Der bisherige ADB-Dump
+bleibt separat erhalten. Ein erneuter Diagnose-Upload ist dafür nicht nötig. Ein späteres Userdata-Image ersetzt die
 Android-Nutzerdaten. Die Image-Erstellung selbst schreibt ausschließlich lokale
 Dateien; die noch offene Geräte-/HAL-Integration bleibt Voraussetzung für den
 ersten Flash-Versuch.
