@@ -4,22 +4,42 @@
 bootgetestetes oder installierbares Sailfish-Image aus diesem Projekt.**
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
-einen Sailfish-OS-Port auf Grundlage von Android 10 (`hybris-17.1`, VNDK 29).
+einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,
+LineageOS 20) und **Stock-Android-11-Firmware als Kandidat**.
 Boot, Display, WLAN und Telefonie sind **ungetestet**. Der präzise Status steht
 in [status.json](status.json). Grüne Host-Tests belegen ausschließlich die
 Funktion der Portierungswerkzeuge.
 
 Das **Nord N100 ist `billie2`** (Snapdragon 460 / SM4250, Adreno 610).
 `billie` ist das Nord N10 und darf nicht als Ersatz verwendet werden.
-`lito` bleibt als Build-Plattformname des untersuchten Android-10-Gerätebaums
-erhalten; das ist keine Umbenennung der Hardware.
+Die aktuelle Buildbasis verwendet `bengal`, passend zum ausgelesenen Gerät.
+
+## Ergebnis des ersten Geräteberichts
+
+| Merkmal | Ausgelesener Wert |
+| --- | --- |
+| Modell / Region | BE2013 / EEA |
+| Android / API | 11 / 30 |
+| Stock-Kernel | 4.19.152-perf+ |
+| Plattform | bengal |
+| Aktiver Slot zum Messzeitpunkt | B |
+| Bootloader / Verified Boot | gesperrt / green |
+| Datenpartition | F2FS, dateibasiert verschlüsselt |
+| Systemlayout | dynamische system-, system_ext-, vendor- und product-Partitionen |
+
+Die frühere Android-10-Basis passt nicht zur installierten Firmware und wurde
+durch den neueren Entwicklungskandidaten ersetzt. Der offizielle LineageOS-20-
+Gerätebaum verwendet Android-11-Stock-Blobs; die EEA-Version und deren Fixups
+müssen noch geprüft werden. **Ein Android-Downgrade ist für diesen Ansatz nicht
+vorgesehen.** Er ist noch nicht gebaut oder als startfähig bestätigt.
+Details stehen in [docs/DEVICE_BE2013.md](docs/DEVICE_BE2013.md).
 
 ## Enthalten
 
 - Gepinntes Android-Manifest und [Quellen-Lockdatei](sources.lock.json).
-- Vorbereitung des Android-Gerätebaums und Erzeugung der dort referenzierten,
-  im OnePlus-Quellstand fehlenden `vendor/billie2-perf_defconfig` aus der
-  herstellereigenen `bengal-perf_defconfig` plus Sailfish-Ergänzungen.
+- Offizieller LineageOS-20-Gerätebaum, dazu passender Kernel und die OnePlus-
+  Hardwarebibliotheken; eigene `vendor/sailfish-billie2_defconfig` aus der
+  Kernel-Basiskonfiguration plus Sailfish-Ergänzungen.
 - Erste RPM-Definitionen für `droid-hal-billie2`, `droid-config-billie2` und
   `droid-hal-version-billie2`, Paketgruppen und SELinux-Konfiguration.
 - HAL-/RPM-/Rootfs-Buildhelfer für die offiziellen HADK-Umgebungen.
@@ -31,15 +51,16 @@ Android-, Kernel- und Sailfish-Upstreamquellen werden über festgelegte Git-
 Revisionen eingebunden. Die großen Quellbäume, proprietäre Firmware und SDK-
 Downloads werden nicht als Kopien in dieses Repository eingecheckt.
 
-## Zuerst: Gerätebasis feststellen
+## Ergänzenden Bericht sammeln
 
 Auf deinem CachyOS-Rechner mit aktiviertem USB-Debugging und freigegebenem ADB:
 
 ```bash
 sudo pacman -S --needed git python android-tools
-git clone https://github.com/xNeo92x/n100_sailfishos.git
+# Im bereits geklonten Repository:
 cd n100_sailfishos
-python3 tools/n100.py probe --output ../n100-device-report.json
+git pull --ff-only
+python3 tools/n100.py probe --output ../n100-device-report-v2.json
 ```
 
 Das verändert keine Einstellungen oder Partitionen am Telefon. Bei mehreren
@@ -49,10 +70,20 @@ Mountpfade und Eingabegerätenamen stehen darin; Bericht vor dem Teilen prüfen.
 Für einige Diagnosepfade kann Android den Zugriff verweigern, was protokolliert
 wird. Fehlende Einträge bedeuten nicht, dass die Partition nicht existiert.
 
-**Benötigt werden Modellnummer, installierte OxygenOS-/Android-Version und das
-tatsächliche Partitionslayout.** Die konkrete Stock-Firmware ist noch nicht
-freigegeben. Android 11 oder ein neueres LineageOS darf nicht beliebig mit der
-hier gewählten Android-10-HAL vermischt werden.
+Der aktualisierte Sammler liest fstab-Dateien einzeln aus und behält stdout,
+stderr und Exitcode bei fehlgeschlagenen Diagnosen. Das behebt den Verlust
+von Teilergebnissen im ersten Bericht. Zusätzlich sammelt er Vendor-API,
+Firmware-Anzeige, VINTF-Manifest, SELinux-Version und Partitionsgrößen.
+
+Ein gespeicherter Bericht kann ohne Telefon offline ausgewertet werden:
+
+```bash
+python3 tools/n100.py analyze-report ../n100-device-report-v2.json
+```
+
+Bootloader-Entsperrung und Root sind für diesen Schritt nicht erforderlich.
+Das Build-Setup verlangt einen passenden Gerätebericht und lehnt die
+Wiederverwendung der alten Android-10-Quellstruktur ab.
 
 ## Bauen und weiterentwickeln
 
@@ -86,7 +117,10 @@ bash -n tools/build-hal.sh tools/build-packages.sh
 ## English
 
 Experimental Sailfish OS adaptation work for the OnePlus Nord N100 (`billie2`),
-using an Android 10 / hybris-17.1 base. **No HAL/RPM/rootfs build or hardware boot
+using an Android 13 / hybris-20.0 HAL build base with Android 11 stock firmware
+as a candidate baseline. The first BE2013 report confirms Android 11, bengal,
+locked bootloader, dynamic partitions and encrypted F2FS userdata.
+**No HAL/RPM/rootfs build or hardware boot
 has been validated. This is not an installable release.** The repository provides
 pinned sources, initial device/kernel/RPM integration, build helpers and read-only
 device diagnostics. Dynamic-partition mounting and access to Android-encrypted

@@ -1,4 +1,4 @@
-# Build workflow — Android 10 / aarch64
+# Build workflow — Android 13 HAL / Android 11 firmware / aarch64
 
 Status: **commands and integration prepared; no full build executed**.
 No Sailfish release has been certified for this device. The locked upstream
@@ -21,7 +21,7 @@ same absolute path in each:
 | HABUILD_SDK | Android/Clang/kernel build | Official HADK Ubuntu build chroot, repo, git, Python 3, Android build prerequisites |
 | PLATFORM_SDK | Target setup, RPM, middleware, rootfs | sdk-assistant, mb2, mic, createrepo_c, matching aarch64 target/tooling |
 
-Use the Android-10-compatible build dependencies from HADK rather than attempting
+Use the Android-13-compatible build dependencies from HADK rather than attempting
 to compile the old Android tree directly with the latest Arch host tools.
 Reserve 200 GiB free or more for Android sources and intermediate outputs.
 SDK downloads, dependency installation, network access and any sudo needed by
@@ -32,6 +32,7 @@ Set the following **in both build shells**, using real paths on your machine:
 ```bash
 export N100_PORT="$HOME/n100_sailfishos"
 export ANDROID_ROOT="$HOME/hadk/android-billie2"
+export N100_DEVICE_REPORT="$HOME/n100-device-report-v2.json"
 source "$N100_PORT/config/port.env"
 ```
 
@@ -52,12 +53,17 @@ make explicit reviewed pin changes in `sources.lock.json`; do not use a moving
 ## 2. Source checkout (HABUILD_SDK)
 
 ```bash
-python3 "$N100_PORT/tools/n100.py" init --android-root "$ANDROID_ROOT" --sync --jobs 4
+python3 "$N100_PORT/tools/n100.py" init --android-root "$ANDROID_ROOT" --device-report "$N100_DEVICE_REPORT" --sync --jobs 4
 python3 "$N100_PORT/tools/n100.py" prepare --android-root "$ANDROID_ROOT"
 ```
 
+Do not reuse the old Android-10 source directory. Use a new empty build tree.
+The report gate checks the intended phone's **stock Android 11 / SDK 30** baseline,
+not Android 13: the latter is the version used to build the new HAL. A generation
+match permits source preparation only, not installation.
+
 `init` uses the pinned mer-hybris manifest and installs `manifests/billie2.xml` as
-a local manifest. Device, kernel, libhybris, hybris-boot and hybris-patches are
+a local manifest. Device, kernel, OnePlus hardware, libhybris, hybris-boot and hybris-patches are
 pinned separately. The upstream manifest still contains branch references for
 other Android components. The resulting **entire** resolved manifest is exported
 as `n100-resolved-manifest.xml`; preserve it with the first build. Before that
@@ -66,9 +72,10 @@ export, the source set is not completely reproducible across future syncs.
 `prepare` verifies those checkout revisions, refuses unrelated edits to the
 inspected BoardConfig/fstab, and:
 
-- generates the missing `vendor/billie2-perf_defconfig` from OnePlus's
+- generates `vendor/sailfish-billie2_defconfig` from the pinned kernel's
   `vendor/bengal-perf_defconfig` and `kernel/sailfish.config`;
-- adds `selinux=1` while retaining the upstream `androidboot.selinux=permissive`;
+- selects that config in BoardConfig, keeping `OEM_TARGET_PRODUCT` and other
+  upstream board settings, and adds `selinux=1 androidboot.selinux=permissive`;
 - creates independent source snapshots in `rpm`, `hybris/droid-configs` and
   `hybris/droid-hal-version-billie2`, with locked upstream Git submodules.
 
@@ -83,9 +90,11 @@ it aside and retrying; it is not automatically deleted.
 The Android device tree inherits `vendor/oneplus/billie2/billie2-vendor.mk` and
 `BoardConfigVendor.mk`. Neither is included here. Extract the device's proprietary
 components with the pinned device tree's `extract-files.sh` / `setup-makefiles.sh`
-and the pinned Lineage extract utilities. Read those scripts first and supply
-the matching mounted Android filesystem dump as their source. Do not substitute
-a vendor tree from Android 11/13/15 or a different OnePlus phone. Preserve a local
+and `tools/extract-utils`. Read those scripts first and supply
+the matching Android 11 filesystem dump as their source. The pinned blob list
+was extracted from global 11.0.15.BE81AA; the BE2013 report is EEA, so the regional
+blobs and the extraction script's ELF fixups must be checked individually.
+Do not substitute stock Android 13/15 blobs or a different OnePlus phone. Preserve a local
 hash list and firmware fingerprint alongside the build log. Proprietary blobs
 remain local unless their redistribution rights are known.
 
@@ -97,7 +106,7 @@ test -s vendor/oneplus/billie2/billie2-vendor.mk
 test -s vendor/oneplus/billie2/BoardConfigVendor.mk
 ```
 
-Apply the Android-10 hybris patches **once to a clean, synced base**:
+Apply the Android-13 hybris patches **once to a clean, synced base**:
 
 ```bash
 cd "$ANDROID_ROOT"
@@ -136,9 +145,13 @@ Output is expected in `out/target/product/billie2/`, including `hybris-boot.img`
 the stock boot image with Android's unpacking tools before any boot experiment.
 The inherited header is v2, page size 4096, boot partition size 100663296 bytes.
 These numbers are source-tree expectations, not confirmation of your handset.
-The inspected tree's `lito` platform name, AVB test keys, dynamic partition group
-and `BUILD_WITHOUT_VENDOR` need first-build review. In particular, a stock vendor
-partition does not prove the `vendorimage` hybris build dependency is satisfied.
+The current tree uses the observed `bengal` platform and builds vendor payloads.
+Its AVB test keys, additional logical ODM partition and rebuilt kernel modules
+need first-build review. Stock Android's observed partition layout has no visible
+ODM mapper entry, while Lineage's build introduces an ODM image; do not mount an
+assumed stock `odm_b`. The stock kernel is 4.19.152, whereas the pinned Lineage
+kernel source identifies itself as 4.19.325. Rebuild compatible modules; never
+reuse stock kernel modules based solely on the shared 4.19 major/minor version.
 
 ## 5. RPMs and middleware (PLATFORM_SDK)
 
@@ -162,7 +175,8 @@ droid audio and sensor middleware. They make **no claim that those features
 already function**. Device-specific sensor calibration, audio routing, USB
 gadget, modem, Wi-Fi, haptics and fingerprint integration await hardware logs.
 
-The SELinux sparse links point at expected Android-10 paths. Verify on your own
+The SELinux sparse links point at Android policy paths whose presence was observed
+in the BE2013 Android-11 report. Verify on your own
 firmware that the files exist, the policy version is suitable and the merged
 file contexts are sufficient. Otherwise replace them with the actual device
 policy/context files as directed by HADK FAQ. Do not copy Sony's policy binary.

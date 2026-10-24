@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "properties": {
+    "ro.product.device": "OnePlusN100",
+    "ro.product.vendor.device": "OnePlusN100",
+    "ro.product.model": "BE2013",
+    "ro.product.manufacturer": "OnePlus",
+    "ro.board.platform": "bengal",
+    "ro.hardware": "qcom",
+    "ro.build.version.release": "11",
+    "ro.build.version.sdk": "30",
+    "ro.build.fingerprint": "OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys",
+    "ro.vendor.build.fingerprint": "OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys",
+    "ro.boot.slot_suffix": "_b",
+    "ro.boot.dynamic_partitions": "true",
+    "ro.boot.verifiedbootstate": "green",
+    "ro.boot.flash.locked": "1",
+    "ro.crypto.state": "encrypted",
+    "ro.crypto.type": "file"
+  },
+  "diagnostics": {
+    "kernel": "Linux localhost 4.19.152-perf+ #1 SMP PREEMPT Tue Oct 10 00:10:33 CST 2023 aarch64",
+    "mounts": "/dev/block/dm-8 / ext4 ro,seclabel,relatime,discard 0 0\n/dev/block/by-name/metadata /metadata ext4 rw,sync,seclabel,nosuid,nodev,noatime,discard 0 0\n/dev/block/dm-9 /system_ext ext4 ro,seclabel,relatime,discard 0 0\n/dev/block/dm-10 /vendor ext4 ro,seclabel,relatime,discard 0 0\n/dev/block/dm-11 /product ext4 ro,seclabel,relatime,discard 0 0\n/dev/block/dm-12 /data f2fs rw,lazytime,seclabel,nosuid,nodev,noatime,background_gc=on,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,extent_cache,mode=adaptive,active_logs=6,reserve_root=22871,resuid=0,resgid=1065,inlinecrypt,alloc_mode=default,fsync_mode=nobarrier 0 0",
+    "partitions": "/dev/block/by-name:\nlrwxrwxrwx 1 root root 0 fixture boot_a -> /dev/block/sde11\nlrwxrwxrwx 1 root root 0 fixture boot_b -> /dev/block/sde32\nlrwxrwxrwx 1 root root 0 fixture dtbo_a -> /dev/block/sde17\nlrwxrwxrwx 1 root root 0 fixture dtbo_b -> /dev/block/sde38\nlrwxrwxrwx 1 root root 0 fixture metadata -> /dev/block/sda15\nlrwxrwxrwx 1 root root 0 fixture recovery_a -> /dev/block/sda11\nlrwxrwxrwx 1 root root 0 fixture recovery_b -> /dev/block/sda12\nlrwxrwxrwx 1 root root 0 fixture super -> /dev/block/sda10\nlrwxrwxrwx 1 root root 0 fixture userdata -> /dev/block/sda16\n/dev/block/mapper:\nlrwxrwxrwx 1 root root 0 fixture product_a -> /dev/block/dm-2\nlrwxrwxrwx 1 root root 0 fixture product_b -> /dev/block/dm-6\nlrwxrwxrwx 1 root root 0 fixture system_a -> /dev/block/dm-0\nlrwxrwxrwx 1 root root 0 fixture system_b -> /dev/block/dm-4\nlrwxrwxrwx 1 root root 0 fixture system_ext_a -> /dev/block/dm-1\nlrwxrwxrwx 1 root root 0 fixture system_ext_b -> /dev/block/dm-5\nlrwxrwxrwx 1 root root 0 fixture userdata -> /dev/block/dm-12\nlrwxrwxrwx 1 root root 0 fixture vendor_a -> /dev/block/dm-3\nlrwxrwxrwx 1 root root 0 fixture vendor_b -> /dev/block/dm-7",
+    "fstab": {
+      "unavailable": "Legacy combined cat command returned exit 1; stdout was discarded."
+    }
+  }
+}

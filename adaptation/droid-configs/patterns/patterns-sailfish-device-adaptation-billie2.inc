@@ -34,6 +34,6 @@ Requires: geoclue-provider-hybris
 
 # Vibra/fingerprint/VoLTE need hardware evidence before adding integration.
 %description -n patterns-sailfish-device-adaptation-billie2
-Experimental Android 10 libhybris adaptation. Hardware operation is unverified.
+Experimental Android 13 HAL with Android 11 firmware baseline. Hardware operation is unverified.
 
 %files -n patterns-sailfish-device-adaptation-billie2

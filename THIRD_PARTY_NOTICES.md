@@ -14,10 +14,11 @@ Jolla-licensed binary products are included in this repository.
 - The sparse SELinux layout follows the HADK FAQ / Android-10 adaptation
   convention. The two absolute symlinks refer to files expected on the user's
   own device and do not contain Android policy binaries.
-- The kernel defconfig is generated locally from OnePlusOSS's GPL-2.0 kernel
-  sources. `kernel/sailfish.config` contains initial configuration selections;
+- The kernel defconfig is generated locally from LineageOS's OnePlus SM4250
+  GPL-2.0 kernel, derived from the manufacturer's sources.
+  `kernel/sailfish.config` contains initial configuration selections;
   the resulting kernel/config remains subject to the kernel's licensing.
-- The Android device tree is obtained separately from danascape / LineageOS
+- The Android device tree is obtained separately from LineageOS
   and retains its Apache-2.0 and per-file notices. None of its source notices
   are removed by the setup tool.
 

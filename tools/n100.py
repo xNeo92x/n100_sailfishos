@@ -16,7 +16,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class PortError(Exception):
-    pass
+    stdout = ""
+    stderr = ""
+    returncode = None
 
 
 def run(argv, cwd=None, capture=False, timeout=None):
@@ -24,12 +26,142 @@ def run(argv, cwd=None, capture=False, timeout=None):
         result = subprocess.run([str(x) for x in argv], cwd=cwd, check=True,
                                 text=True, capture_output=capture, timeout=timeout)
         return result.stdout.strip() if capture else None
+    except subprocess.CalledProcessError as exc:
+        error = PortError(f"Command failed: {argv[0]} (exit {exc.returncode})")
+        error.stdout = exc.stdout or ""
+        error.stderr = exc.stderr or ""
+        error.returncode = exc.returncode
+        raise error from exc
     except (subprocess.SubprocessError, OSError) as exc:
-        raise PortError(f"Command failed: {argv[0]}: {exc}") from exc
+        raise PortError(f"Command failed: {argv[0]}: {type(exc).__name__}") from exc
 
 
 def read_lock():
     return json.loads((ROOT / "sources.lock.json").read_text())
+
+
+def lock_digest():
+    return hashlib.sha256((ROOT / "sources.lock.json").read_bytes()).hexdigest()
+
+
+def diagnostic_text(value):
+    if isinstance(value, str):
+        return value
+    if isinstance(value, dict) and isinstance(value.get("stdout"), str):
+        return value["stdout"]
+    return ""
+
+
+def block_aliases(text):
+    """Keep physical by-name aliases separate from logical mapper aliases."""
+    physical, mapper = {}, {}
+    destination = None
+    for line in text.splitlines():
+        if line.strip() in ("/dev/block/by-name:", "/dev/block/bootdevice/by-name:"):
+            destination = physical
+            continue
+        if line.strip() == "/dev/block/mapper:":
+            destination = mapper
+            continue
+        match = re.search(r"\s([^\s/]+) -> (/dev/block/\S+)\s*$", line)
+        if destination is not None and match and line.startswith("l"):
+            name, target = match.groups()
+            if name in destination and destination[name] != target:
+                raise PortError(f"Inconsistent block alias evidence for {name}")
+            destination[name] = target
+    return physical, mapper
+
+
+def analyze_report(report, lock=None):
+    """Evidence summary only: a generation match never implies a bootable port."""
+    if not isinstance(report, dict) or not isinstance(report.get("properties"), dict):
+        raise PortError("Invalid device report: properties object is required")
+    props = report["properties"]
+    if not all(isinstance(k, str) and isinstance(v, str) for k, v in props.items()):
+        raise PortError("Invalid property values")
+    diagnostics = report.get("diagnostics", {})
+    if not isinstance(diagnostics, dict):
+        raise PortError("Invalid diagnostics object")
+    lock = lock or read_lock()
+    mounts = []
+    for line in diagnostic_text(diagnostics.get("mounts")).splitlines():
+        fields = line.split()
+        if len(fields) >= 6:
+            mounts.append({"source": fields[0], "target": fields[1], "type": fields[2],
+                           "options": fields[3].split(",")})
+    aliases, mapper = block_aliases(diagnostic_text(diagnostics.get("partitions")))
+    logical = sorted(name for name in mapper if re.fullmatch(r"(?:system|system_ext|vendor|product|odm)_[ab]", name))
+    sdk = props.get("ro.build.version.sdk", "")
+    release = props.get("ro.build.version.release", "")
+    vendor_sdk = props.get("ro.vendor.build.version.sdk", "")
+    vendor_fingerprint = props.get("ro.vendor.build.fingerprint", "")
+    vendor_release = re.search(r":(\d+)(?:\.[^/]*)?/", vendor_fingerprint)
+    identity = identify(props)
+    compatibility = "unconfirmed"
+    if identity == "wrong-device-nord-n10" or identity != "n100-candidate":
+        compatibility = "wrong-or-unconfirmed-device"
+    elif sdk and sdk != str(lock["stock_android_sdk"]):
+        compatibility = "stock-android-generation-mismatch"
+    elif vendor_sdk and vendor_sdk != str(lock["stock_android_sdk"]):
+        compatibility = "vendor-android-generation-mismatch"
+    elif vendor_release and vendor_release[1] != str(lock["stock_android_version"]):
+        compatibility = "vendor-fingerprint-generation-mismatch"
+    elif (release.split(".")[0] == str(lock["stock_android_version"]) and sdk == str(lock["stock_android_sdk"])
+          and (vendor_sdk == str(lock["stock_android_sdk"]) or vendor_release)):
+        compatibility = "candidate-generation-match"
+    locked_value = props.get("ro.boot.flash.locked", "")
+    locked = {"1": True, "0": False}.get(locked_value)
+    encrypted = {"encrypted": True, "unencrypted": False}.get(props.get("ro.crypto.state"))
+    blockers = ["images-not-built-or-boot-tested", "regional-proprietary-blobs-unverified"]
+    if compatibility != "candidate-generation-match":
+        blockers.append("source-profile-not-compatible-or-unconfirmed")
+    if locked is not False:
+        blockers.append("bootloader-locked" if locked else "bootloader-state-unconfirmed")
+    if encrypted:
+        blockers.append("encrypted-data-rootfs-access-unimplemented")
+    elif encrypted is None:
+        blockers.append("data-encryption-state-unconfirmed")
+    if logical or props.get("ro.boot.dynamic_partitions") == "true":
+        blockers.append("logical-partition-early-mounts-unimplemented")
+    fstab_keys = [key for key in diagnostics if key == "fstab" or key.startswith("fstab_")]
+    fstab_collected = any(re.search(r"^\s*[^#\s]\S*\s+/\S*\s+\w+\s+", diagnostic_text(diagnostics[key]), re.MULTILINE)
+                          for key in fstab_keys)
+    return {
+        "schema": 1, "profile": lock["profile"], "source_compatibility": compatibility,
+        "deployable": False, "model": props.get("ro.product.model", ""),
+        "device": props.get("ro.product.device", ""), "platform": props.get("ro.board.platform", ""),
+        "stock_android": release, "stock_sdk": sdk, "vendor_sdk": vendor_sdk or None,
+        "fingerprint": props.get("ro.build.fingerprint", ""), "vendor_fingerprint": vendor_fingerprint,
+        "kernel": diagnostic_text(diagnostics.get("kernel")), "active_slot": props.get("ro.boot.slot_suffix", ""),
+        "bootloader_locked": locked, "verified_boot": props.get("ro.boot.verifiedbootstate", ""),
+        "encrypted": encrypted, "encryption_type": props.get("ro.crypto.type", ""),
+        "logical_partitions_observed": logical,
+        "mounts_observed": [m for m in mounts if m["target"] in
+                            ("/", "/system", "/system_ext", "/vendor", "/product", "/odm", "/data", "/metadata")],
+        "physical_aliases_observed": {k: v for k, v in sorted(aliases.items()) if k in
+                                     ("boot_a", "boot_b", "dtbo_a", "dtbo_b", "recovery_a", "recovery_b",
+                                      "super", "metadata", "userdata")},
+        "fstab_collected": fstab_collected,
+        "blockers": blockers,
+        "note": "Observed dm numbers and slot are session-specific, not boot configuration."
+    }
+
+
+def analyze(args):
+    assessment = analyze_report(json.loads(Path(args.report).read_text()))
+    content = json.dumps(assessment, indent=2, ensure_ascii=False) + "\n"
+    if args.output:
+        write_new(Path(args.output), content)
+    print(content, end="")
+
+
+def require_profile(android):
+    marker = android / ".n100-source-profile.json"
+    if not marker.is_file():
+        raise PortError("Missing source profile marker; initialize a separate tree with the current report")
+    profile = json.loads(marker.read_text())
+    if profile.get("lock_sha256") != lock_digest():
+        raise PortError("This tree uses a different source profile. Do not reuse an Android 10 tree")
 
 
 def write_new(path, content):
@@ -88,6 +220,9 @@ def android_path(value):
 
 
 def init_sources(args):
+    assessment = analyze_report(json.loads(Path(args.device_report).read_text()))
+    if assessment["source_compatibility"] != "candidate-generation-match":
+        raise PortError("Report/profile mismatch: " + assessment["source_compatibility"])
     android = android_path(args.android_root)
     if not shutil.which("repo"):
         raise PortError("Install the Android repo tool inside HABUILD_SDK first")
@@ -95,9 +230,10 @@ def init_sources(args):
     if not (android / ".repo").exists() and any(android.iterdir()):
         raise PortError("Use an empty directory for a new source tree")
     if shutil.disk_usage(android).free < 200 * 1024**3:
-        raise PortError("Reserve at least 200 GiB free for this Android 10 build")
+        raise PortError("Reserve at least 200 GiB free for this Android HAL build")
     lock = read_lock()
     if (android / ".repo").exists():
+        require_profile(android)
         existing = android / ".repo/local_manifests/billie2.xml"
         if not existing.exists() or existing.read_bytes() != (ROOT / "manifests/billie2.xml").read_bytes():
             raise PortError("Existing source tree has a different local manifest")
@@ -105,6 +241,8 @@ def init_sources(args):
          lock["android"]["revision"]], cwd=android)
     write_new(android / ".repo/local_manifests/billie2.xml",
               (ROOT / "manifests/billie2.xml").read_text())
+    write_new(android / ".n100-source-profile.json", json.dumps({
+        "profile": lock["profile"], "lock_sha256": lock_digest()}, indent=2) + "\n")
     if args.sync:
         run(["repo", "sync", "-c", f"-j{args.jobs}", "--fail-fast"], cwd=android)
         resolved = run(["repo", "manifest", "-r"], cwd=android, capture=True)
@@ -149,31 +287,31 @@ def init_package(dest, source, dependency):
 
 def prepare(args):
     android = android_path(args.android_root)
+    require_profile(android)
     lock = read_lock()
     for project in lock["projects"] + lock["extensions"]:
         require_checkout(android / project["path"], project["revision"])
     run(["git", "submodule", "update", "--init", "--recursive"], cwd=android / "external/libhybris")
     device = android / "device/oneplus/billie2"
     # These exact files were inspected at the pinned upstream commit.
-    checks = {"BoardConfig.mk": "b4b8f6188432ed3866a9470f578374b6696f99ce",
-              "rootdir/etc/fstab.qcom": "e32bf0e4169caa44fdcd687a307a3b08a21b67dc"}
+    checks = lock["device_changes"]["inspected_blobs"]
     for name, expected in checks.items():
         actual = run(["git", "hash-object", name], cwd=device, capture=True)
         # BoardConfig gains the controlled selinux flag below, but may not have other edits.
         if actual != expected:
             original = run(["git", "show", "HEAD:" + name], cwd=device, capture=True) + "\n"
-            intended = original + "\n# Sailfish Android 10 bring-up: keep SELinux active but permissive.\nBOARD_KERNEL_CMDLINE += selinux=1\n"
+            intended = modified_board(original, lock)
             if name != "BoardConfig.mk" or (device / name).read_text() != intended:
                 raise PortError(f"Unexpected upstream edits: {device / name}")
     kernel = android / "kernel/oneplus/sm4250"
-    base = kernel / "arch/arm64/configs/vendor/bengal-perf_defconfig"
+    base = kernel / "arch/arm64/configs" / lock["device_changes"]["kernel_base_config"]
     if run(["git", "diff", "--", str(base.relative_to(kernel))], cwd=kernel, capture=True):
         raise PortError("Stock kernel defconfig has local edits")
     generated = merge_config(base.read_text(), (ROOT / "kernel/sailfish.config").read_text())
-    write_new(kernel / "arch/arm64/configs/vendor/billie2-perf_defconfig", generated)
+    write_new(kernel / "arch/arm64/configs" / lock["device_changes"]["kernel_generated_config"], generated)
     board = device / "BoardConfig.mk"
     original = run(["git", "show", "HEAD:BoardConfig.mk"], cwd=device, capture=True) + "\n"
-    intended = original + "\n# Sailfish Android 10 bring-up: keep SELinux active but permissive.\nBOARD_KERNEL_CMDLINE += selinux=1\n"
+    intended = modified_board(original, lock)
     board.write_text(intended)
     sources = [ROOT / "adaptation/rpm", ROOT / "adaptation/droid-configs",
                ROOT / "adaptation/droid-hal-version-billie2"]
@@ -182,12 +320,21 @@ def prepare(args):
     print("Adaptation snapshots prepared. Apply hybris patches before building.")
 
 
+def modified_board(original, lock):
+    return (original + "\n# Sailfish bring-up; preserve the inspected upstream board configuration.\n"
+            "BOARD_KERNEL_CMDLINE += selinux=1 androidboot.selinux=permissive\n"
+            "TARGET_KERNEL_CONFIG := " + lock["device_changes"]["kernel_generated_config"] + "\n")
+
+
 PROPERTIES = [
     "ro.product.device", "ro.product.vendor.device", "ro.product.model",
     "ro.product.manufacturer", "ro.board.platform", "ro.hardware",
     "ro.build.version.release", "ro.build.version.sdk", "ro.build.fingerprint",
     "ro.vendor.build.fingerprint", "ro.boot.slot_suffix", "ro.boot.dynamic_partitions",
     "ro.boot.verifiedbootstate", "ro.boot.flash.locked", "ro.crypto.state", "ro.crypto.type",
+    "ro.vendor.build.version.sdk", "ro.vndk.version", "ro.treble.enabled",
+    "ro.build.display.id", "ro.build.version.incremental", "ro.build.version.security_patch",
+    "ro.vendor.build.security_patch", "ro.boot.hardware.sku",
 ]
 
 
@@ -218,8 +365,17 @@ def probe(args):
     commands = {
         "kernel": "uname -a", "mounts": "cat /proc/mounts", "filesystems": "cat /proc/filesystems",
         "partitions": "ls -l /dev/block/by-name /dev/block/bootdevice/by-name /dev/block/mapper",
-        "fstab": "cat /vendor/etc/fstab.qcom /odm/etc/fstab.qcom",
+        "fstab_vendor": "cat /vendor/etc/fstab.qcom",
+        "fstab_odm": "cat /odm/etc/fstab.qcom",
+        "fstab_root": "cat /fstab.qcom",
+        "fstab_first_stage": "cat /first_stage_ramdisk/fstab.qcom",
+        "fstab_paths": "ls /vendor/etc/fstab* /odm/etc/fstab* /first_stage_ramdisk/fstab*",
         "selinux_files": "ls -l /vendor/etc/selinux /system/etc/selinux",
+        "selinux_vendor_version": "cat /vendor/etc/selinux/plat_sepolicy_vers.txt",
+        "vintf_vendor": "cat /vendor/etc/vintf/manifest.xml",
+        "vintf_paths": "ls /vendor/etc/vintf/manifest /odm/etc/vintf /system_ext/etc/vintf",
+        "partition_sizes": "cat /proc/partitions",
+        "mapper_names": "cat /sys/block/dm-*/dm/name",
         "inputs": "cat /proc/bus/input/devices",
     }
     # Fixed shell strings only; no user input enters the remote shell.
@@ -227,7 +383,8 @@ def probe(args):
         try:
             report["diagnostics"][key] = run(adb + ["shell", command], capture=True, timeout=20)
         except PortError as exc:
-            report["diagnostics"][key] = {"unavailable": str(exc)}
+            report["diagnostics"][key] = {"unavailable": str(exc), "stdout": exc.stdout,
+                                          "stderr": exc.stderr, "returncode": exc.returncode}
     out = Path(args.output).expanduser()
     write_new(out, json.dumps(report, indent=2, ensure_ascii=False) + "\n")
     print(f"{report['identity']}: {out}. Review before sharing; no IMEI/serial queried.")
@@ -289,12 +446,20 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     p = commands.add_parser("init", help="Initialize pinned Android manifest in HABUILD_SDK")
     p.add_argument("--android-root", required=True)
+    p.add_argument("--device-report", required=True, help="Read-only report from the intended stock Android device")
     p.add_argument("--sync", action="store_true")
     p.add_argument("--jobs", type=positive, default=4)
     p.set_defaults(func=init_sources)
     p = commands.add_parser("prepare", help="Install device changes and locked RPM source snapshots")
     p.add_argument("--android-root", required=True)
     p.set_defaults(func=prepare)
+    p = commands.add_parser("verify-tree", help="Reject stale source profiles before a HAL build")
+    p.add_argument("--android-root", required=True)
+    p.set_defaults(func=lambda args: require_profile(android_path(args.android_root)))
+    p = commands.add_parser("analyze-report", help="Assess a saved report offline; no ADB or device writes")
+    p.add_argument("report")
+    p.add_argument("--output")
+    p.set_defaults(func=analyze)
     p = commands.add_parser("probe", help="Read Android device information; never writes to device")
     p.add_argument("--serial")
     p.add_argument("--output", required=True)

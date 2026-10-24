@@ -1,0 +1,140 @@
+{
+  "schema": 1,
+  "profile": "lineage20-stock11",
+  "source_compatibility": "candidate-generation-match",
+  "deployable": false,
+  "model": "BE2013",
+  "device": "OnePlusN100",
+  "platform": "bengal",
+  "stock_android": "11",
+  "stock_sdk": "30",
+  "vendor_sdk": null,
+  "fingerprint": "OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys",
+  "vendor_fingerprint": "OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys",
+  "kernel": "Linux localhost 4.19.152-perf+ #1 SMP PREEMPT Tue Oct 10 00:10:33 CST 2023 aarch64",
+  "active_slot": "_b",
+  "bootloader_locked": true,
+  "verified_boot": "green",
+  "encrypted": true,
+  "encryption_type": "file",
+  "logical_partitions_observed": [
+    "product_a",
+    "product_b",
+    "system_a",
+    "system_b",
+    "system_ext_a",
+    "system_ext_b",
+    "vendor_a",
+    "vendor_b"
+  ],
+  "mounts_observed": [
+    {
+      "source": "/dev/block/dm-8",
+      "target": "/",
+      "type": "ext4",
+      "options": [
+        "ro",
+        "seclabel",
+        "relatime",
+        "discard"
+      ]
+    },
+    {
+      "source": "/dev/block/by-name/metadata",
+      "target": "/metadata",
+      "type": "ext4",
+      "options": [
+        "rw",
+        "sync",
+        "seclabel",
+        "nosuid",
+        "nodev",
+        "noatime",
+        "discard"
+      ]
+    },
+    {
+      "source": "/dev/block/dm-9",
+      "target": "/system_ext",
+      "type": "ext4",
+      "options": [
+        "ro",
+        "seclabel",
+        "relatime",
+        "discard"
+      ]
+    },
+    {
+      "source": "/dev/block/dm-10",
+      "target": "/vendor",
+      "type": "ext4",
+      "options": [
+        "ro",
+        "seclabel",
+        "relatime",
+        "discard"
+      ]
+    },
+    {
+      "source": "/dev/block/dm-11",
+      "target": "/product",
+      "type": "ext4",
+      "options": [
+        "ro",
+        "seclabel",
+        "relatime",
+        "discard"
+      ]
+    },
+    {
+      "source": "/dev/block/dm-12",
+      "target": "/data",
+      "type": "f2fs",
+      "options": [
+        "rw",
+        "lazytime",
+        "seclabel",
+        "nosuid",
+        "nodev",
+        "noatime",
+        "background_gc=on",
+        "discard",
+        "no_heap",
+        "user_xattr",
+        "inline_xattr",
+        "acl",
+        "inline_data",
+        "inline_dentry",
+        "extent_cache",
+        "mode=adaptive",
+        "active_logs=6",
+        "reserve_root=22871",
+        "resuid=0",
+        "resgid=1065",
+        "inlinecrypt",
+        "alloc_mode=default",
+        "fsync_mode=nobarrier"
+      ]
+    }
+  ],
+  "physical_aliases_observed": {
+    "boot_a": "/dev/block/sde11",
+    "boot_b": "/dev/block/sde32",
+    "dtbo_a": "/dev/block/sde17",
+    "dtbo_b": "/dev/block/sde38",
+    "metadata": "/dev/block/sda15",
+    "recovery_a": "/dev/block/sda11",
+    "recovery_b": "/dev/block/sda12",
+    "super": "/dev/block/sda10",
+    "userdata": "/dev/block/sda16"
+  },
+  "fstab_collected": false,
+  "blockers": [
+    "images-not-built-or-boot-tested",
+    "regional-proprietary-blobs-unverified",
+    "bootloader-locked",
+    "encrypted-data-rootfs-access-unimplemented",
+    "logical-partition-early-mounts-unimplemented"
+  ],
+  "note": "Observed dm numbers and slot are session-specific, not boot configuration."
+}

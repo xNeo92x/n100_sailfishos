@@ -84,6 +84,115 @@ class DeviceTests(unittest.TestCase):
                 n100.probe(type("Args", (), {"serial": None, "output": "/unused"})())
 
 
+class ReportTests(unittest.TestCase):
+    def fixture(self):
+        return json.loads((ROOT / "tests/fixtures/be2013-stock11.json").read_text())
+
+    def test_stock11_is_firmware_baseline_for_android13_hal_candidate(self):
+        result = n100.analyze_report(self.fixture())
+        self.assertEqual(n100.read_lock()["android_build_version"], 13)
+        self.assertEqual(result["source_compatibility"], "candidate-generation-match")
+        self.assertEqual(result["platform"], "bengal")
+        self.assertEqual(result["active_slot"], "_b")
+        self.assertTrue(result["bootloader_locked"])
+        self.assertFalse(result["deployable"])
+        self.assertIn("bootloader-locked", result["blockers"])
+        self.assertIn("encrypted-data-rootfs-access-unimplemented", result["blockers"])
+        self.assertIn("system_ext_b", result["logical_partitions_observed"])
+        self.assertEqual(result["physical_aliases_observed"]["boot_b"], "/dev/block/sde32")
+        self.assertEqual(result["physical_aliases_observed"]["userdata"], "/dev/block/sda16")
+        self.assertFalse(result["fstab_collected"])
+
+    def test_report_cannot_self_assert_device_identity(self):
+        report = self.fixture()
+        report["identity"] = "n100-candidate"
+        report["properties"]["ro.product.device"] = "billie"
+        self.assertEqual(n100.analyze_report(report)["source_compatibility"], "wrong-or-unconfirmed-device")
+
+    def test_wrong_android_or_vendor_generation_is_rejected(self):
+        for key,value in (("ro.build.version.sdk","29"), ("ro.vendor.build.version.sdk","29"),
+                          ("ro.vendor.build.fingerprint","OnePlus/N100/N100:10/fixture/fixture:user/release-keys")):
+            report = self.fixture()
+            report["properties"][key] = value
+            result = n100.analyze_report(report)
+            self.assertNotEqual(result["source_compatibility"], "candidate-generation-match")
+            self.assertIn("source-profile-not-compatible-or-unconfirmed", result["blockers"])
+
+    def test_missing_data_does_not_imply_compatibility(self):
+        report = {"properties": {"ro.product.device":"OnePlusN100"}}
+        self.assertEqual(n100.analyze_report(report)["source_compatibility"], "unconfirmed")
+
+    def test_partial_fstab_output_is_usable_even_when_another_path_fails(self):
+        report = self.fixture()
+        report["diagnostics"]["fstab_vendor"] = {
+            "stdout": "system_ext /system_ext ext4 ro wait,logical,slotselect\n",
+            "stderr": "cat: other file missing", "returncode": 1}
+        self.assertTrue(n100.analyze_report(report)["fstab_collected"])
+
+    def test_mapper_userdata_never_replaces_physical_userdata(self):
+        physical, mapper = n100.block_aliases(
+            "/dev/block/by-name:\nlrwxrwxrwx 1 root root 0 now userdata -> /dev/block/sda16\n"
+            "/dev/block/mapper:\nlrwxrwxrwx 1 root root 0 now userdata -> /dev/block/dm-12\n")
+        self.assertEqual(physical["userdata"], "/dev/block/sda16")
+        self.assertEqual(mapper["userdata"], "/dev/block/dm-12")
+
+    def test_failed_capture_preserves_both_streams_without_serial_in_error(self):
+        completed = subprocess.CalledProcessError(1, ["adb","-s","PRIVATE_SERIAL","shell","fixture"],
+                                                output="usable data\n", stderr="missing path\n")
+        with patch.object(subprocess,"run",side_effect=completed):
+            with self.assertRaises(n100.PortError) as caught:
+                n100.run(["adb","-s","PRIVATE_SERIAL","shell","fixture"],capture=True)
+        self.assertEqual(caught.exception.stdout,"usable data\n")
+        self.assertEqual(caught.exception.stderr,"missing path\n")
+        self.assertNotIn("PRIVATE_SERIAL",str(caught.exception))
+
+    def test_probe_serializes_readable_partial_output_on_error(self):
+        def fake_run(argv, **kwargs):
+            if argv == ["adb", "devices"]:
+                return "List of devices attached\nexample\tdevice"
+            if argv[-1] == "cat /vendor/etc/fstab.qcom":
+                exc=n100.PortError("exit 1")
+                exc.stdout="system /system ext4 ro wait,logical\n"
+                exc.stderr="one missing path\n"
+                exc.returncode=1
+                raise exc
+            return "OnePlusN100" if argv[-1] == "ro.product.device" else ""
+        with tempfile.TemporaryDirectory() as tmp, patch.object(n100,"run",fake_run):
+            output=Path(tmp)/"report.json"
+            n100.probe(type("Args",(),{"serial":None,"output":str(output)})())
+            result=json.loads(output.read_text())["diagnostics"]["fstab_vendor"]
+            self.assertEqual(result["stdout"],"system /system ext4 ro wait,logical\n")
+            self.assertEqual(result["stderr"],"one missing path\n")
+            self.assertEqual(result["returncode"],1)
+
+    def test_incompatible_report_stops_before_source_downloads_or_directory_creation(self):
+        report=self.fixture()
+        report["properties"]["ro.build.version.sdk"]="29"
+        with tempfile.TemporaryDirectory() as tmp, patch.object(n100,"run") as runner:
+            path=Path(tmp)/"report.json"
+            path.write_text(json.dumps(report))
+            android=Path(tmp)/"android"
+            args=type("Args",(),{"device_report":str(path),"android_root":str(android)})()
+            with self.assertRaises(n100.PortError):
+                n100.init_sources(args)
+            runner.assert_not_called()
+            self.assertFalse(android.exists())
+
+    def test_old_source_tree_marker_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            android=Path(tmp)
+            (android/".n100-source-profile.json").write_text(json.dumps({"lock_sha256":"old-profile"}))
+            with self.assertRaises(n100.PortError):
+                n100.require_profile(android)
+
+    def test_board_overlay_preserves_upstream_and_hardware_specific_flags(self):
+        original="TARGET_KERNEL_ADDITIONAL_FLAGS := OEM_TARGET_PRODUCT=$(PRODUCT_DEVICE)\n"
+        result=n100.modified_board(original,n100.read_lock())
+        self.assertTrue(result.startswith(original))
+        self.assertIn("vendor/sailfish-billie2_defconfig",result)
+        self.assertIn("selinux=1 androidboot.selinux=permissive",result)
+
+
 class BootTests(unittest.TestCase):
     def image(self, path, version=2, page=4096):
         header = bytearray(4096)

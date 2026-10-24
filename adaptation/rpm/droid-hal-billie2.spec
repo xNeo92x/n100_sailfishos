@@ -8,7 +8,7 @@
 # Logical Android partitions require device-mapper setup before they can mount.
 # Do not generate physical /dev/block/by-name/{system,vendor,product} mounts.
 # Bring-up remains blocked until the mounting strategy in docs/BRINGUP.md passes.
-%define makefstab_skip_entries / /system /vendor /product /metadata /dev/stune /dev/cpuset /dev/cpuctl
+%define makefstab_skip_entries / /system /system_ext /vendor /product /odm /metadata /linkerconfig /dev/stune /dev/cpuset /dev/cpuctl
 
 %define android_config \
 #define WANT_ADRENO_QUIRKS 1\

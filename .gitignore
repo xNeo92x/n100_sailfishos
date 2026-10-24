@@ -4,6 +4,7 @@ build/
 work/
 artifacts/
 device-report*/
+n100-device-report*.json
 *.img
 *.zip
 *.rpm

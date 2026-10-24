@@ -1,30 +1,36 @@
 {
-  "schema": 1,
+  "schema": 2,
   "checked_on": "2026-10-24",
-  "status": "pre-bringup",
+  "status": "stock11-source-candidate",
   "android": {
     "url": "https://github.com/mer-hybris/android.git",
-    "branch": "hybris-17.1",
-    "revision": "f2ffbb25b3669c957848405688f614a5298f940c"
+    "branch": "hybris-20.0",
+    "revision": "1e982642f81b76b4fb7830baba06d9d8c756454d"
   },
   "projects": [
     {
       "path": "device/oneplus/billie2",
-      "name": "danascape/android_device_oneplus_billie2",
-      "branch": "lineage-17.1",
-      "revision": "9a017853a4bcfac1e74858152d5bf9e4d906839a"
+      "name": "LineageOS/android_device_oneplus_billie2",
+      "branch": "lineage-20",
+      "revision": "b2bde47cb6d0d737136915d65feac5cffacb1d53"
     },
     {
       "path": "kernel/oneplus/sm4250",
-      "name": "OnePlusOSS/android_kernel_oneplus_sm4250",
-      "branch": "oneplus/SM4250_Q_10.0",
-      "revision": "6db26f433f9a8722d0858562804da13f3090bfd7"
+      "name": "LineageOS/android_kernel_oneplus_sm4250",
+      "branch": "lineage-20",
+      "revision": "1eade87e4a56ffc797cb508bc7322f6783d90f67"
     },
     {
       "path": "external/libhybris",
       "name": "mer-hybris/libhybris",
       "branch": "master",
       "revision": "2b39e63191ad931a8440517f232a5f03beb692d3"
+    },
+    {
+      "path": "hardware/oneplus",
+      "name": "LineageOS/android_hardware_oneplus",
+      "branch": "lineage-20",
+      "revision": "a2095be16213e3643c157d3534c4c24918a76144"
     }
   ],
   "extensions": [
@@ -34,7 +40,7 @@
     },
     {
       "path": "hybris-patches",
-      "revision": "909f62c465f458655eedc0b5c3417f5440c42976"
+      "revision": "02b0452189d0f0aae1c0253132f331392f2b0fc1"
     }
   ],
   "packaging": [
@@ -56,5 +62,17 @@
       "name": "mer-hybris/droid-hal-version",
       "revision": "09c2745f7cd0eb5f5b941e97272914b03a9cadf2"
     }
-  ]
+  ],
+  "profile": "lineage20-stock11",
+  "android_build_version": 13,
+  "stock_android_version": 11,
+  "stock_android_sdk": 30,
+  "device_changes": {
+    "inspected_blobs": {
+      "BoardConfig.mk": "83db2b73e4dae2e46534cfcdb6a99cb059a95b8d",
+      "rootdir/etc/fstab.qcom": "50f4ea3f9097c5cc49a04284d8dfa9d76745812c"
+    },
+    "kernel_base_config": "vendor/bengal-perf_defconfig",
+    "kernel_generated_config": "vendor/sailfish-billie2_defconfig"
+  }
 }

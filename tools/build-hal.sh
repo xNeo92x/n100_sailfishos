@@ -5,8 +5,9 @@ port_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 source "$port_dir/config/port.env"
 : "${ANDROID_ROOT:?Set ANDROID_ROOT to the prepared Android tree}"
 cd "$ANDROID_ROOT"
+python3 "$port_dir/tools/n100.py" verify-tree --android-root "$ANDROID_ROOT"
 test -f rpm/droid-hal-billie2.spec
-test -f kernel/oneplus/sm4250/arch/arm64/configs/vendor/billie2-perf_defconfig
+test -f kernel/oneplus/sm4250/arch/arm64/configs/vendor/sailfish-billie2_defconfig
 test -f .n100-hybris-patches-applied || {
     echo 'Apply hybris-patches/apply-patches.sh --mb and record the marker as in docs/BUILD.md.' >&2
     exit 1

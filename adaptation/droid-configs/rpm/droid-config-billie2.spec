@@ -4,7 +4,7 @@
 %define vendor_pretty OnePlus
 %define device_pretty Nord N100
 %define community_adaptation 1
-%define android_version_major 10
+%define android_version_major 13
 # 269 ppi / 245 ppi; initial UI choice, subject to on-device testing.
 %define pixel_ratio 1.0
 

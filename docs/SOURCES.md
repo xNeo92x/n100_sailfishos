@@ -1,66 +1,78 @@
 # Source audit and port decisions
 
-Reviewed on 2026-10-24. Exact integration revisions are in
-[`sources.lock.json`](../sources.lock.json); the following are primary sources.
+Reviewed on 2026-10-24. Exact revisions are in
+[`sources.lock.json`](../sources.lock.json). The source profile is an
+**unbuilt development candidate** for the reported BE2013, not a hardware release.
 
-| Source | Role |
+| Primary source | Role |
 | --- | --- |
-| [Sailfish OS GitHub](https://github.com/sailfishos) | OS components; not a ready-made N100 board-support tree |
-| [Official HADK](https://docs.sailfishos.org/Develop/HADK/) | Hardware adaptation process and build environments |
-| [Official architecture](https://docs.sailfishos.org/Reference/Architecture/) | Android BSP / libhybris / Sailfish layering |
-| [mer-hybris Android 10 manifest](https://github.com/mer-hybris/android/tree/f2ffbb25b3669c957848405688f614a5298f940c) | hybris-17.1 Android base |
-| [HADK FAQ](https://github.com/mer-hybris/hadk-faq/blob/master/README.rst) | Android-10 patches, SELinux and path-restriction requirements |
-| [N100 Android-10 device tree](https://github.com/danascape/android_device_oneplus_billie2/tree/9a017853a4bcfac1e74858152d5bf9e4d906839a) | billie2 BoardConfig, product, extraction scripts and fstab |
-| [OnePlus vendor kernel](https://github.com/OnePlusOSS/android_kernel_oneplus_sm4250/tree/6db26f433f9a8722d0858562804da13f3090bfd7) | SM4250 Android-10 kernel / bengal defconfig |
-| [Current Lineage N100 tree](https://github.com/LineageOS/android_device_oneplus_billie2) | Confirms device identity; newer branch is not mixed into Android 10 |
-| [N100 Ubuntu Touch](https://devices.ubuntu-touch.io/device/billie2/) | Adjacent Linux adaptation evidence, not a Sailfish installation source |
+| [Official HADK](https://docs.sailfishos.org/Develop/HADK/) | SDK and adaptation workflow |
+| [Sailfish architecture](https://docs.sailfishos.org/Reference/Architecture/) | Android BSP / libhybris / Sailfish layering |
+| [hybris-20.0 manifest](https://github.com/mer-hybris/android/tree/1e982642f81b76b4fb7830baba06d9d8c756454d) | Android 13 HAL build base |
+| [Official N100 device tree](https://github.com/LineageOS/android_device_oneplus_billie2/tree/b2bde47cb6d0d737136915d65feac5cffacb1d53) | bengal BoardConfig, product, extraction scripts and fstab |
+| [Blob inventory](https://github.com/LineageOS/android_device_oneplus_billie2/blob/b2bde47cb6d0d737136915d65feac5cffacb1d53/proprietary-files.txt) | Explicitly identifies Android 11 stock version 11.0.15.BE81AA |
+| [Product definition](https://github.com/LineageOS/android_device_oneplus_billie2/blob/b2bde47cb6d0d737136915d65feac5cffacb1d53/lineage_billie2.mk) | Android-11 fingerprint, build 2310091801 |
+| [Device dependencies](https://github.com/LineageOS/android_device_oneplus_billie2/blob/b2bde47cb6d0d737136915d65feac5cffacb1d53/lineage.dependencies) | SM4250 kernel and OnePlus hardware repository |
+| [Lineage SM4250 kernel](https://github.com/LineageOS/android_kernel_oneplus_sm4250/tree/1eade87e4a56ffc797cb508bc7322f6783d90f67) | Matching kernel baseline, version 4.19.325 at inspection |
+| [OnePlus hardware sources](https://github.com/LineageOS/android_hardware_oneplus/tree/a2095be16213e3643c157d3534c4c24918a76144) | Device-specific hardware modules |
+| [HADK FAQ](https://github.com/mer-hybris/hadk-faq/blob/master/README.rst) | General adaptation/debugging and base-specific caveats |
 | [droid-hal-device](https://github.com/mer-hybris/droid-hal-device) | RPM macros and build helpers |
-| [droid-hal-configs](https://github.com/mer-hybris/droid-hal-configs) | Android-specific sparse files and config/package templates |
-| [droid-hal-version](https://github.com/mer-hybris/droid-hal-version) | hw-release / umbrella package template |
-| [Sony Android-10 adaptation](https://github.com/mer-hybris/droid-config-sony-seine/tree/eaa09db67b94352ef801417363008dc4005d9213/sparse/etc/selinux) | FAQ reference for SELinux file layout only; no Sony binary policy reused |
+| [droid-hal-configs](https://github.com/mer-hybris/droid-hal-configs) | Sparse files and package templates |
+| [droid-hal-version](https://github.com/mer-hybris/droid-hal-version) | hw-release / umbrella package macros |
 
-## Why Android 10
+## Why the initial Android-10 base was replaced
 
-The N100 has an available Android-10 device tree and vendor kernel, and
-mer-hybris explicitly documents hybris-17.1 adaptation. The latest Lineage
-branch targets a much newer Android base and is not a drop-in Sailfish HAL.
-Android base version and Sailfish userspace version are separate concepts.
-Choosing Android 10 does not pin Sailfish to an Android-10-era OS release.
+The actual device report identifies BE2013 / OnePlusN100 EEA, Android 11 SDK 30,
+platform bengal, a 4.19.152-perf+ stock kernel, dynamic partitions and file-encrypted
+F2FS userdata. The original hybris-17.1 / Android-10 source choice cannot simply
+reuse that installed firmware.
 
-This is a **candidate combination**. The device tree is an old development tree
-with a very terse final commit, not evidence of a release-quality Android ROM.
-Its kernel config path does not exist in the chosen OnePlus kernel. The setup
-tool supplies that config path, but DTS/model selection and successful compilation
-remain to be demonstrated. Do not mistake a pinned revision for a tested one.
+There was no suitable lineage-18.1 branch in the N100 repositories inspected.
+Rather than treating an Android-12 device tree as an Android-11 tree, the current
+profile pairs the official LineageOS-20 device/kernel sources with hybris-20.0.
+The device's own blob inventory and product fingerprint show that this Android-13
+build was designed around Android-11 stock components. The inspected hybris
+manifest includes the extract utilities, SM8250 CAF stack used by bengal and
+legacy Qualcomm vendor sepolicy dependencies. Additional OnePlus hardware
+sources required by the device dependency list are included explicitly.
 
-## Facts from the inspected files
+This is a source-level rationale. It does not establish EEA binary compatibility,
+successful compilation, correct early mounts or boot. The regional fingerprint
+differs from the global stock fingerprint in the source. Do not imply that a
+reported SDK 30 must be changed to SDK 33 on the handset: Android 13 is the HAL
+build version; Android 11 is the candidate firmware baseline.
 
-`BoardConfig.mk` declares arm64 plus arm secondary architecture, HWC2, Clang,
-`vendor/billie2-perf_defconfig`, kernel source `kernel/oneplus/sm4250`, header v2,
-4096-byte pages, DTB in boot, separate DTBO and dynamic partitions.
-The platform identifier is `lito` in that device tree despite the physical SoC
-being SM4250. It is retained for compatibility with the inspected product/vendor
-configuration until build/runtime evidence supports a change.
+## Integration changes
 
-`device.mk` inherits proprietary vendor files and VNDK 29. The fstab lists
-logical system/product/vendor partitions, A/B selection, F2FS encrypted userdata
-and separate Qualcomm firmware/persist mounts. Those are precisely why a generic
-old-device flashing or mount recipe would be inappropriate.
+The generated kernel config now has its own name,
+`vendor/sailfish-billie2_defconfig`, derived from the pinned kernel's existing
+`vendor/bengal-perf_defconfig`. The BoardConfig overlay selects it while retaining
+`OEM_TARGET_PRODUCT=$(PRODUCT_DEVICE)` and all other inspected upstream settings.
+The board blob and fstab blob hashes are recorded in the source lock.
 
-The stock kernel's `bengal-perf_defconfig` has `CONFIG_VT` disabled and contains
-OnePlus hardware-specific options. The fragment keeps the stock base, adds
-systemd/debug requirements and retains SELinux support. A text merge is not a
-successful kernel build; verify Kconfig's final result.
+RPM configuration selects Android-13 common sparse files. Logical
+system/system_ext/vendor/product/odm mounts are excluded from the legacy
+physical-mount converter. That exclusion does not implement their replacement.
+An ODM image in the Lineage build is not evidence of a stock ODM mapper entry;
+none was visible in the supplied live report.
+
+The source initializer requires a matching stock-generation report and records
+a lock digest. Prepare/HAL/RPM helpers reject stale profile markers, so an
+Android-10 source tree cannot be silently reused. This does not validate blobs.
+
+The report parser distinguishes physical by-name aliases from mapper aliases,
+and the collector preserves partial stdout/stderr on nonzero exit codes.
+See [DEVICE_BE2013.md](DEVICE_BE2013.md) for observations and remaining inputs.
 
 ## Verification boundary
 
-The initial contribution has only host-side tests, source inspection and syntax
-validation. The development environment had about 28 GiB free, no connected N100,
-no proprietary firmware dump and no installed Sailfish target. Therefore a full
-Android build, RPM resolution, rootfs creation, flash, boot and hardware tests
-could not be performed. `status.json` deliberately records these as false/untested.
+Host tests, syntax checks and source inspection are available. The development
+environment has about 28 GiB free, no attached N100, no proprietary firmware dump
+and no installed Sailfish target. Full Android build, RPM resolution, rootfs
+creation, boot-image validation against stock and hardware tests remain unperformed.
 
-The local manifest locks the device-facing projects and top-level manifest;
-transitive Android branches and middleware fetched by build helpers need a
-resolved manifest/commit inventory from the first actual build. No fully
-reproducible binary release is claimed.
+The top-level manifest and device-facing projects are pinned; other Android
+branch references and middleware fetched by build helpers still need a fully
+resolved manifest/commit inventory from the first real build. A completely
+reproducible binary release is not claimed. The original Android-10 contribution
+remains available in Git history at commit `b5e3124`.

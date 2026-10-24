@@ -8,6 +8,7 @@ source "$port_dir/config/port.env"
 command -v mb2 >/dev/null
 command -v sdk-assistant >/dev/null
 cd "$ANDROID_ROOT"
+python3 "$port_dir/tools/n100.py" verify-tree --android-root "$ANDROID_ROOT"
 test -s out/target/product/billie2/hybris-boot.img
 test -f rpm/droid-hal-billie2.spec
 case "${1:-}" in
