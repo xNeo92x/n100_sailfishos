@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!-- github remote is defined by the pinned mer-hybris base manifest. -->
+  <project path="device/oneplus/billie2" name="danascape/android_device_oneplus_billie2" remote="github" revision="9a017853a4bcfac1e74858152d5bf9e4d906839a" />
+  <project path="kernel/oneplus/sm4250" name="OnePlusOSS/android_kernel_oneplus_sm4250" remote="github" revision="6db26f433f9a8722d0858562804da13f3090bfd7" />
+  <project path="external/libhybris" name="mer-hybris/libhybris" remote="github" revision="2b39e63191ad931a8440517f232a5f03beb692d3" />
+  <extend-project path="hybris/hybris-boot" name="mer-hybris/hybris-boot" revision="6547fd1c3aeb9c987271a01b298d2ae5d39be231" />
+  <extend-project path="hybris-patches" name="mer-hybris/hybris-patches" revision="909f62c465f458655eedc0b5c3417f5440c42976" />
+</manifest>

@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+build/
+work/
+artifacts/
+device-report*/
+*.img
+*.zip
+*.rpm
+*.qcow2
+*.tar.*
+!tests/fixtures/**

@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "checked_on": "2026-10-24",
+  "status": "pre-bringup",
+  "android": {
+    "url": "https://github.com/mer-hybris/android.git",
+    "branch": "hybris-17.1",
+    "revision": "f2ffbb25b3669c957848405688f614a5298f940c"
+  },
+  "projects": [
+    {
+      "path": "device/oneplus/billie2",
+      "name": "danascape/android_device_oneplus_billie2",
+      "branch": "lineage-17.1",
+      "revision": "9a017853a4bcfac1e74858152d5bf9e4d906839a"
+    },
+    {
+      "path": "kernel/oneplus/sm4250",
+      "name": "OnePlusOSS/android_kernel_oneplus_sm4250",
+      "branch": "oneplus/SM4250_Q_10.0",
+      "revision": "6db26f433f9a8722d0858562804da13f3090bfd7"
+    },
+    {
+      "path": "external/libhybris",
+      "name": "mer-hybris/libhybris",
+      "branch": "master",
+      "revision": "2b39e63191ad931a8440517f232a5f03beb692d3"
+    }
+  ],
+  "extensions": [
+    {
+      "path": "hybris/hybris-boot",
+      "revision": "6547fd1c3aeb9c987271a01b298d2ae5d39be231"
+    },
+    {
+      "path": "hybris-patches",
+      "revision": "909f62c465f458655eedc0b5c3417f5440c42976"
+    }
+  ],
+  "packaging": [
+    {
+      "parent": "rpm",
+      "path": "dhd",
+      "name": "mer-hybris/droid-hal-device",
+      "revision": "775f6c05123ca7e58422df1fcfd51943eb56920f"
+    },
+    {
+      "parent": "hybris/droid-configs",
+      "path": "droid-configs-device",
+      "name": "mer-hybris/droid-hal-configs",
+      "revision": "1dae7f21ba676194f4cdafd6a6fc16d97462101d"
+    },
+    {
+      "parent": "hybris/droid-hal-version-billie2",
+      "path": "droid-hal-version",
+      "name": "mer-hybris/droid-hal-version",
+      "revision": "09c2745f7cd0eb5f5b941e97272914b03a9cadf2"
+    }
+  ]
+}
