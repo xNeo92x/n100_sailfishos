@@ -4,9 +4,10 @@ The exact kernel source pinned by `sources.lock.json` was checked out and its
 generated `vendor/sailfish-billie2_defconfig` passed through the real Kconfig
 resolver for `ARCH=arm64 OEM_TARGET_PRODUCT=billie2`.
 
-This was a **configuration-only build**. Kernel C/assembly, DTB/DTBO, modules,
+This records the earlier **configuration-only build**. Kernel C/assembly, DTB/DTBO, modules,
 Android HAL and boot images were not compiled. No device boot was attempted.
-The exact input/output hashes, compiler and tool revisions are recorded in
+A subsequent binary build is recorded separately in [KERNEL_BUILD.md](KERNEL_BUILD.md).
+The exact input/output hashes, compiler and tool revisions of this earlier check are recorded in
 [`validation/kernel-config.json`](../validation/kernel-config.json).
 
 ## Findings and changes

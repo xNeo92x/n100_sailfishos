@@ -51,31 +51,36 @@ Details stehen in [docs/DEVICE_BE2013.md](docs/DEVICE_BE2013.md).
 - Host-Tests und GitHub-Actions-Validierung.
 - Mit dem echten Kernelquellstand aufgelöste und vom Sailfish-Upstream-Checker
   geprüfte Kernelkonfiguration: keine Fehler, 47 optionale Hinweise;
-  [Prüfumfang](docs/KERNEL_CONFIG_VALIDATION.md). Der Kernel selbst ist noch nicht kompiliert.
+  [Prüfumfang](docs/KERNEL_CONFIG_VALIDATION.md).
+- Erfolgreich kompilierter ARM64-Kernel (4.19.325), DTB, DTBO und drei Module;
+  Overlay am Host erfolgreich angewendet. [Build und Prüfnachweise](docs/KERNEL_BUILD.md).
+- Vollständig geprüfte Sammlung von 33 Stock-Konfigurationsdateien und
+  [Auswertung](docs/CONFIG_BUNDLE.md) für Mounts, Verschlüsselung und HAL-Fragmente.
 
 Android-, Kernel- und Sailfish-Upstreamquellen werden über festgelegte Git-
 Revisionen eingebunden. Die großen Quellbäume, proprietäre Firmware und SDK-
 Downloads werden nicht als Kopien in dieses Repository eingecheckt.
 
-## Nächster Schritt: tatsächliche Konfigurationsdateien sammeln
+## Konfigurationssammlung abgeschlossen
 
-Der V2-Bericht wurde ausgewertet. Die Stock-fstab-Dateien heißen anders als
-die generische `fstab.qcom`: `fstab.default`, `fstab.emmc` und
-`fstab_nodata.qcom`. Außerdem enthält das Gerät zusätzliche VINTF-Fragmente.
-Der neue Sammler kopiert diese Dateien zusammen mit den relevanten SELinux-
-Konfigurationsdateien und einem aktuellen Bericht in ein einziges ZIP:
+Das hochgeladene `n100-configs.zip` wurde ausgewertet: Alle 33 Dateien stimmen
+mit Größe und SHA-256 im Inventar überein. Die drei fstab-Dateien sind
+Alternativen; die beim Boot gewählte Variante ist noch nicht belegt. Die
+VINTF-Fragmente enthalten unter anderem AIDL für Power und Vibration. Die
+SELinux-Binärpolicy hat Version 30; ihre Laufzeitkompatibilität ist nicht geprüft.
+Details: [Konfigurationsauswertung](docs/CONFIG_BUNDLE.md).
+**Ein weiterer Diagnosebericht ist für diese Auswertung nicht erforderlich.**
+
+Ein vorhandenes ZIP lässt sich ohne Telefon erneut prüfen:
 
 ```bash
-git pull --ff-only
-python3 tools/n100.py collect-configs --output ../n100-configs.zip
+python3 tools/n100.py inspect-configs ../n100-configs.zip --output ../n100-config-audit.json
 ```
 
-Die Sammlung benötigt **weder Root noch Bootloader-Entsperrung** und verändert
-keine Dateien oder Einstellungen auf dem Telefon. Sie enthält keine Nutzerdaten
-und ist kein vollständiges Firmware-Backup. Fehlgeschlagene Kopiervorgänge
-werden in `inventory.json` aufgeführt; erfolgreich kopierte Dateien erhalten
-Größe und SHA-256. Bereits vorhandene ZIPs bleiben erhalten und neue bekommen
-einen Zeitstempel. Den tatsächlich ausgegebenen ZIP-Pfad zum Hochladen verwenden.
+Bei Bedarf kann `collect-configs --output ../n100-configs.zip` die Sammlung
+wiederholen. Es benötigt weder Root noch Bootloader-Entsperrung und verändert
+keine Dateien auf dem Telefon. Vorhandene Ausgabedateien bleiben erhalten;
+neue erhalten bei einer Namenskollision einen Zeitstempel.
 
 ## Einzelnen Diagnosebericht sammeln
 
@@ -131,7 +136,7 @@ Planungsgröße. CachyOS kann der Host sein; Android und RPM werden in den
 getrennten HADK-Umgebungen gebaut.
 
 **Noch offene Arbeit:** vollständiger Build, verifizierte Firmwarebasis,
-Kernel/DTB/DTBO-Abgleich, Einrichtung der dynamischen Partitionen für den frühen
+Integration des gebauten Kernels in das Bootimage, Einrichtung der dynamischen Partitionen für den frühen
 Boot, funktionierender Zugriff auf `/data`, Rootfs-Integration sowie Tests auf
 dem echten Gerät. Es gibt deshalb kein Flash-Skript und keine Download-Datei,
 die als fertiger Port ausgegeben wird. Das Bootloader-Entsperren löscht die
@@ -155,8 +160,9 @@ locked bootloader, dynamic partitions and encrypted F2FS userdata.
 has been validated. This is not an installable release.** The repository provides
 pinned sources, initial device/kernel/RPM integration, build helpers and read-only
 device diagnostics. Dynamic-partition mounting and access to Android-encrypted
-userdata remain critical bring-up work. Start with the device report command above;
-follow the linked build and bring-up notes. Do not use Nord N10 (`billie`) images.
+userdata remain critical bring-up work. The standalone kernel, DTB, DTBO and three
+modules compile successfully; the device configuration bundle has been inspected.
+Follow the linked build and bring-up notes. Do not use Nord N10 (`billie`) images.
 
 ## Herkunft und Lizenzen
 

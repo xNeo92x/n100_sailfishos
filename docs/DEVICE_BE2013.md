@@ -96,13 +96,13 @@ old report just to collect another one.
 
 The V2 report confirms Vendor SDK 30, VNDK 30 and SELinux compatibility version
 30.0. The latter is not a measurement of the compiled SELinux policy binary's
-internal version. The rootfs encryption parameters are still unknown until the
-actual stock fstabs are read.
+internal version. The subsequent configuration bundle supplies those fstab
+contents and confirms binary policy version 30; see [CONFIG_BUNDLE.md](CONFIG_BUNDLE.md).
 
 The exact `fstab.qcom` candidates do not exist on this stock build. The listing
 does expose `/vendor/etc/fstab.default`, `/vendor/etc/fstab.emmc` and
-`/vendor/etc/fstab_nodata.qcom`. Their roles must be determined from their contents;
-the nodata variant must not be assumed to be the normal boot fstab.
+`/vendor/etc/fstab_nodata.qcom`. The subsequent bundle shows two persistent F2FS alternatives and a tmpfs
+nodata variant. The active init selection remains unknown.
 
 The main vendor VINTF manifest declares 63 HALs. Canonical comparison with the
 pinned Lineage main manifest finds all 62 upstream declarations equivalent,
@@ -116,7 +116,8 @@ audio 2.0, camera provider 2.4, radio config 1.1 and a vendor Egis fingerprint
 interface. Hardware features must not be marked working based on declarations.
 Several essential interfaces are represented by separate files, including
 display composer/allocator, sensors 2.0, GNSS, fingerprint, vibrator, power and
-Wi-Fi. Their filenames were listed but their contents were not collected by V2.
+Wi-Fi. Their filenames were listed by V2; their contents have since been
+collected and inventoried in the configuration summary.
 
 `/odm/etc/vintf/manifest_2.xml` and `manifest_8.xml` exist despite the absence of
 a separate ODM mapper entry in the observed stock mount layout. A directory
@@ -124,7 +125,9 @@ path is not proof of a separate partition. `/proc/partitions` and input-device
 details are explicitly denied by the current Android policy; no root bypass is
 part of the collection.
 
-The next collection obtains the actual files in one archive:
+The configuration collection has now been completed (33/33 files verified).
+The command below is retained for optional repetition, not as a request for
+another upload:
 
 ```bash
 git pull --ff-only

@@ -68,7 +68,8 @@ The V2 report confirms vendor API/VNDK 30 and lists the actual stock fstab names
 Its main VINTF XML contains all 62 HAL declarations from the pinned device tree
 with equivalent versions, transport and interfaces; one extra OnePlus display
 declaration appears in stock. This comparison covers declarations in the main
-XML only. Manifest fragments and runtime compatibility remain unverified.
+XML only. The subsequent configuration bundle inventories the fragments;
+runtime compatibility remains unverified.
 Android's [VINTF manifest documentation](https://source.android.com/docs/core/architecture/vintf/objects)
 explains the role of main manifests and their additional fragments.
 
@@ -83,8 +84,11 @@ The pinned kernel has additionally been checked out and passed through real
 Kconfig resolution with Android Clang r416183b. After correcting DUMMY,
 STATIC_USERMODEHELPER and NLS_UTF8, both the local fragment check and the pinned
 Sailfish upstream checker pass; 47 advisory warnings remain. The exact evidence
-is recorded in `validation/kernel-config.json`. Kernel C/assembly and images
-have not been compiled.
+is recorded in `validation/kernel-config.json`. A subsequent standalone build
+compiled the ARM64 Image, DTB, DTBO and three modules and successfully applied
+the overlay at the host. Its pinned compiler/host-tool/DTC revisions and hashes
+are in `validation/kernel-build.json`; reproduction is in [KERNEL_BUILD.md](KERNEL_BUILD.md).
+This does not validate boot-image packing, Android HAL or device runtime.
 
 The top-level manifest and device-facing projects are pinned; other Android
 branch references and middleware fetched by build helpers still need a fully

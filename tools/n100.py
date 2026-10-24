@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shlex
 import shutil
 import struct
 import subprocess
@@ -95,10 +96,15 @@ def vintf_inventory(xml):
                    for interface in hal.findall("interface") for instance in interface.findall("instance")
                    if instance.text}
         for fqname in hal.findall("fqname"):
-            match=re.fullmatch(r"@(\d+\.\d+)::([^/]+)/(.+)", (fqname.text or "").strip())
+            value=(fqname.text or "").strip()
+            match=re.fullmatch(r"@(\d+\.\d+)::([^/]+)/(.+)", value)
             if match:
                 versions.add(match[1])
                 instances.add((match[2],match[3]))
+            elif hal.get("format")=="aidl":
+                match=re.fullmatch(r"([^/]+)/(.+)",value)
+                if match:
+                    instances.add((match[1],match[2]))
         transport=hal.find("transport")
         hals.append({"name":hal.findtext("name", "").strip(), "format":hal.get("format", "hidl"),
                      "transport":(transport.text or "").strip() if transport is not None else "",
@@ -123,6 +129,120 @@ def discovered_config_paths(text):
         elif re.fullmatch(r"/(?:vendor|odm|system_ext)/etc/vintf/(?:manifest/)?[A-Za-z0-9_@.+-]+\.xml",path):
             paths.add(path)
     return sorted(paths)
+
+
+def parse_android_fstab(text):
+    """Read five-column Android fstab records without selecting a boot variant."""
+    entries=[]
+    for number,line in enumerate(text.splitlines(),1):
+        try:
+            fields=shlex.split(line,comments=True)
+        except ValueError as exc:
+            raise PortError(f"Invalid fstab quoting at line {number}") from exc
+        if not fields:
+            continue
+        if len(fields)!=5:
+            raise PortError(f"Expected five fstab fields at line {number}")
+        entries.append({"source":fields[0],"target":fields[1],"filesystem":fields[2],
+                        "mount_options":fields[3].split(","),"fs_mgr_flags":fields[4].split(",")})
+    return entries
+
+
+def selinux_policy_header(data):
+    """Inspect the kernel policydb header, not CIL compatibility text."""
+    if len(data)<32:
+        raise PortError("Truncated SELinux policy header")
+    magic,length=struct.unpack_from("<II",data)
+    if magic!=0xF97CFF8C or length!=8 or data[8:16]!=b"SE Linux":
+        raise PortError("Unsupported SELinux policy format")
+    return {"identifier":"SE Linux","binary_policy_version":struct.unpack_from("<I",data,16)[0],
+            "scope":"header only; policy rules and runtime compatibility not verified"}
+
+
+def read_config_bundle(path):
+    """Validate bounded ZIP inputs against the collector inventory; never extract."""
+    try:
+        with zipfile.ZipFile(path) as archive:
+            members=archive.infolist()
+            names=[m.filename for m in members]
+            if len(names)!=len(set(names)) or len(names)>258:
+                raise PortError("Duplicate or excessive ZIP members")
+            if sum(m.file_size for m in members)>34*1024*1024 or any(m.file_size>8*1024*1024 for m in members):
+                raise PortError("Configuration bundle exceeds size limits")
+            if any((m.external_attr>>16)&0o170000==0o120000 for m in members):
+                raise PortError("Symlink ZIP members are not supported")
+            if "report.json" not in names or "inventory.json" not in names:
+                raise PortError("Missing report or inventory in configuration bundle")
+            inventory=json.loads(archive.read("inventory.json"))
+            report=json.loads(archive.read("report.json"))
+            records=inventory.get("files") if isinstance(inventory,dict) else None
+            if not isinstance(records,list) or len(records)>256:
+                raise PortError("Invalid configuration inventory")
+            if not isinstance(report,dict) or not isinstance(report.get("properties"),dict):
+                raise PortError("Invalid device report in bundle")
+            files={}
+            allowed_members={"report.json","inventory.json"}
+            seen=set()
+            for record in records:
+                if not isinstance(record,dict):
+                    raise PortError("Invalid configuration record")
+                remote=record.get("remote_path","")
+                if not isinstance(remote,str) or (remote not in POLICY_CONFIGS and remote not in discovered_config_paths(remote)):
+                    raise PortError("Unexpected configuration path in inventory")
+                if remote in seen:
+                    raise PortError("Duplicate configuration path")
+                seen.add(remote)
+                if record.get("status")=="unavailable":
+                    continue
+                if record.get("status")!="collected":
+                    raise PortError("Unknown inventory status")
+                member="files"+remote
+                if member not in names:
+                    raise PortError(f"Missing collected configuration: {remote}")
+                data=archive.read(member)
+                if len(data)!=record.get("bytes") or hashlib.sha256(data).hexdigest()!=record.get("sha256"):
+                    raise PortError(f"Configuration hash or size mismatch: {remote}")
+                files[remote]=data
+                allowed_members.add(member)
+            if set(names)!=allowed_members:
+                raise PortError("Unexpected or unlisted ZIP members")
+            return report,inventory,files
+    except (zipfile.BadZipFile,KeyError,json.JSONDecodeError) as exc:
+        raise PortError("Invalid configuration bundle") from exc
+
+
+def inspect_config_bundle(path):
+    report,inventory,files=read_config_bundle(path)
+    assessment=analyze_report(report)
+    fstabs={}
+    manifests={}
+    for name,data in sorted(files.items()):
+        if name in discovered_config_paths(name) and name.startswith("/vendor/etc/fstab"):
+            fstabs[name]=parse_android_fstab(data.decode("utf-8"))
+        elif "/vintf/" in name and name.endswith(".xml") and not name.endswith("compatibility_matrix.xml"):
+            manifests[name]=vintf_inventory(data.decode("utf-8"))
+    policy=files.get("/vendor/etc/selinux/precompiled_sepolicy")
+    return {"schema":1,"profile":assessment["profile"],"model":assessment["model"],
+            "source_compatibility":assessment["source_compatibility"],"deployable":False,
+            "inventory_records":len(inventory["files"]),"verified_files":len(files),
+            "file_sha256":{name:hashlib.sha256(data).hexdigest() for name,data in sorted(files.items())},
+            "fstab_variants":fstabs,"active_fstab_variant":None,
+            "fstab_selection_note":"Files are alternatives. Neither name nor directory listing proves which init selects.",
+            "vintf_documents":manifests,
+            "vintf_selection_note":"ODM manifest_2 and manifest_8 are alternate SKUs, not simultaneously active declarations.",
+            "selinux_policy":selinux_policy_header(policy) if policy else None,
+            "selinux_compatibility_version":files.get("/vendor/etc/selinux/plat_sepolicy_vers.txt",b"").decode().strip() or None,
+            "runtime_note":"Stock Android 11 policy and contexts must not replace policy built for an Android 13 HAL without validation."}
+
+
+def inspect_configs(args):
+    result=inspect_config_bundle(Path(args.bundle))
+    content=json.dumps(result,indent=2,ensure_ascii=False)+"\n"
+    if args.output:
+        out=write_report(args.output,content)
+        print(f"Configuration assessment saved to {out}")
+    else:
+        print(content,end="")
 
 
 def analyze_report(report, lock=None):
@@ -615,6 +735,10 @@ def main():
     p.add_argument("--serial")
     p.add_argument("--output", required=True)
     p.set_defaults(func=collect_configs)
+    p = commands.add_parser("inspect-configs", help="Verify and inspect a configuration ZIP offline")
+    p.add_argument("bundle")
+    p.add_argument("--output")
+    p.set_defaults(func=inspect_configs)
     p = commands.add_parser("check-kernel", help="Check the resolved kernel .config")
     p.add_argument("config")
     p.set_defaults(func=check_kernel)

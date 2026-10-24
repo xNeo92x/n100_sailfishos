@@ -1,0 +1,20 @@
+{
+  "clang": {
+    "repository": "LineageOS/android_prebuilts_clang_kernel_linux-x86_clang-r416183b",
+    "branch": "lineage-20.0",
+    "revision": "54220fd601050b350b2af7adc913089ebf0e7aed",
+    "directory": "kernel-clang-check"
+  },
+  "host_tools": {
+    "repository": "LineageOS/android_prebuilts_build-tools",
+    "branch": "lineage-20.0",
+    "revision": "a82c39b06eff0dc470221953f455a4e756dfe469",
+    "directory": "android-build-tools-check"
+  },
+  "dtc": {
+    "repository": "LineageOS/android_external_dtc",
+    "branch": "lineage-20.0",
+    "revision": "301cc869850c55304faa0315aea678ca9d643197",
+    "directory": "android-dtc-check"
+  }
+}

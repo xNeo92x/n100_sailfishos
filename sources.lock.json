@@ -45,6 +45,10 @@
     {
       "path": "hybris/mer-kernel-check",
       "revision": "e6b57641e65b8cd88b9daa92e668a2f389a32a4d"
+    },
+    {
+      "path": "external/dtc",
+      "revision": "301cc869850c55304faa0315aea678ca9d643197"
     }
   ],
   "packaging": [

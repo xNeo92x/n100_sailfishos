@@ -350,6 +350,19 @@ class BootTests(unittest.TestCase):
 
 
 class ManifestTests(unittest.TestCase):
+    def test_binary_build_record_and_dtc_match_current_inputs(self):
+        lock=n100.read_lock()
+        build=json.loads((ROOT/"validation/kernel-build.json").read_text())
+        pins=json.loads((ROOT/"config/kernel-build-sources.json").read_text())
+        self.assertEqual(build["tools"],pins)
+        self.assertEqual(build["kernel_revision"],next(p["revision"] for p in lock["projects"]
+                         if p["path"]=="kernel/oneplus/sm4250"))
+        self.assertEqual(pins["dtc"]["revision"],next(p["revision"] for p in lock["extensions"]
+                         if p["path"]=="external/dtc"))
+        self.assertEqual(build["fragment_sha256"],hashlib.sha256((ROOT/"kernel/sailfish.config").read_bytes()).hexdigest())
+        self.assertFalse(build["boot_tested"])
+        self.assertFalse(build["flashable_sailfish_image"])
+
     def test_manifest_matches_lock_without_path_collisions(self):
         lock = n100.read_lock()
         manifest = ET.parse(ROOT / "manifests/billie2.xml").getroot()

@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "stock11-source-candidate",
+  "stage": "kernel-built-pre-bringup",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": false,
@@ -45,12 +45,21 @@
     "main_vintf_declarations_matched": 62,
     "stock_only_main_hal": "vendor.oneplus.hardware.display",
     "stock_fstab_names_identified": true,
-    "stock_fstab_contents_collected": false,
-    "vintf_fragments_collected": false
+    "stock_fstab_contents_collected": true,
+    "vintf_fragments_collected": true,
+    "config_files_verified": 33,
+    "selinux_binary_policy_version": 30,
+    "active_fstab_variant": null
   },
   "kernel_config_resolved": true,
   "kernel_upstream_config_check_passed": true,
   "kernel_config_optional_warnings": 47,
-  "kernel_built": false,
-  "kernel_config_validation": "validation/kernel-config.json"
+  "kernel_built": true,
+  "kernel_config_validation": "validation/kernel-config.json",
+  "configuration_summary": "devices/be2013-config-summary.json",
+  "kernel_build_validation": "validation/kernel-build.json",
+  "dtb_built": true,
+  "dtbo_built": true,
+  "kernel_modules_built": 3,
+  "dtbo_host_apply_verified": true
 }

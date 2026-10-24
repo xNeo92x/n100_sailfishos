@@ -1,0 +1,72 @@
+{
+  "scope": "kernel, DTB, DTBO and modules built; not an OS/boot validation",
+  "boot_tested": false,
+  "flashable_sailfish_image": false,
+  "kernel_revision": "1eade87e4a56ffc797cb508bc7322f6783d90f67",
+  "tools": {
+    "clang": {
+      "repository": "LineageOS/android_prebuilts_clang_kernel_linux-x86_clang-r416183b",
+      "branch": "lineage-20.0",
+      "revision": "54220fd601050b350b2af7adc913089ebf0e7aed",
+      "directory": "kernel-clang-check"
+    },
+    "host_tools": {
+      "repository": "LineageOS/android_prebuilts_build-tools",
+      "branch": "lineage-20.0",
+      "revision": "a82c39b06eff0dc470221953f455a4e756dfe469",
+      "directory": "android-build-tools-check"
+    },
+    "dtc": {
+      "repository": "LineageOS/android_external_dtc",
+      "branch": "lineage-20.0",
+      "revision": "301cc869850c55304faa0315aea678ca9d643197",
+      "directory": "android-dtc-check"
+    }
+  },
+  "fragment_sha256": "289deb0c904e179ce6d7e3394b4052a6cd9df2783ba5a908a6cb6cdaade7eb23",
+  "config_sha256": "cd9ff8276638e9a435f07203b8f620f904ea29c1d0357bb0dcf86b71e2f128ab",
+  "overlay_apply_exit": 0,
+  "artifacts": [
+    {
+      "path": "arch/arm64/boot/Image",
+      "bytes": 42949120,
+      "sha256": "922ca3610034bfc4d238a4e686108413fde68d450647bea7cc2bdd4d64bc2250"
+    },
+    {
+      "path": "arch/arm64/boot/dts/vendor/billie2/bengal.dtb",
+      "bytes": 279793,
+      "sha256": "42b757cab0dd02642ab000df0cf812a3ba0ba905fd1e7689863aac574e8f3fcd"
+    },
+    {
+      "path": "arch/arm64/boot/dts/vendor/billie2/billie2-qrd-overlay.dtbo",
+      "bytes": 186299,
+      "sha256": "5d945b2dd32aa89c774f673cd775e3444d2f2f12131ab50703094147d1113951"
+    },
+    {
+      "path": "billie2-merged-check.dtb",
+      "bytes": 433050,
+      "sha256": "4446e0b22c0e71c6b5386618df573b765379b0d43590d51f801608c32814c005"
+    },
+    {
+      "path": "drivers/video/backlight/lcd.ko",
+      "bytes": 216136,
+      "sha256": "93630614831ed96c36e28cfd6d92569ca7f198c3dcbced635e1c86b722f9ece9"
+    },
+    {
+      "path": "techpack/data/drivers/rmnet/perf/rmnet_perf.ko",
+      "bytes": 1604416,
+      "sha256": "4741fb6e9fac58f434e0e756ecae83802be61a400f596976ce921cc3420aa19f"
+    },
+    {
+      "path": "techpack/data/drivers/rmnet/shs/rmnet_shs.ko",
+      "bytes": 2315952,
+      "sha256": "d43104603bac367a8a2a79105f263b7f4556e1a0e1b65443358ef8f291ad7b83"
+    }
+  ],
+  "checker_revision": "e6b57641e65b8cd88b9daa92e668a2f389a32a4d",
+  "configuration_checks": {
+    "local_fragment_passed": true,
+    "upstream_exit": 0,
+    "upstream_optional_warnings": 47
+  }
+}

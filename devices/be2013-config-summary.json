@@ -1,0 +1,394 @@
+{
+  "schema": 1,
+  "profile": "lineage20-stock11",
+  "model": "BE2013",
+  "source_compatibility": "candidate-generation-match",
+  "deployable": false,
+  "inventory_records": 33,
+  "verified_files": 33,
+  "active_fstab_variant": null,
+  "fstab_selection_note": "Files are alternatives. Neither name nor directory listing proves which init selects.",
+  "selinux_policy": {
+    "identifier": "SE Linux",
+    "binary_policy_version": 30,
+    "scope": "header only; policy rules and runtime compatibility not verified"
+  },
+  "selinux_compatibility_version": "30.0",
+  "runtime_note": "Stock Android 11 policy and contexts must not replace policy built for an Android 13 HAL without validation.",
+  "archive_sha256": "10be8ac4c7e1455d488fb9d90837e7f5607bf92b67a92f40f4c441984d81f48c",
+  "fstab_variants": {
+    "/vendor/etc/fstab.default": {
+      "logical_partitions": [
+        "system",
+        "system_ext",
+        "vendor",
+        "product"
+      ],
+      "data": [
+        {
+          "source": "/dev/block/bootdevice/by-name/userdata",
+          "target": "/data",
+          "filesystem": "f2fs",
+          "mount_options": [
+            "noatime",
+            "nosuid",
+            "nodev",
+            "discard",
+            "reserve_root=32768",
+            "resgid=1065",
+            "fsync_mode=nobarrier",
+            "inlinecrypt"
+          ],
+          "fs_mgr_flags": [
+            "latemount",
+            "wait",
+            "check",
+            "formattable",
+            "fileencryption=ice",
+            "quota",
+            "reservedsize=512M",
+            "wrappedkey",
+            "keydirectory=/metadata/vold/metadata_encryption",
+            "sysfs_path=/sys/devices/platform/soc/4804000.ufshc",
+            "checkpoint=fs"
+          ]
+        }
+      ],
+      "metadata": [
+        {
+          "source": "/dev/block/by-name/metadata",
+          "target": "/metadata",
+          "filesystem": "ext4",
+          "mount_options": [
+            "noatime",
+            "nosuid",
+            "nodev",
+            "discard",
+            "sync"
+          ],
+          "fs_mgr_flags": [
+            "wait",
+            "formattable",
+            "wrappedkey",
+            "first_stage_mount"
+          ]
+        }
+      ]
+    },
+    "/vendor/etc/fstab.emmc": {
+      "logical_partitions": [
+        "system",
+        "system_ext",
+        "vendor",
+        "product"
+      ],
+      "data": [
+        {
+          "source": "/dev/block/bootdevice/by-name/userdata",
+          "target": "/data",
+          "filesystem": "f2fs",
+          "mount_options": [
+            "noatime",
+            "nosuid",
+            "nodev",
+            "discard",
+            "reserve_root=32768",
+            "resgid=1065",
+            "fsync_mode=nobarrier",
+            "inlinecrypt"
+          ],
+          "fs_mgr_flags": [
+            "latemount",
+            "wait",
+            "check",
+            "formattable",
+            "quota",
+            "reservedsize=128M",
+            "fileencryption=aes-256-xts:aes-256-cts:v2+emmc_optimized+wrappedkey_v0",
+            "metadata_encryption=aes-256-xts:wrappedkey_v0",
+            "keydirectory=/metadata/vold/metadata_encryption",
+            "checkpoint=fs"
+          ]
+        }
+      ],
+      "metadata": [
+        {
+          "source": "/dev/block/by-name/metadata",
+          "target": "/metadata",
+          "filesystem": "ext4",
+          "mount_options": [
+            "noatime",
+            "nosuid",
+            "nodev",
+            "discard"
+          ],
+          "fs_mgr_flags": [
+            "wait",
+            "check",
+            "formattable",
+            "first_stage_mount"
+          ]
+        }
+      ]
+    },
+    "/vendor/etc/fstab_nodata.qcom": {
+      "logical_partitions": [
+        "system",
+        "vendor",
+        "product"
+      ],
+      "data": [
+        {
+          "source": "tmpfs",
+          "target": "/data",
+          "filesystem": "tmpfs",
+          "mount_options": [
+            "defaults"
+          ],
+          "fs_mgr_flags": [
+            "defaults"
+          ]
+        }
+      ],
+      "metadata": [
+        {
+          "source": "/dev/block/by-name/metadata",
+          "target": "/metadata",
+          "filesystem": "ext4",
+          "mount_options": [
+            "noatime",
+            "nosuid",
+            "nodev",
+            "discard"
+          ],
+          "fs_mgr_flags": [
+            "wait",
+            "formattable",
+            "wrappedkey",
+            "first_stage_mount"
+          ]
+        }
+      ]
+    }
+  },
+  "interfaces": {
+    "android.hardware.radio": [
+      {
+        "document": "/odm/etc/vintf/manifest_2.xml",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.2",
+          "1.4"
+        ],
+        "instances": [
+          {
+            "interface": "IRadio",
+            "instance": "slot1"
+          },
+          {
+            "interface": "IRadio",
+            "instance": "slot2"
+          },
+          {
+            "interface": "ISap",
+            "instance": "slot1"
+          },
+          {
+            "interface": "ISap",
+            "instance": "slot2"
+          }
+        ]
+      },
+      {
+        "document": "/odm/etc/vintf/manifest_8.xml",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.2",
+          "1.4"
+        ],
+        "instances": [
+          {
+            "interface": "IRadio",
+            "instance": "slot1"
+          },
+          {
+            "interface": "ISap",
+            "instance": "slot1"
+          }
+        ]
+      }
+    ],
+    "android.hardware.biometrics.fingerprint": [
+      {
+        "document": "/vendor/etc/vintf/manifest/android.hardware.biometrics.fingerprint@2.1-service.xml",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.1"
+        ],
+        "instances": [
+          {
+            "interface": "IBiometricsFingerprint",
+            "instance": "default"
+          }
+        ]
+      }
+    ],
+    "android.hardware.gnss": [
+      {
+        "document": "/vendor/etc/vintf/manifest/android.hardware.gnss@2.1-service-qti.xml",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.1",
+          "2.1"
+        ],
+        "instances": [
+          {
+            "interface": "IGnss",
+            "instance": "default"
+          }
+        ]
+      },
+      {
+        "document": "/vendor/etc/vintf/manifest/vendor.qti.gnss@4.0-service.xml",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.0"
+        ],
+        "instances": [
+          {
+            "interface": "IGnss",
+            "instance": "gnss_vendor"
+          }
+        ]
+      }
+    ],
+    "android.hardware.graphics.mapper": [
+      {
+        "document": "/vendor/etc/vintf/manifest/android.hardware.graphics.mapper-impl-qti-display.xml",
+        "format": "hidl",
+        "transport": "passthrough",
+        "transport_arch": "32+64",
+        "versions": [
+          "3.0",
+          "4.0"
+        ],
+        "instances": [
+          {
+            "interface": "IMapper",
+            "instance": "default"
+          }
+        ]
+      }
+    ],
+    "android.hardware.sensors": [
+      {
+        "document": "/vendor/etc/vintf/manifest/android.hardware.sensors@2.0-multihal.xml",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.0"
+        ],
+        "instances": [
+          {
+            "interface": "ISensors",
+            "instance": "default"
+          }
+        ]
+      }
+    ],
+    "android.hardware.wifi": [
+      {
+        "document": "/vendor/etc/vintf/manifest/android.hardware.wifi@1.0-service.xml",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "1.4"
+        ],
+        "instances": [
+          {
+            "interface": "IWifi",
+            "instance": "default"
+          }
+        ]
+      }
+    ],
+    "android.hardware.power": [
+      {
+        "document": "/vendor/etc/vintf/manifest/power.xml",
+        "format": "aidl",
+        "transport": "",
+        "transport_arch": "",
+        "versions": [],
+        "instances": [
+          {
+            "interface": "IPower",
+            "instance": "default"
+          }
+        ]
+      }
+    ],
+    "android.hardware.graphics.allocator": [
+      {
+        "document": "/vendor/etc/vintf/manifest/vendor.qti.hardware.display.allocator-service.xml",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "3.0",
+          "4.0"
+        ],
+        "instances": [
+          {
+            "interface": "IAllocator",
+            "instance": "default"
+          }
+        ]
+      }
+    ],
+    "android.hardware.graphics.composer": [
+      {
+        "document": "/vendor/etc/vintf/manifest/vendor.qti.hardware.display.composer-service.xml",
+        "format": "hidl",
+        "transport": "hwbinder",
+        "transport_arch": "",
+        "versions": [
+          "2.4"
+        ],
+        "instances": [
+          {
+            "interface": "IComposer",
+            "instance": "default"
+          }
+        ]
+      }
+    ],
+    "android.hardware.vibrator": [
+      {
+        "document": "/vendor/etc/vintf/manifest/vendor.qti.hardware.vibrator.service.xml",
+        "format": "aidl",
+        "transport": "",
+        "transport_arch": "",
+        "versions": [],
+        "instances": [
+          {
+            "interface": "IVibrator",
+            "instance": "default"
+          }
+        ]
+      }
+    ]
+  },
+  "odm_variant_selection": "unknown; manifest_2 has two radio slots and manifest_8 one; directory presence does not select a variant"
+}

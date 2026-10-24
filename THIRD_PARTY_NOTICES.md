@@ -18,6 +18,10 @@ Jolla-licensed binary products are included in this repository.
   GPL-2.0 kernel, derived from the manufacturer's sources.
   `kernel/sailfish.config` contains initial configuration selections;
   the resulting kernel/config remains subject to the kernel's licensing.
+- `tests/fixtures/fstab.default`, `fstab.emmc` and `fstab_nodata.qcom` were
+  collected from the supplied BE2013 stock configuration archive. They carry
+  The Linux Foundation's BSD redistribution conditions, retained in full in
+  each file; they are not covered by the MIT license for new project tools.
 - The Android device tree is obtained separately from LineageOS
   and retains its Apache-2.0 and per-file notices. None of its source notices
   are removed by the setup tool.
