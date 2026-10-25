@@ -1,8 +1,12 @@
 # Auf dem CachyOS-PC zum Image
 
 Ziel sind ein passendes `hybris-boot.img` und ein `userdata.img` mit dem gebauten
-Sailfish-System. Der Kernel ist gebaut. **HAL, RPM-Pakete und Rootfs sind noch
-nicht gebaut; deshalb gibt es derzeit kein freigegebenes Installationsimage.**
+Sailfish-System. **Kernel und Android-HAL sind auf dem CachyOS-Buildhost erfolgreich
+gebaut; RPM-Pakete und Sailfish-Rootfs fehlen noch.** Der gemeldete HAL-Build vom
+25. Oktober 2026 erzeugte ein strukturell geprüftes `hybris-boot.img` mit
+45.064.192 Byte. [Buildnachweis](../validation/hal-build-user-20261025.json).
+Die Binärdatei wurde nicht hochgeladen; ihre Startfähigkeit ist noch ungetestet.
+Es gibt derzeit kein freigegebenes Installationsimage.
 Der folgende Ablauf bereitet diese Builds auf deinem PC vor. Die beiden SDKs
 bleiben erforderlich; native Arch-Bibliotheken ersetzen sie nicht.
 
@@ -158,8 +162,8 @@ bash "$N100_PORT/tools/build-hal.sh"
 ```
 
 Kein erneutes Patchen oder `repo sync` ist dafür nötig. Die Korrektur behebt
-den nachgewiesenen Konfigurationsabbruch; ein vollständiger HAL-Build wurde
-damit noch nicht nachgewiesen.
+den nachgewiesenen Konfigurationsabbruch. Der spätere erfolgreiche HAL-Build
+ist im Buildnachweis am Anfang dieser Anleitung dokumentiert.
 
 ### Chromium-WebView-Link nach Upstream-Umbenennung
 
@@ -182,8 +186,8 @@ Zum Fortsetzen die Port-Werkzeuge wie im Fortsetzungsblock oben mit
 `build-hal.sh` erneut ausführen. Kein erneutes Patchen oder vollständiger
 `repo sync` ist nötig. Ein späterer Sync kann den alten Manifest-Link erneut
 erzeugen; die Prüfung vor jedem Build behandelt auch diesen Fall.
-Die Änderung repariert die Eingabestruktur; ein vollständiger HAL-Build und
-ein Geräteboot sind damit noch nicht bestätigt.
+Die Änderung repariert die Eingabestruktur. Der HAL-Build ist inzwischen
+abgeschlossen; der Geräteboot bleibt ungetestet.
 
 ### Fehlende Produktmodule SimpleSettingsConfig und apns-conf.xml
 
@@ -226,8 +230,8 @@ Ein erneuter vollständiger Sync oder eine erneute Patch-Anwendung ist unnötig.
 
 Neue Quellinitialisierungen nehmen dieses Zusatzmanifest bereits vor dem ersten
 Sync auf. Der HAL-Build prüft, dass Manifest und beide Commit-Stände vorliegen.
-Das behebt die nachgewiesenen fehlenden Produktmodule; vollständiger HAL-Build,
-Mobilfunkfunktion und Geräteboot müssen weiterhin validiert werden.
+Das behebt die nachgewiesenen fehlenden Produktmodule. Der HAL-Build ist
+inzwischen abgeschlossen; Mobilfunkfunktion und Geräteboot bleiben ungetestet.
 
 ### Fehlendes ccache und billie2-Mountpoint-Fixup
 
@@ -266,10 +270,27 @@ Android-Nutzerdaten nicht und implementiert keine dynamischen HAL-Mounts.
 
 Die ebenfalls protokollierten doppelten Installationsregeln für Fingerabdruck,
 Display und weitere Vendor-Dateien sind noch zu prüfen. Sie werden nicht als
-behoben oder als Laufzeitkompatibilitätsnachweis gewertet. Der vollständige
-HAL-Build und ein Geräteboot sind weiter offen.
+behoben oder als Laufzeitkompatibilitätsnachweis gewertet. Der HAL-Build ist
+inzwischen abgeschlossen; ein Geräteboot steht noch aus.
 
 ## 4. RPMs und Rootfs bauen — PLATFORM_SDK
+
+Nach erfolgreichem HAL-Build das Ubuntu-Chroot mit genau einmal `exit`
+verlassen. Zurück im Platform SDK zuerst Umgebung und vorhandene Build-Tools
+prüfen:
+
+```bash
+source "$HOME/n100-build/build.env"
+cat /etc/os-release
+sdk-assistant list
+```
+
+Hier muss Sailfish OS erscheinen. Benötigt werden ein Tooling
+`SailfishOS-VERSION` und das Gerätetarget `oneplus-billie2-aarch64`.
+Bereits vorhandene passende Build-Tools weiterverwenden. Andernfalls zuerst
+Tooling und Target nach Abschnitt 2 installieren und die tatsächliche Version
+ermitteln. Die Version des Platform-Chroots allein belegt kein installiertes
+Gerätetarget.
 
 `RELEASE` muss der wirklich installierten Target-Version entsprechen:
 

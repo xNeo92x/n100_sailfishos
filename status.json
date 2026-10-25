@@ -1,10 +1,10 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "kernel-built-pre-bringup",
+  "stage": "hal-built-pre-bringup",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
-  "hal_built": false,
+  "hal_built": true,
   "rpm_built": false,
   "rootfs_built": false,
   "boot_tested": false,
@@ -79,7 +79,7 @@
     "user_raw_reference_pin_differences": 43,
     "complete_vendor_source_verified": true,
     "vendor_source_validation": "validation/vendor-source.json",
-    "vendor_installed_on_user_build_host": false,
+    "vendor_installed_on_user_build_host": true,
     "observed_host": {
       "architecture": "x86_64",
       "free_gib": 1401.7,
@@ -88,5 +88,6 @@
       "filesystem": "btrfs",
       "host_prerequisites_passed": true
     }
-  }
+  },
+  "hal_build_validation": "validation/hal-build-user-20261025.json"
 }

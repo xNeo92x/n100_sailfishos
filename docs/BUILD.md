@@ -1,6 +1,8 @@
 # Build workflow — Android 13 HAL / Android 11 firmware / aarch64
 
-Status: **commands and integration prepared; no full build executed**.
+Status: **Android HAL build completed on the user's build host; RPMs and Sailfish rootfs remain unbuilt**.
+See [the user-reported HAL build evidence](../validation/hal-build-user-20261025.json).
+The boot image passed structural checks; it has not been boot-tested.
 No Sailfish release has been certified for this device. The locked upstream
 packaging revisions are a starting point, not a tested release combination.
 Keep logs of the first real build and fix failures before proceeding to hardware.
@@ -161,8 +163,11 @@ A standalone resolution of the pinned kernel config has now succeeded, including
 the local fragment check and upstream checker with zero fatal errors and 47
 advisories. See [KERNEL_CONFIG_VALIDATION.md](KERNEL_CONFIG_VALIDATION.md) for exact
 scope, hashes and reproduction. A subsequent standalone kernel/DTB/DTBO/module
-build also succeeded; see [KERNEL_BUILD.md](KERNEL_BUILD.md). Android HAL, RPMs,
-rootfs and a boot image remain unbuilt.
+build also succeeded; see [KERNEL_BUILD.md](KERNEL_BUILD.md). The subsequent
+Android HAL build completed on the user's host and reported a structurally valid
+45,064,192-byte hybris boot image; see
+[HAL build evidence](../validation/hal-build-user-20261025.json). RPMs and the
+Sailfish rootfs remain unbuilt.
 The HAL wrapper repeats both checks against the final Android-built configuration.
 
 Output is expected in `out/target/product/billie2/`, including `hybris-boot.img`,

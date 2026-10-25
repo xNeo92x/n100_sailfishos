@@ -1,7 +1,7 @@
 # Sailfish OS für das OnePlus Nord N100 (`billie2`)
 
-**Experimenteller Portierungsstart / pre-bringup. Es gibt noch kein gebautes,
-bootgetestetes oder installierbares Sailfish-Image aus diesem Projekt.**
+**Experimenteller Port / pre-bringup. Android-HAL und `hybris-boot.img` sind
+gebaut. Sailfish-Rootfs und ein geprüftes Installationsimage fehlen noch.**
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,
@@ -56,7 +56,8 @@ Die frühere Android-10-Basis passt nicht zur installierten Firmware und wurde
 durch den neueren Entwicklungskandidaten ersetzt. Der offizielle LineageOS-20-
 Gerätebaum verwendet Android-11-Stock-Blobs; die EEA-Version und deren Fixups
 müssen noch geprüft werden. **Ein Android-Downgrade ist für diesen Ansatz nicht
-vorgesehen.** Er ist noch nicht gebaut oder als startfähig bestätigt.
+vorgesehen.** Der HAL-Build ist inzwischen erfolgreich abgeschlossen; ein Start
+auf dem Gerät ist noch nicht bestätigt.
 Details stehen in [docs/DEVICE_BE2013.md](docs/DEVICE_BE2013.md).
 
 ## Enthalten
@@ -68,6 +69,8 @@ Details stehen in [docs/DEVICE_BE2013.md](docs/DEVICE_BE2013.md).
 - Erste RPM-Definitionen für `droid-hal-billie2`, `droid-config-billie2` und
   `droid-hal-version-billie2`, Paketgruppen und SELinux-Konfiguration.
 - HAL-/RPM-/Rootfs-Buildhelfer für die offiziellen HADK-Umgebungen.
+- Erfolgreicher Android-HAL-Build auf dem CachyOS-Buildhost und strukturell
+  geprüftes `hybris-boot.img`; [gemeldeter Buildnachweis](validation/hal-build-user-20261025.json).
 - Auslesen der Gerätebasis über ADB, Kernel-Konfigurationsprüfung und Prüfung
   von Android-Bootimages mit Header v2.
 - Host-Tests und GitHub-Actions-Validierung.
@@ -157,8 +160,8 @@ Build-Kapazität**, besser 250–300 GiB, sowie 16 GiB RAM sind eine sinnvolle
 Planungsgröße. CachyOS kann der Host sein; Android und RPM werden in den
 getrennten HADK-Umgebungen gebaut.
 
-**Noch offene Arbeit:** vollständiger Build, verifizierte Firmwarebasis,
-Integration des gebauten Kernels in das Bootimage, Einrichtung der dynamischen Partitionen für den frühen
+**Noch offene Arbeit:** RPM-/Middleware-/Rootfs-Build, verifizierte Firmwarebasis,
+Vergleich des gebauten Bootimages mit dem Stock-Image, Einrichtung der dynamischen Partitionen für den frühen
 Boot, funktionierender Zugriff auf `/data`, Rootfs-Integration sowie Tests auf
 dem echten Gerät. Es gibt deshalb kein Flash-Skript und keine Download-Datei,
 die als fertiger Port ausgegeben wird. Das Bootloader-Entsperren löscht die
@@ -178,8 +181,9 @@ Experimental Sailfish OS adaptation work for the OnePlus Nord N100 (`billie2`),
 using an Android 13 / hybris-20.0 HAL build base with Android 11 stock firmware
 as a candidate baseline. The first BE2013 report confirms Android 11, bengal,
 locked bootloader, dynamic partitions and encrypted F2FS userdata.
-**No HAL/RPM/rootfs build or hardware boot
-has been validated. This is not an installable release.** The repository provides
+**The user reports a completed Android HAL build and a structurally valid boot
+image. RPM/rootfs builds and hardware boot remain unvalidated. This is not an
+installable release.** The repository provides
 pinned sources, initial device/kernel/RPM integration, build helpers and read-only
 device diagnostics. Dynamic-partition mounting and access to Android-encrypted
 userdata remain critical bring-up work. The standalone kernel, DTB, DTBO and three

@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "device": "billie2",
+  "model": "BE2013",
+  "evidence_kind": "User-supplied terminal output from the build host",
+  "port_commit_at_build": "721e19546bb3652549606d3a046da63cb46456bc",
+  "build_command": "bash \"$N100_PORT/tools/build-hal.sh\"",
+  "result": "completed",
+  "ninja_reported_duration_seconds": 532,
+  "kernel_fragment_check": "passed",
+  "upstream_kernel_check": {
+    "fatal_errors_reported": 0,
+    "warnings_present": true,
+    "raw_warning_log_uploaded": false
+  },
+  "boot_image": {
+    "path": "out/target/product/billie2/hybris-boot.img",
+    "header_version": 2,
+    "page_size": 4096,
+    "bytes": 45064192,
+    "kernel_bytes": 42947072,
+    "ramdisk_bytes": 1824474,
+    "dtb_bytes": 279793,
+    "cmdline": "earlycon=msm_geni_serial,0x4a90000 androidboot.hardware=qcom androidboot.memcg=1 lpm_levels.sleep_disabled=1 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=2048 loop.max_part=7 selinux=1 androidboot.selinux=permissive",
+    "assessment": "structural-check-only-not-boot-validation",
+    "sha256": null
+  },
+  "artifacts_uploaded_or_independently_inspected": false,
+  "resolved_manifest_path": "n100-build-logs/resolved-manifest.xml",
+  "resolved_manifest_uploaded": false,
+  "rpm_built": false,
+  "rootfs_built": false,
+  "boot_tested": false,
+  "flashable_release": false,
+  "next_stage": "Configure Platform SDK tooling and oneplus-billie2-aarch64 target, then build RPMs and Sailfish rootfs"
+}
