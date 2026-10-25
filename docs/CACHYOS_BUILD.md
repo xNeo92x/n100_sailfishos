@@ -411,6 +411,38 @@ dynamischen HAL-Mounts und der udev-Konvertierung in
 [BRINGUP.md](BRINGUP.md) offen. Ein erfolgreicher RPM-Build ist kein
 Nachweis dieser Laufzeitfunktionen.
 
+### Ungepackte Android-Root-Symlinks im HAL-RPM
+
+Der nächste Build erreichte nach der Mountpoint-Korrektur die RPM-Dateiprüfung.
+Der fatale Fehler waren genau vier mitkopierte Android-Root-Symlinks:
+
+| Pfad | Gemeldetes Linkziel |
+| --- | --- |
+| `/bugreports` | `/data/user_de/0/com.android.shell/files/bugreports` |
+| `/cache` | `/data/cache` |
+| `/d` | `/sys/kernel/debug` |
+| `/sdcard` | `/storage/self/primary` |
+
+Das Geräte-Spec nutzt jetzt den vorhandenen Upstream-Hook
+`custom_install_cmds`, um ausschließlich diese vier bekannten Links aus dem
+RPM-Buildroot zu entfernen. Der Helfer prüft zuerst alle Linktypen und Ziele.
+Bei abweichenden Dateien oder Zielen bricht er ab, ohne zuvor Links zu löschen.
+Er folgt keinen Linkzielen und verändert weder Android-Buildausgaben noch
+Telefondateien. Eine erneute Ausführung auf dem bereinigten Buildroot ist erlaubt.
+Die RPM-Prüfung auf ungepackte Dateien bleibt eingeschaltet.
+
+`n100.py prepare-rpm-spec` aktualisiert den bestehenden, eigenen RPM-Snapshot
+vor dem Build. Er akzeptiert nur den exakt geprüften alten Spec-Stand
+`b6184db55338fa680556ad2a4db65a30b33d15d5` mit passendem Snapshot-Marker
+oder den bereits unverändert installierten neuen Stand. Lokale Änderungen
+werden nicht überschrieben. Der `rpm/dhd`-Checkout und sein Mountpoint-Fixup
+bleiben erhalten. Neu vorbereitete Bäume enthalten den Hook bereits.
+
+Die absoluten Symlinks für die APEX-Linker und die udev-Regel wurden im Log
+als Warnungen gemeldet; sie bleiben erhalten. Ihre Laufzeitfunktion ist
+weiter Teil der Boot-/APEX-Integration. Mit dem üblichen Aktualisierungsblock
+und `build-packages.sh hal` fortsetzen; die Snapshot-Anpassung läuft automatisch.
+
 Das Ergebnis des letzten Schritts ist ein `sfe-billie2-*.tar.bz2`. Die
 Paketauflösung und weitere Middleware-Anpassungen sind noch nicht erprobt.
 Das Rootfs muss bereits die billie2-Anpassung und die AArch64-Laufzeit enthalten;
