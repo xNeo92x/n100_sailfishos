@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "device": "billie2",
+  "failure_port_commit": "8e8893044058b7b35c3b84d93e45c4ee5f32efee",
+  "observed_failure": "Please build droidmedia as per HADK instructions; Failed to pack_source_droidmedia-localbuild.sh",
+  "cause": "The HAL wrapper requested hybris-hal without the separate Android droidmedia target. The pinned packer could not find libdroidmedia.so in system/lib64 or system/lib.",
+  "pinned_packaging_revision": "775f6c05123ca7e58422df1fcfd51943eb56920f",
+  "pinned_hybris_boot_revision": "6547fd1c3aeb9c987271a01b298d2ae5d39be231",
+  "fix": {
+    "default_android_targets": [
+      "hybris-hal",
+      "droidmedia"
+    ],
+    "existing_tree_recovery": "build-hal.sh media inside Ubuntu HABUILD_SDK; then build-packages.sh media inside Platform SDK",
+    "prepack_validation": "All four outputs must have AArch64 ELF64 headers; no binary substitution or packer bypass."
+  },
+  "validation": {
+    "targeted_host_tests": 10,
+    "shell_syntax": "passed",
+    "real_android_droidmedia_build": false,
+    "media_rpm_built": false,
+    "boot_tested": false
+  }
+}

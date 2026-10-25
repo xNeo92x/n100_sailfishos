@@ -522,19 +522,59 @@ beruht auf der Terminalausgabe; Paketlogs, RPMs und tatsächlich verwendete
 Middleware-Revisionen wurden nicht übermittelt. Der Build belegt noch keine
 Grafik- oder Audiofunktion auf dem Gerät.
 
-Im selben **Platform SDK** jetzt die Medienpakete bauen:
+Vor dem Medien-RPM müssen die Android-Medienbibliotheken gebaut sein.
+Der frühere HAL-Helfer rief nur `mka hybris-hal` auf. Mit diesem Stand konnte
+der RPM-Packer `libdroidmedia.so` noch nicht finden und brach mit
+`Please build droidmedia as per HADK instructions` ab.
+Die offizielle [HADK-Buildfolge](https://docs.sailfishos.org/Develop/HADK/)
+baut dafür zusätzlich das eigenständige Ziel `droidmedia`.
+
+`build-hal.sh` baut jetzt standardmäßig `hybris-hal droidmedia`.
+Für einen bereits erfolgreich gebauten HAL reicht der neue Modus `media`.
+Er wählt denselben Gerätebaum und baut ausschließlich `droidmedia`.
+Die Prüfung vor dem RPM-Packer verlangt alle vier benötigten Dateien mit
+AArch64-ELF64-Headern: `libdroidmedia.so`, `libminisf.so`,
+`minimediaservice` und `minisfservice`. Dies ist eine Strukturprüfung, kein
+Funktionsnachweis. Abweichende oder teilweise fehlende Ausgaben stoppen den
+RPM-Schritt, bevor der ältere Packer Dateien kopiert.
+
+Im vorhandenen **Platform SDK** zuerst aktualisieren und das Ubuntu-Chroot betreten:
+
+```bash
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+/usr/bin/ubu-chroot -r "$PLATFORM_SDK_ROOT/sdks/ubuntu"
+```
+
+Erst am neuen Prompt **im Ubuntu-Chroot** ausführen:
 
 ```bash
 (
 set -e
 source "$HOME/n100-build/build.env"
-git -C "$N100_PORT" pull --ff-only
+export PATH="$HOME/.local/bin:$PATH"
+bash "$N100_PORT/tools/build-hal.sh" media
+)
+```
+
+Das Android-Buildlog liegt unter
+`$ANDROID_ROOT/n100-build-logs/droidmedia.log`. Bei einem Fehler im
+Ubuntu-Chroot bleiben und diesen Buildfehler zuerst beheben.
+Nur nach erfolgreichem Abschluss das Ubuntu-Chroot mit genau einmal `exit`
+verlassen und **zurück im Platform SDK** fortsetzen:
+
+```bash
+(
+set -e
 source "$HOME/n100-build/build.env"
 export RELEASE=5.1.0.11
 bash "$N100_PORT/tools/build-packages.sh" media
 )
 ```
 
+Ein neuer Sync, erneutes Anwenden der Hybris-Patches oder Wiederholen der
+bereits erfolgreichen HAL-/Config-/Middleware-RPMs ist für diesen Schritt
+nicht erforderlich.
 Die aktuellen Paketgruppen verlangen `gstreamer1.0-droid`, daher bereitet der
 Upstream-Helfer `droidmedia-localbuild` aus `external/droidmedia` vor und baut
 dessen RPM. Das Log liegt unter

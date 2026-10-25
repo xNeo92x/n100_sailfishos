@@ -26,7 +26,9 @@ case "${1:-}" in
         exec bash rpm/dhd/helpers/build_packages.sh -d ;;
     configs) exec bash rpm/dhd/helpers/build_packages.sh -c ;;
     middleware) exec bash rpm/dhd/helpers/build_packages.sh -m ;;
-    media) exec bash rpm/dhd/helpers/build_packages.sh -g ;;
+    media)
+        python3 "$port_dir/tools/check-droidmedia.py" --android-root "$ANDROID_ROOT"
+        exec bash rpm/dhd/helpers/build_packages.sh -g ;;
     version) exec bash rpm/dhd/helpers/build_packages.sh -v ;;
     rootfs)
         command -v mic >/dev/null

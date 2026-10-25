@@ -3,6 +3,15 @@
 set -eo pipefail
 port_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 source "$port_dir/config/port.env"
+mode=${1:-all}
+if [[ $# -gt 1 || ( "$mode" != all && "$mode" != media ) ]]; then
+    echo 'Usage: build-hal.sh [all|media]' >&2
+    exit 2
+fi
+if [[ "$mode" == media && "${MERSDKUBU:-}" != 1 ]]; then
+    echo 'Enter the Ubuntu HABUILD_SDK with ubu-chroot before building droidmedia.' >&2
+    exit 1
+fi
 : "${ANDROID_ROOT:?Set ANDROID_ROOT to the prepared Android tree}"
 cd "$ANDROID_ROOT"
 python3 "$port_dir/tools/n100.py" verify-tree --android-root "$ANDROID_ROOT"
@@ -36,9 +45,20 @@ if [[ -n "${CCACHE_EXEC:-}" && -n "${USE_CCACHE:-}" && "${USE_CCACHE:-}" != fals
     fi
 fi
 breakfast billie2
-mka hybris-hal 2>&1 | tee n100-build-logs/hybris-hal.log
-python3 "$port_dir/tools/n100.py" check-kernel out/target/product/billie2/obj/KERNEL_OBJ/.config
-perl hybris/mer-kernel-check/mer_verify_kernel_config out/target/product/billie2/obj/KERNEL_OBJ/.config 2>&1 | tee n100-build-logs/kernel-config-check.log
-python3 "$port_dir/tools/n100.py" inspect-boot out/target/product/billie2/hybris-boot.img
+if [[ "$mode" == media ]]; then
+    mka droidmedia 2>&1 | tee n100-build-logs/droidmedia.log
+else
+    mka hybris-hal droidmedia 2>&1 | tee n100-build-logs/hybris-hal.log
+fi
+python3 "$port_dir/tools/check-droidmedia.py" --android-root "$ANDROID_ROOT"
+if [[ "$mode" == all ]]; then
+    python3 "$port_dir/tools/n100.py" check-kernel out/target/product/billie2/obj/KERNEL_OBJ/.config
+    perl hybris/mer-kernel-check/mer_verify_kernel_config out/target/product/billie2/obj/KERNEL_OBJ/.config 2>&1 | tee n100-build-logs/kernel-config-check.log
+    python3 "$port_dir/tools/n100.py" inspect-boot out/target/product/billie2/hybris-boot.img
+fi
 repo manifest -r > n100-build-logs/resolved-manifest.xml
-echo 'HAL build finished. RPM, middleware, rootfs and hardware bring-up remain separate stages.'
+if [[ "$mode" == media ]]; then
+    echo 'Android droidmedia build finished. Return to Platform SDK and run build-packages.sh media.'
+else
+    echo 'HAL and Android droidmedia builds finished. RPM, middleware, rootfs and hardware bring-up remain separate stages.'
+fi

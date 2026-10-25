@@ -1,6 +1,7 @@
 # Build workflow — Android 13 HAL / Android 11 firmware / aarch64
 
-Status: **Android HAL build completed on the user's build host; RPMs and Sailfish rootfs remain unbuilt**.
+Status: **Android HAL, HAL/config RPMs and five middleware packages built on the user's host;
+Android droidmedia, media/version RPMs and Sailfish rootfs remain unfinished**.
 See [the user-reported HAL build evidence](../validation/hal-build-user-20261025.json).
 The boot image passed structural checks; it has not been boot-tested.
 No Sailfish release has been certified for this device. The locked upstream
@@ -146,7 +147,7 @@ bash "$N100_PORT/tools/build-hal.sh"
 This uses the saved `N100_DEVICE_REPORT` to generate a reviewed local physical
 mountpoint override with `n100.py prepare-boot`. Existing custom overrides are
 not overwritten. It checks the configured ccache executable, sources the Android
-environment, selects `billie2`, runs `mka hybris-hal` and checks
+environment, selects `billie2`, runs `mka hybris-hal droidmedia` and checks
 the final `.config` and `hybris-boot.img`. If the kernel build uses a different
 object directory, supply its final `.config` explicitly:
 
@@ -166,8 +167,8 @@ scope, hashes and reproduction. A subsequent standalone kernel/DTB/DTBO/module
 build also succeeded; see [KERNEL_BUILD.md](KERNEL_BUILD.md). The subsequent
 Android HAL build completed on the user's host and reported a structurally valid
 45,064,192-byte hybris boot image; see
-[HAL build evidence](../validation/hal-build-user-20261025.json). RPMs and the
-Sailfish rootfs remain unbuilt.
+[HAL build evidence](../validation/hal-build-user-20261025.json). HAL/config RPMs and five middleware packages subsequently built successfully;
+media/version RPMs and the Sailfish rootfs remain unfinished.
 The HAL wrapper repeats both checks against the final Android-built configuration.
 
 Output is expected in `out/target/product/billie2/`, including `hybris-boot.img`,
@@ -182,6 +183,24 @@ ODM mapper entry, while Lineage's build introduces an ODM image; do not mount an
 assumed stock `odm_b`. The stock kernel is 4.19.152, whereas the pinned Lineage
 kernel source identifies itself as 4.19.325. Rebuild compatible modules; never
 reuse stock kernel modules based solely on the shared 4.19 major/minor version.
+
+### Android media outputs before RPM packaging
+
+The `droidmedia` Android target is separate from `hybris-hal`. It must be
+built in HABUILD_SDK before `build-packages.sh media` packages its binaries
+in PLATFORM_SDK. The default HAL wrapper now includes both targets.
+To complete an existing HAL tree without requesting `hybris-hal` again,
+enter the Ubuntu build chroot, source the same build environment, and run:
+
+```bash
+bash "$N100_PORT/tools/build-hal.sh" media
+```
+
+This mode requires `MERSDKUBU=1`, keeps its log in
+`n100-build-logs/droidmedia.log`, and verifies all four required AArch64
+ELF64 output headers. The RPM media stage repeats this check before the
+legacy packer. See [the CachyOS recovery steps](CACHYOS_BUILD.md) for
+entering and leaving the nested Ubuntu environment.
 
 ## 5. RPMs and middleware (PLATFORM_SDK)
 
