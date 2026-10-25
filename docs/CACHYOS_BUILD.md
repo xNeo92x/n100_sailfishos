@@ -2,8 +2,8 @@
 
 Ziel sind ein passendes `hybris-boot.img` und ein `userdata.img` mit dem gebauten
 Sailfish-System. **Kernel und Android-HAL sind auf dem CachyOS-Buildhost erfolgreich
-gebaut; auch der HAL-RPM-Build ist abgeschlossen. Config-, Middleware-, Media-
-und Versionspakete sowie Sailfish-Rootfs fehlen noch.** Der gemeldete HAL-Build vom
+gebaut; auch HAL-RPM und Gerätekonfigurationspakete sind fertig. Middleware-,
+Media- und Versionspakete sowie Sailfish-Rootfs fehlen noch.** Der gemeldete HAL-Build vom
 25. Oktober 2026 erzeugte ein strukturell geprüftes `hybris-boot.img` mit
 45.064.192 Byte. [Buildnachweis](../validation/hal-build-user-20261025.json).
 Die Binärdatei wurde nicht hochgeladen; ihre Startfähigkeit ist noch ungetestet.
@@ -473,6 +473,44 @@ Konfigurationslog liegt unter `$ANDROID_ROOT/hybris/droid-configs.log`.
 Danach folgen `middleware`, `media`, `version` und zuletzt `rootfs`.
 Ein erneuter Android-HAL- oder HAL-RPM-Build ist für diesen Übergang nicht nötig.
 Geräteboot und Image-Kompatibilität sind weiterhin ungeprüft.
+
+### Nach erfolgreicher Gerätekonfiguration: Middleware bauen
+
+Mit Port-Commit `52a2dc6` wurden zwölf Gerätekonfigurations-RPMs geschrieben
+und `Jolla-@RELEASE@-billie2-@ARCH@.ks` erzeugt. Die Terminalausgabe bestätigt
+auch den erfolgreichen Community-Adaptation-Build und die Installation von
+`droid-config-billie2-bluez5` im SDK-Target. Das hochgeladene
+`droid-configs.log` endet mit erfolgreicher Bereinigung; der
+[Buildnachweis](../validation/configs-rpm-build-user-20261025.json) hält
+Log-Hash, Paketnamen und verbleibende Warnungen fest.
+
+Die fehlenden geräteeigenen Keymap-/Attachment-Overrides brachen den Build
+nicht ab: Upstream-Standarddateien wurden zuvor installiert. Doppelte
+Dateilisteneinträge und absolute Symlinks sind als Warnungen protokolliert.
+Der Paketbau bestätigt ihre Funktion auf dem Telefon noch nicht.
+
+Im selben **Platform SDK** fortsetzen:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+source "$HOME/n100-build/build.env"
+export RELEASE=5.1.0.11
+bash "$N100_PORT/tools/build-packages.sh" middleware
+)
+```
+
+Bei `Build …? [Y/n/all]` mit `a` bestätigen, um alle Middleware-Pakete
+dieses Schritts zu bauen. Der Upstream-Helfer nutzt vorhandene Quellen unter
+`external` und lädt fehlende Middleware-Quellen nach. Deren tatsächliche
+Revisionen und Build-Kompatibilität sind beim ersten Lauf noch zu erfassen.
+Logs liegen für vorhandene externe Quellen unter
+`$ANDROID_ROOT/external/PAKETNAME.log`, sonst unter
+`$ANDROID_ROOT/hybris/mw/PAKETNAME.log`. Bei einem Abbruch das zuletzt
+genannte Paketlog zusammen mit der Terminalausgabe prüfen.
+Nach erfolgreicher Middleware folgen `media`, `version` und `rootfs`.
 
 Das Ergebnis des Rootfs-Schritts ist ein `sfe-billie2-*.tar.bz2`. Die
 Paketauflösung und weitere Middleware-Anpassungen sind noch nicht erprobt.
