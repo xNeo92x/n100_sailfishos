@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "source": "User-provided terminal transcript after first physical debug boot attempt",
+  "fastboot_guard": {
+    "passed": true,
+    "product": "bengal",
+    "unlocked": "yes",
+    "current_slot": "b",
+    "is_userspace": "no",
+    "dtbo_b_bytes": 25165824,
+    "boot_b_bytes": 100663296,
+    "max_download_bytes": 804280320
+  },
+  "writes": {
+    "dtbo_b": {
+      "send": "OKAY",
+      "write": "OKAY",
+      "kilobytes": 24576
+    },
+    "boot_image": {
+      "transfer": "OKAY",
+      "boot_command": "OKAY",
+      "kilobytes": 44008,
+      "temporary": true
+    }
+  },
+  "post_attempt_observation": {
+    "host_net_interface": "enp16s0u10",
+    "host_link_state": "UNKNOWN",
+    "host_interface_ip_addresses": [],
+    "usb_id": "18d1:d001",
+    "lsusb_database_label": "Google Inc. Nexus 4 (fastboot)",
+    "id_matches_debug_gadget_source": true,
+    "interface_usb_binding_independently_confirmed": false
+  },
+  "interpretation": "USB network interface and matching gadget VID/PID are consistent with early kernel/initramfs progress. The lsusb database label alone is not proof of fastboot mode. Shell connection and kernel logs are still required.",
+  "device_boot_test_attempted": true,
+  "bootloader_accepted_temporary_boot": true,
+  "kernel_execution_verified": false,
+  "debug_shell_verified": false,
+  "full_sailfish_boot_verified": false,
+  "restore_procedure_device_tested": false,
+  "stock_dtbo_restoration_reported": false,
+  "flashable_release": false,
+  "next": "Configure host USB interface temporarily as 192.168.2.14/24 and try Telnet 192.168.2.15:23. Obtain uname, cmdline, mounts and init log."
+}

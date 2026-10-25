@@ -2,8 +2,8 @@
 
 **Experimenteller Port / pre-bringup. Android-HAL, alle fünf RPM-Stufen und ein
 Sailfish-OS-5.1.0.11-Rootfs sind gebaut. `userdata.img` (8 GiB) und
-`hybris-boot.img` wurden erzeugt; ext4-Prüfung erfolgreich. Der Geräteboot
-steht noch aus.**
+`hybris-boot.img` wurden erzeugt; ext4-Prüfung erfolgreich. Der erste Debug-Bootauftrag wurde angenommen; ein USB-Netzinterface ist
+sichtbar. Debug-Shell und vollständiger Sailfish-Start sind noch unbestätigt.**
 
 Die Boot-Prüfung fand eine Inkompatibilität des Stock-DTBO mit dem gebauten
 Basis-DTB. Für den frühen USB-Debugstart wurden Init und Decoderanforderungen
@@ -15,7 +15,7 @@ Weiter geht es mit dem [ersten Geräteversuch](docs/FIRST_DEVICE_TEST.md).
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,
 LineageOS 20) und **Stock-Android-11-Firmware als Kandidat**.
-Boot, Display, WLAN und Telefonie sind **ungetestet**. Der präzise Status steht
+Der vollständige Sailfish-Start, Display, WLAN und Telefonie sind **unbestätigt**. Der präzise Status steht
 in [status.json](status.json). Grüne Host-Tests belegen ausschließlich die
 Funktion der Portierungswerkzeuge.
 

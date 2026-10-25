@@ -1,9 +1,11 @@
 # Hardware bring-up and current blockers
 
 This is a development checklist, not an installation guide. No command here
-authorizes or automates partition writes. The generated image has passed a host ext4 check; no on-device boot has been tested.
+authorizes or automates partition writes. The generated image has passed a host ext4 check; a first physical debug boot was attempted; the shell and full Sailfish boot remain unverified.
 
-The latest user observation confirms an unlocked bootloader and active slot B.
+The latest user observation confirms an unlocked bootloader, active slot B,
+successful DTBO write and accepted temporary boot. A USB net interface is visible;
+continue with [USB_DEBUG_SHELL.md](USB_DEBUG_SHELL.md).
 The exact debug/DTBO candidate, verified stock rollback file preparation and
 explicit first-test commands are in [FIRST_DEVICE_TEST.md](FIRST_DEVICE_TEST.md).
 
@@ -69,7 +71,8 @@ The complete new binaries were not uploaded for independent inspection.
 See [the build assessment](../validation/debug-image-build-user-20261025.json),
 [EARLY_USB_DEBUG.md](EARLY_USB_DEBUG.md) and the concrete
 [first device test plan](FIRST_DEVICE_TEST.md). No further rebuild is required
-for this candidate. No phone boot or restoration procedure has been tested.
+for this candidate. The first physical debug attempt has since been accepted by the bootloader;
+USB enumeration is observed, while shell access and restoration remain unverified.
 
 ## 3. Dynamic partitions and Android userspace — unresolved
 
@@ -123,7 +126,7 @@ script without a `data_subdir` override. `tools/make-userdata-image.py` populate
 it with `mke2fs -d` and checks it with `e2fsck`. The first real 8 GiB Sailfish userdata image has now been generated on the user's
 CachyOS host and passed e2fsck. The uploaded manifest and reported checks are
 recorded in [the image build evidence](../validation/image-build-user-20261025.json).
-The binary images were not uploaded for independent inspection; device boot remains untested.
+The binary images were not uploaded for independent inspection; full rootfs boot remains untested.
 
 A future deployment to userdata replaces Android user data, rather than decrypting
 or migrating it. The tool performs no device writes. Physical partition capacities were subsequently verified and the image sizes fit.
@@ -236,8 +239,8 @@ partition; the combined experiment therefore includes a persistent change.
 
 Only after validating the boot header, storage access and recovery path should
 an experienced porter attempt a temporary boot of the generated debugging image,
-if the actual bootloader supports it. `fastboot boot` support has not been checked
-for this handset. No fallback flash is prescribed here. Keep both A/B slots and
+if the actual bootloader supports it. The bootloader has now accepted the first `fastboot boot` command;
+this does not yet verify shell access or a full OS boot. No fallback flash is prescribed here. Keep both A/B slots and
 the original DTBO/vbmeta/boot files documented; never relock the bootloader on
 unverified custom images.
 

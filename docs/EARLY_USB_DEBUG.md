@@ -3,7 +3,9 @@
 Das separate USB-Debug-Image ist auf dem Buildhost erfolgreich erstellt.
 Der [Packerbericht](../validation/debug-image-report-user-20261025.json) bestätigt
 die Debug-Sperre vor jedem automatischen Mount von `/data` und die geprüften
-DTB/DTBO-Inhalte. Ein Geräteboot ist ungetestet. Weiter geht es mit dem
+DTB/DTBO-Inhalte. Der erste physische Debug-Bootauftrag wurde inzwischen
+angenommen; ein USB-Netzinterface ist sichtbar. Shell und vollständiger
+Sailfish-Start sind noch unbestätigt. Weiter geht es mit dem
 [ersten Geräteversuch](FIRST_DEVICE_TEST.md).
 
 ## Ergebnisse der echten Boot-Prüfung
@@ -142,11 +144,13 @@ bei Bedarf unter `$ANDROID_ROOT/n100-build-logs/boot-debug.log`.
 Der neue Gerätebefund bestätigt den entsperrten Bootloader und aktiven Slot B.
 Die Testdateien, der DTBO-Rückweg und die konkreten Schritte stehen jetzt in
 [FIRST_DEVICE_TEST.md](FIRST_DEVICE_TEST.md). Der Build selbst führt keine
-Telefonbefehle aus; der erste Kernelstart und die physische Wiederherstellung
-sind noch ungetestet.
+Telefonbefehle aus; die Ausführung des Kernels muss noch über die
+Shell bestätigt werden. Die physische Wiederherstellung ist ungetestet.
 Die Standardadresse der frühen USB-Shell ist `192.168.2.15`, Telnet-Port 23;
 die tatsächliche USB-Enumeration muss erst auf dem Handy geprüft werden.
 
 Das Debug-Image dient dem Kernel-/USB-Test. Es löst weder die dynamischen
-Android-HAL-Mounts noch den normalen Sailfish-Start. Deshalb bleiben
-`boot_tested` und `flashable_release` weiterhin `false`.
+Android-HAL-Mounts noch den normalen Sailfish-Start. `boot_tested` erfasst jetzt den durchgeführten physischen Debug-Versuch und
+steht auf `true`; es bedeutet keinen erfolgreichen Sailfish-Start.
+`debug_boot.debug_shell_verified` und `flashable_release` bleiben `false`.
+Weiter mit [USB_DEBUG_SHELL.md](USB_DEBUG_SHELL.md).
