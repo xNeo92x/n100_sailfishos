@@ -96,6 +96,52 @@ Erstelle zuerst das Tooling und dann das Gerätetarget
 prüfen und als `RELEASE` setzen. Für dieses Gerät ist noch keine Version
 durch einen vollständigen Build bestätigt; `latest` ist keine Release-Freigabe.
 
+### Konkrete Einrichtung für Sailfish OS 5.1.0.11
+
+Auf dem Buildhost ist das Platform SDK 5.1.0.11 vorhanden. Die beiden
+versionsgebundenen Archive unten waren am 25. Oktober 2026 über HTTPS mit
+HTTP 200 erreichbar. `sdk-assistant list` war vor dieser Einrichtung leer.
+
+Im **Platform SDK** zuerst Tooling und danach das aarch64-Gerätetarget anlegen:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+sudo zypper install kmod createrepo_c
+sdk-assistant create SailfishOS-5.1.0.11 \
+  https://releases.sailfishos.org/sdk/targets/Sailfish_OS-5.1.0.11-Sailfish_SDK_Tooling-i486.tar.7z
+sdk-assistant create oneplus-billie2-aarch64 \
+  https://releases.sailfishos.org/sdk/targets/Sailfish_OS-5.1.0.11-Sailfish_SDK_Target-aarch64.tar.7z \
+  --tooling SailfishOS-5.1.0.11
+sdk-assistant list
+)
+```
+
+Rückfragen zum Anlegen mit `y` bestätigen. Bereits erfolgreich angelegte
+Einträge nicht erneut anlegen. Falls nur das zweite Anlegen fehlschlägt, zuerst
+den konkreten Fehler beheben und anschließend nur diesen Target-Schritt
+wiederholen. Die Tooling-Zuordnung wird ausdrücklich angegeben; der generische
+Targetname aus der SDK-Dokumentation wird durch den HADK-Gerätenamen ersetzt.
+Das i486-Tooling läuft auf dem Buildhost, das aarch64-Target stellt die
+Zielumgebung für die N100-Pakete bereit.
+
+Nach erfolgreicher Einrichtung und abgeschlossenem HAL-Build zunächst die
+Droid-HAL-RPMs bauen:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+export RELEASE=5.1.0.11
+bash "$N100_PORT/tools/build-packages.sh" hal
+)
+```
+
+Damit beginnt die erste Paket-/Target-Validierung dieser Kombination. Den
+weiteren Config-/Middleware-/Rootfs-Build erst nach erfolgreichem HAL-RPM-Build
+fortsetzen. `RELEASE` in jeder neuen Paket-Build-Shell erneut setzen.
+
 Die erzeugte `~/n100-build/build.env` in **jeder** SDK-Shell laden:
 
 ```bash
