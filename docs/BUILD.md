@@ -133,12 +133,15 @@ projects without preserving the patch state. Use `repo forall -c 'git status
 
 ## 4. Kernel and HAL (HABUILD_SDK)
 
+`config/port.env` unsets the obsolete `TEMPORARY_DISABLE_PATH_RESTRICTIONS`
+switch, including values inherited from an older shell. Android 13 aborts when
+this variable is true. Keep the normal Android PATH restrictions enabled.
+
 ```bash
 bash "$N100_PORT/tools/build-hal.sh"
 ```
 
-This sources the Android environment, selects `billie2`, exports
-`TEMPORARY_DISABLE_PATH_RESTRICTIONS=true`, runs `mka hybris-hal` and checks
+This sources the Android environment, selects `billie2`, runs `mka hybris-hal` and checks
 the final `.config` and `hybris-boot.img`. If the kernel build uses a different
 object directory, supply its final `.config` explicitly:
 

@@ -134,6 +134,32 @@ prüft die Kernelkonfiguration und die Struktur des Bootimages. Ein Android-13-
 Build kann gegenüber dem alten Focal-Chroot weitere Build-Abhängigkeiten
 benötigen; die erste vollständige Kombination ist noch zu validieren.
 
+### Nach Abbruch wegen des veralteten PATH-Schalters fortsetzen
+
+Die Meldung `TEMPORARY_DISABLE_PATH_RESTRICTIONS was a temporary migration
+method, and is now obsolete.` ist unter Android 13 ein fataler Buildfehler.
+Eine ältere Port-Konfiguration setzte diesen Schalter noch auf `true`.
+Die korrigierte `config/port.env` entfernt ihn auch aus geerbten Umgebungen.
+
+Wenn Vorbereitung, Vendor-Installation und Hybris-Patches bereits erfolgreich
+waren und `.n100-hybris-patches-applied` geschrieben wurde, im Ubuntu-Chroot
+nur die Port-Werkzeuge aktualisieren und den Build fortsetzen:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+source "$HOME/n100-build/build.env"
+export PATH="$HOME/.local/bin:$PATH"
+bash "$N100_PORT/tools/build-hal.sh"
+)
+```
+
+Kein erneutes Patchen oder `repo sync` ist dafür nötig. Die Korrektur behebt
+den nachgewiesenen Konfigurationsabbruch; ein vollständiger HAL-Build wurde
+damit noch nicht nachgewiesen.
+
 ## 4. RPMs und Rootfs bauen — PLATFORM_SDK
 
 `RELEASE` muss der wirklich installierten Target-Version entsprechen:
