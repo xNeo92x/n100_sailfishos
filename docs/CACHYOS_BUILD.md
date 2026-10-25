@@ -2,7 +2,7 @@
 
 Ziel sind ein passendes `hybris-boot.img` und ein `userdata.img` mit dem gebauten
 Sailfish-System. **Kernel und Android-HAL sind auf dem CachyOS-Buildhost erfolgreich
-gebaut; auch HAL-RPM und Gerätekonfigurationspakete sind fertig. Middleware-,
+gebaut; HAL-RPM, Gerätekonfiguration und fünf Middleware-Pakete sind fertig.
 Media- und Versionspakete sowie Sailfish-Rootfs fehlen noch.** Der gemeldete HAL-Build vom
 25. Oktober 2026 erzeugte ein strukturell geprüftes `hybris-boot.img` mit
 45.064.192 Byte. [Buildnachweis](../validation/hal-build-user-20261025.json).
@@ -511,6 +511,38 @@ Logs liegen für vorhandene externe Quellen unter
 `$ANDROID_ROOT/hybris/mw/PAKETNAME.log`. Bei einem Abbruch das zuletzt
 genannte Paketlog zusammen mit der Terminalausgabe prüfen.
 Nach erfolgreicher Middleware folgen `media`, `version` und `rootfs`.
+
+### Nach erfolgreicher Middleware: Medienpakete bauen
+
+Mit Port-Commit `b78de82` meldete der Buildhost den erfolgreichen Build von
+`libhybris`, `pulseaudio-modules-droid`, `pulseaudio-modules-droid-hidl`,
+`mce-plugin-libhybris` und `qt5-qpa-hwcomposer-plugin`.
+Der [Buildnachweis](../validation/middleware-rpm-build-user-20261025.json)
+beruht auf der Terminalausgabe; Paketlogs, RPMs und tatsächlich verwendete
+Middleware-Revisionen wurden nicht übermittelt. Der Build belegt noch keine
+Grafik- oder Audiofunktion auf dem Gerät.
+
+Im selben **Platform SDK** jetzt die Medienpakete bauen:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+source "$HOME/n100-build/build.env"
+export RELEASE=5.1.0.11
+bash "$N100_PORT/tools/build-packages.sh" media
+)
+```
+
+Die aktuellen Paketgruppen verlangen `gstreamer1.0-droid`, daher bereitet der
+Upstream-Helfer `droidmedia-localbuild` aus `external/droidmedia` vor und baut
+dessen RPM. Das Log liegt unter
+`$ANDROID_ROOT/hybris/mw/droidmedia-localbuild.log`.
+Da `pulseaudio-modules-droid-hidl` gewählt ist, überspringt er anschließend
+`audioflingerglue` und `pulseaudio-modules-droid-glue`; diese Meldung ist
+für diese Paketwahl vorgesehen. Nach erfolgreichem Medien-Build folgen
+`version` und zuletzt `rootfs`.
 
 Das Ergebnis des Rootfs-Schritts ist ein `sfe-billie2-*.tar.bz2`. Die
 Paketauflösung und weitere Middleware-Anpassungen sind noch nicht erprobt.

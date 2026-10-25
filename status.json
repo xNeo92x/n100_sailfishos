@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "hal-and-config-rpms-built-pre-bringup",
+  "stage": "middleware-rpms-built-pre-bringup",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -95,9 +95,10 @@
   "rpm_build_components": {
     "hal": true,
     "configs": true,
-    "middleware": false,
+    "middleware": true,
     "media": false,
     "version": false
   },
-  "configs_rpm_build_validation": "validation/configs-rpm-build-user-20261025.json"
+  "configs_rpm_build_validation": "validation/configs-rpm-build-user-20261025.json",
+  "middleware_rpm_build_validation": "validation/middleware-rpm-build-user-20261025.json"
 }

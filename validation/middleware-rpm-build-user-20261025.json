@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "device": "billie2",
+  "model": "BE2013",
+  "evidence_kind": "User-supplied terminal output from the build host",
+  "port_commit_at_build": "b78de82ee62ed8540c15cf87ad10d098a726d86a",
+  "build_command": "bash \"$N100_PORT/tools/build-packages.sh\" middleware",
+  "sailfish_release": "5.1.0.11",
+  "target": "oneplus-billie2-aarch64",
+  "result": "completed",
+  "reported_successful_packages": [
+    "libhybris",
+    "pulseaudio-modules-droid",
+    "pulseaudio-modules-droid-hidl",
+    "mce-plugin-libhybris",
+    "qt5-qpa-hwcomposer-plugin"
+  ],
+  "source_revisions_reported": false,
+  "raw_package_logs_uploaded": false,
+  "artifacts_uploaded_or_independently_inspected": false,
+  "rpm_built": false,
+  "remaining_rpm_stages": [
+    "media",
+    "version"
+  ],
+  "rootfs_built": false,
+  "boot_tested": false,
+  "flashable_release": false,
+  "next_stage": "Build droidmedia-localbuild inside the existing Platform SDK using build-packages.sh media"
+}
