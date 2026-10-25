@@ -1,0 +1,98 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "source": "User-provided ICMP, Telnet, procfs and init-log terminal output",
+  "milestone": "First confirmed kernel execution and early hybris initramfs USB shell on BE2013",
+  "ping": {
+    "host_interface": "enp16s0u10",
+    "host_address": "192.168.2.14",
+    "target": "192.168.2.15",
+    "sent": 3,
+    "received": 3,
+    "loss_percent": 0,
+    "rtt_ms": {
+      "min": 0.2,
+      "average": 0.303,
+      "max": 0.443
+    }
+  },
+  "telnet": {
+    "address": "192.168.2.15",
+    "port": 23,
+    "connected": true,
+    "banner": "Welcome to the Mer/SailfishOS Boat loader debug init system.",
+    "shell_prompt": "~ #",
+    "process": "telnetd -b 192.168.2.15:23 -l /bin/sh"
+  },
+  "cmdline_observed_subset": {
+    "n100_debug": "1",
+    "androidboot.hardware": "qcom",
+    "androidboot.slot_suffix": "_b",
+    "androidboot.verifiedbootstate": "orange",
+    "androidboot.vbmeta.device_state": "unlocked",
+    "androidboot.veritymode": "enforcing",
+    "androidboot.vbmeta.invalidate_on_error": "yes",
+    "androidboot.project_codename": "billie2",
+    "androidboot.platform_name": "SM4250",
+    "pcb_board_id": "eu",
+    "androidboot.dtb_idx": "0",
+    "androidboot.dtbo_idx": "0",
+    "androidboot.mode": "fastboot",
+    "selinux": "1",
+    "androidboot.selinux": "permissive",
+    "init": "/init",
+    "msm_drm.dsi_display0": "qcom,mdss_dsi_ili9882n_90hz_video:"
+  },
+  "mounts": [
+    {
+      "source": "rootfs",
+      "target": "/",
+      "type": "rootfs"
+    },
+    {
+      "source": "devtmpfs",
+      "target": "/dev",
+      "type": "devtmpfs"
+    },
+    {
+      "source": "devpts",
+      "target": "/dev/pts",
+      "type": "devpts"
+    },
+    {
+      "source": "sysfs",
+      "target": "/sys",
+      "type": "sysfs"
+    },
+    {
+      "source": "proc",
+      "target": "/proc",
+      "type": "proc"
+    },
+    {
+      "source": "none",
+      "target": "/config",
+      "type": "configfs"
+    }
+  ],
+  "init_log": {
+    "busybox_version": "1.36.1",
+    "udhcpd_running": true,
+    "telnetd_listening": true,
+    "inject_loop_waiting": true,
+    "nonfatal_diagnostic_error": "ps -ef is unsupported by this BusyBox; subsequent netstat, mounts and inject_loop ran."
+  },
+  "kernel_execution_verified": true,
+  "early_debug_shell_verified": true,
+  "userdata_mounted": false,
+  "rootfs_switch_root_performed": false,
+  "full_sailfish_boot_verified": false,
+  "physical_storage_access_verified": false,
+  "runtime_kernel_version": null,
+  "uname_note": "The submitted command was Quname -a and failed. Actual uname output is still needed.",
+  "stock_dtbo_restoration_reported": false,
+  "restore_procedure_device_tested": false,
+  "flashable_release": false,
+  "scope": "Confirms kernel/initramfs/RNDIS/Telnet for this temporary boot plus matching DTBO. It does not validate full firmware/HAL compatibility, display, storage mappings or rootfs boot.",
+  "next": "Read kernel version, partition inventory, supported filesystems, target sysfs labels and storage-related dmesg in the existing Telnet shell."
+}

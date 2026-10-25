@@ -1,11 +1,13 @@
 # Hardware bring-up and current blockers
 
 This is a development checklist, not an installation guide. No command here
-authorizes or automates partition writes. The generated image has passed a host ext4 check; a first physical debug boot was attempted; the shell and full Sailfish boot remain unverified.
+authorizes or automates partition writes. The generated image has passed a host ext4 check; the first physical debug boot reached the hybris initramfs shell over USB.
+Full rootfs/HAL boot remains untested.
 
 The latest user observation confirms an unlocked bootloader, active slot B,
-successful DTBO write and accepted temporary boot. A USB net interface is visible;
-continue with [USB_DEBUG_SHELL.md](USB_DEBUG_SHELL.md).
+successful DTBO write and accepted temporary boot. USB ICMP and Telnet now work in the early initramfs. The mount list confirms
+that userdata has not been mounted. Continue with the storage inventory in
+[USB_DEBUG_SHELL.md](USB_DEBUG_SHELL.md).
 The exact debug/DTBO candidate, verified stock rollback file preparation and
 explicit first-test commands are in [FIRST_DEVICE_TEST.md](FIRST_DEVICE_TEST.md).
 
@@ -71,8 +73,9 @@ The complete new binaries were not uploaded for independent inspection.
 See [the build assessment](../validation/debug-image-build-user-20261025.json),
 [EARLY_USB_DEBUG.md](EARLY_USB_DEBUG.md) and the concrete
 [first device test plan](FIRST_DEVICE_TEST.md). No further rebuild is required
-for this candidate. The first physical debug attempt has since been accepted by the bootloader;
-USB enumeration is observed, while shell access and restoration remain unverified.
+for this candidate. The first physical debug attempt has since reached the early USB shell.
+Kernel execution, n100_debug=1, ICMP and Telnet are confirmed. Restoration,
+storage mapping and full Sailfish boot remain unverified.
 
 ## 3. Dynamic partitions and Android userspace — unresolved
 
@@ -239,8 +242,8 @@ partition; the combined experiment therefore includes a persistent change.
 
 Only after validating the boot header, storage access and recovery path should
 an experienced porter attempt a temporary boot of the generated debugging image,
-if the actual bootloader supports it. The bootloader has now accepted the first `fastboot boot` command;
-this does not yet verify shell access or a full OS boot. No fallback flash is prescribed here. Keep both A/B slots and
+if the actual bootloader supports it. The first temporary boot now reaches the early hybris USB shell.
+This verifies kernel/initramfs execution; it does not verify a full OS boot. No fallback flash is prescribed here. Keep both A/B slots and
 the original DTBO/vbmeta/boot files documented; never relock the bootloader on
 unverified custom images.
 
@@ -258,7 +261,7 @@ Useful first logs: `/init.log`, `/diagnosis.log`, `/proc/cmdline`, `dmesg`,
 
 | Stage | Evidence needed | Initial state |
 | --- | --- | --- |
-| Initramfs | Kernel alive, storage and USB debug shell | Untested |
+| Initramfs | Kernel alive, storage and USB debug shell | Kernel + USB shell verified; storage pending |
 | Rootfs | Successful switch-root, systemd, journal | Untested |
 | Android HAL | servicemanager/hwservicemanager/vendor services running | Untested |
 | Graphics | HWC2 + Adreno EGL, simple Qt surface, Lipstick | Untested |

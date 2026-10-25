@@ -2,8 +2,8 @@
 
 Der Debug-Build ist abgeschlossen. Der Benutzer hat die Datensicherung und den
 Factory Reset bestätigt; der neue [Gerätebefund](../validation/unlock-state-user-20261025.json)
-meldet `unlocked: yes` und Slot `b`. Der erste temporäre Debug-Bootauftrag wurde angenommen und ein USB-Netzinterface
-beobachtet. Weiter mit [USB_DEBUG_SHELL.md](USB_DEBUG_SHELL.md); die Testblöcke
+meldet `unlocked: yes` und Slot `b`. Der erste temporäre Debugstart hat die frühe USB-Shell erreicht;
+Ping, Telnet und n100_debug=1 sind bestätigt. Weiter mit [USB_DEBUG_SHELL.md](USB_DEBUG_SHELL.md); die Testblöcke
 unten sind die dokumentierte Wiederholungsanleitung. Kein weiterer Build ist für diesen Kandidaten erforderlich.
 
 ## Testumfang und feste Dateien

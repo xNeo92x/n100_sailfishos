@@ -2,15 +2,18 @@
 
 **Experimenteller Port / pre-bringup. Android-HAL, alle fünf RPM-Stufen und ein
 Sailfish-OS-5.1.0.11-Rootfs sind gebaut. `userdata.img` (8 GiB) und
-`hybris-boot.img` wurden erzeugt; ext4-Prüfung erfolgreich. Der erste Debug-Bootauftrag wurde angenommen; ein USB-Netzinterface ist
-sichtbar. Debug-Shell und vollständiger Sailfish-Start sind noch unbestätigt.**
+`hybris-boot.img` wurden erzeugt; ext4-Prüfung erfolgreich. Der Kernel und die frühe Initramfs laufen auf dem N100;
+USB-Ping und Telnet-Debug-Shell sind bestätigt. Der vollständige Sailfish-Start
+steht noch aus.**
 
 Die Boot-Prüfung fand eine Inkompatibilität des Stock-DTBO mit dem gebauten
 Basis-DTB. Für den frühen USB-Debugstart wurden Init und Decoderanforderungen
 angepasst; der neue Kernel und das separate Debug-Image sind erfolgreich gebaut.
 Die Init-Sperre vor dem Userdata-Mount und die geprüften Gerätebaum-Inhalte sind
 im [Buildbericht](validation/debug-image-build-user-20261025.json) festgehalten.
-Weiter geht es mit dem [ersten Geräteversuch](docs/FIRST_DEVICE_TEST.md).
+Der [erste Geräteversuch](docs/FIRST_DEVICE_TEST.md) hat die frühe
+[USB-Debug-Shell](docs/USB_DEBUG_SHELL.md) erreicht. Als Nächstes werden
+Speicherzugriff und der Rootfs-Start vorbereitet.
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,
@@ -65,7 +68,7 @@ Die frühere Android-10-Basis passt nicht zur installierten Firmware und wurde
 durch den neueren Entwicklungskandidaten ersetzt. Der offizielle LineageOS-20-
 Gerätebaum verwendet Android-11-Stock-Blobs; die EEA-Version und deren Fixups
 müssen noch geprüft werden. **Ein Android-Downgrade ist für diesen Ansatz nicht
-vorgesehen.** Der HAL-Build ist inzwischen erfolgreich abgeschlossen; ein Start
+vorgesehen.** Der HAL-Build ist inzwischen erfolgreich abgeschlossen; der vollständige Sailfish-Start
 auf dem Gerät ist noch nicht bestätigt.
 Details stehen in [docs/DEVICE_BE2013.md](docs/DEVICE_BE2013.md).
 
@@ -183,10 +186,11 @@ Build-Kapazität**, besser 250–300 GiB, sowie 16 GiB RAM sind eine sinnvolle
 Planungsgröße. CachyOS kann der Host sein; Android und RPM werden in den
 getrennten HADK-Umgebungen gebaut.
 
-**Noch offene Arbeit:** verifizierte Firmwarebasis,
-Vergleich des gebauten Bootimages mit dem Stock-Image, Einrichtung der dynamischen Partitionen für den frühen
-Boot, funktionierender Zugriff auf `/data`, Rootfs-Integration sowie Tests auf
-dem echten Gerät. Es gibt deshalb kein Flash-Skript und keine Download-Datei,
+**Noch offene Arbeit:** vollständige Firmware-/HAL-Kompatibilität,
+Einrichtung der dynamischen Android-Partitionen, funktionierender Zugriff auf
+`/data`, Rootfs-Integration und weitere Hardwaretests. Der erste Kernel-/Initramfs-
+Start mit USB-Debug-Shell ist am Gerät bestätigt; Stock-DTBO-Restore und der
+vollständige Sailfish-Start bleiben offen. Es gibt deshalb kein Flash-Skript und keine Download-Datei,
 die als fertiger Port ausgegeben wird. Das Bootloader-Entsperren löscht die
 Nutzerdaten; Partitionen sollten erst nach vollständiger Sicherung und mit
 bekanntem Wiederherstellungsweg verändert werden.
@@ -209,8 +213,9 @@ image, followed by successful HAL and device configuration RPM builds for
 Sailfish OS 5.1.0.11. Five middleware packages and the media RPM also built successfully.
 The version RPM and the device-specific Sailfish rootfs also built successfully.
 The 8 GiB userdata image was created and passed e2fsck on the build host.
-Hardware boot remains unvalidated. This is not an
-installable release.** The repository provides
+The kernel and early hybris initramfs now run on the N100; USB ICMP and the
+Telnet debug shell are confirmed, with no userdata mounted. Full Sailfish boot
+and hardware services remain unvalidated. This is not an installable release.** The repository provides
 pinned sources, initial device/kernel/RPM integration, build helpers and read-only
 device diagnostics. Dynamic-partition mounting and access to Android-encrypted
 userdata remain critical bring-up work. The standalone kernel, DTB, DTBO and three

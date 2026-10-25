@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "debug-boot-attempted-usb-interface-observed",
+  "stage": "early-usb-debug-shell-working",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -10,7 +10,7 @@
   "boot_tested": true,
   "flashable_release": false,
   "hardware": {
-    "usb_network": "USB net interface observed after debug boot; N100 interface binding, IP reachability and shell pending",
+    "usb_network": "working in early initramfs: ICMP 3/3 and Telnet 192.168.2.15:23; full-runtime stability untested",
     "display": "untested",
     "touchscreen": "untested",
     "gpu": "untested",
@@ -142,7 +142,8 @@
     "confirmation_date": "2026-10-25",
     "unlock_completed": true,
     "active_slot_after_unlock": "b",
-    "dtbo_b_state": "Reviewed built DTBO flashed for debug attempt; stock restoration not yet reported"
+    "dtbo_b_state": "Reviewed built DTBO flashed for debug attempt; stock restoration not yet reported",
+    "built_dtbo_early_kernel_boot_verified": true
   },
   "firmware_identity_validation": "validation/firmware-identity-user-20261025.json",
   "stock_firmware_source_validation": "validation/stock-firmware-source-20261025.json",
@@ -173,10 +174,15 @@
     "validation": "validation/debug-image-build-user-20261025.json",
     "bootloader_accepted_temporary_boot": true,
     "dtbo_b_flash_reported_successful": true,
-    "debug_shell_verified": false,
-    "kernel_execution_verified": false,
+    "debug_shell_verified": true,
+    "kernel_execution_verified": true,
     "usb_network_interface_observed": "enp16s0u10",
-    "device_attempt_validation": "validation/first-debug-boot-user-20261025.json"
+    "device_attempt_validation": "validation/first-debug-boot-user-20261025.json",
+    "kernel_cmdline_debug_flag_verified": true,
+    "userdata_mount_absent_verified": true,
+    "usb_interface_binding_confirmed": true,
+    "runtime_kernel_version": null,
+    "shell_validation": "validation/early-debug-shell-user-20261025.json"
   },
   "current_kernel_build_validation": "validation/debug-kernel-build-user-20261025.json",
   "dtbo_content_guard_validation": "validation/dtbo-content-guard.json",
@@ -184,7 +190,8 @@
   "first_device_test_plan": "docs/FIRST_DEVICE_TEST.md",
   "bootloader_unlock_validation": "validation/unlock-state-user-20261025.json",
   "first_test_preparation_validation": "validation/first-device-test-preparation.json",
-  "boot_test_scope": "First physical early-debug boot attempt; bootloader accepted it. Debug shell and full Sailfish boot remain unverified.",
+  "boot_test_scope": "Kernel and early hybris initramfs execute on the N100; USB ICMP and Telnet shell verified. Full Sailfish/rootfs boot remains untested.",
   "device_boot_attempt_validation": "validation/first-debug-boot-user-20261025.json",
-  "rootfs_boot_tested": false
+  "rootfs_boot_tested": false,
+  "early_debug_shell_validation": "validation/early-debug-shell-user-20261025.json"
 }

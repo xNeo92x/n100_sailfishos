@@ -1,16 +1,56 @@
-# N100: frühe USB-Debug-Shell verbinden
+# N100: frühe USB-Debug-Shell
 
-Der erste physische Test hat `dtbo_b` erfolgreich beschrieben und der
-Bootloader hat den temporären Bootauftrag angenommen. Danach zeigte der Host
-das USB-Netzinterface `enp16s0u10` ohne IP-Adresse sowie USB-ID `18d1:d001`.
-[Gerätebefund](../validation/first-debug-boot-user-20261025.json).
+Der erste physische Debugstart ist bestätigt: USB-Ping hat 3/3 Antworten geliefert,
+Telnet auf `192.168.2.15:23` öffnet die Hybris-Initramfs-Shell, und
+`/proc/cmdline` enthält `n100_debug=1`. Die sechs Einträge aus
+`/proc/mounts` zeigen nur Rootfs, devtmpfs, devpts, sysfs, proc und configfs;
+Userdata und Sailfish-Rootfs sind nicht gemountet.
+[Gerätenachweis](../validation/early-debug-shell-user-20261025.json).
 
-Das ist mit dem frühen Debug-Gadget vereinbar. Die Zuordnung des Interfaces
-zum N100 und die Ausführung des Kernels sind noch nicht durch Shell-/Kernel-Logs
-bestätigt. Der Text „Nexus 4 (fastboot)“ aus der lokalen USB-ID-Datenbank ist
-allein kein Nachweis für Bootloader-Fastboot: Unser
-[Configfs-Skript](../adaptation/initramfs/usb-configfs.sh) verwendet dieselbe
-VID/PID-Kombination ausdrücklich für RNDIS.
+Die genaue Kernelversion fehlt noch, weil der erste Befehl als `Quname -a`
+ankam. Der Fehler von `ps -ef` betrifft eine nicht unterstützte BusyBox-Option;
+anschließend liefen netstat, Mount-Ausgabe und die wartende Init-Schleife weiter.
+
+Die USB-ID `18d1:d001` wird von unserem
+[Configfs-Skript](../adaptation/initramfs/usb-configfs.sh) für RNDIS verwendet.
+Die lokale lsusb-Bezeichnung „Nexus 4 (fastboot)“ bezeichnet hier nicht den
+tatsächlich laufenden Modus; die erreichte Shell belegt die Kernel-/Initramfs-Ausführung.
+
+## Nächster Schritt: Speicherinventur in der bestehenden Telnet-Shell
+
+In der bereits geöffneten Shell **auf dem N100**:
+
+```sh
+uname -a
+cat /proc/partitions
+cat /proc/filesystems
+ls -l /dev/sda10 /dev/sda15 /dev/sda16
+
+for n in sda10 sda15 sda16; do
+    echo "=== $n ==="
+    grep -E '^(DEVNAME|PARTNAME)=' "/sys/class/block/$n/uevent"
+done
+
+dmesg | grep -Ei 'ufs|scsi|device-mapper|f2fs|ext4' | tail -n 80
+```
+
+Diese Befehle lesen Kernel-/Geräteinformationen und ändern keine Partitionen.
+Die zuvor unter Android identifizierten Kandidaten sind sda10 = super,
+sda15 = metadata und sda16 = userdata. Die Inventur prüft, ob der neue Kernel
+dieselben Geräte und Namen bereitstellt, und welche Dateisystemtreiber
+tatsächlich registriert sind. Fehlende Geräte oder andere Namen sind Befunde,
+kein Anlass, andere Partitionen auf Verdacht zu verwenden.
+
+Die Ausgabe im Gespräch bereitstellen. Danach folgen der konkrete Rootfs-Startpfad
+und die Integration der dynamischen Android-Partitionen. Android speichert
+deren Bereichszuordnung in den Super-Metadaten; die Zuordnung muss vor einem
+passenden Mount verfügbar sein
+([AOSP](https://source.android.com/docs/core/ota/dynamic_partitions/implement)).
+Der erfolgreiche USB-Test ersetzt diese noch offene Portierungsarbeit nicht.
+
+Die folgenden Abschnitte dokumentieren den bereits erfolgreich verwendeten
+Host-Netzaufbau für spätere Tests. In der bestehenden Verbindung müssen sie
+nicht wiederholt werden.
 
 ## Hostadresse setzen
 
