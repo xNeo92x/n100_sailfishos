@@ -2,8 +2,8 @@
 
 Ziel sind ein passendes `hybris-boot.img` und ein `userdata.img` mit dem gebauten
 Sailfish-System. **Kernel und Android-HAL sind auf dem CachyOS-Buildhost erfolgreich
-gebaut; HAL-RPM, Gerätekonfiguration und fünf Middleware-Pakete sind fertig.
-Media- und Versionspakete sowie Sailfish-Rootfs fehlen noch.** Der gemeldete HAL-Build vom
+gebaut; HAL-RPM, Gerätekonfiguration, fünf Middleware-Pakete und das Medien-RPM
+sind fertig. Versionspaket und Sailfish-Rootfs fehlen noch.** Der gemeldete HAL-Build vom
 25. Oktober 2026 erzeugte ein strukturell geprüftes `hybris-boot.img` mit
 45.064.192 Byte. [Buildnachweis](../validation/hal-build-user-20261025.json).
 Die Binärdatei wurde nicht hochgeladen; ihre Startfähigkeit ist noch ungetestet.
@@ -581,8 +581,7 @@ bestätigte AArch64-ELF64-Header für alle vier Dateien;
 [gemeldeter Buildnachweis](../validation/android-droidmedia-build-user-20261025.json).
 Der Android-Schritt ist damit erledigt. Aus diesem Ubuntu-Chroot mit einmal
 `exit` ins Platform SDK zurückkehren und den oben gezeigten
-`build-packages.sh media`-Aufruf ausführen. Das Medien-RPM ist noch nicht
-als erfolgreich gebaut gemeldet.
+`build-packages.sh media`-Aufruf ausführen. Der anschließende erfolgreiche Medien-RPM-Build ist im nächsten Abschnitt dokumentiert.
 
 Die aktuellen Paketgruppen verlangen `gstreamer1.0-droid`, daher bereitet der
 Upstream-Helfer `droidmedia-localbuild` aus `external/droidmedia` vor und baut
@@ -592,6 +591,34 @@ Da `pulseaudio-modules-droid-hidl` gewählt ist, überspringt er anschließend
 `audioflingerglue` und `pulseaudio-modules-droid-glue`; diese Meldung ist
 für diese Paketwahl vorgesehen. Nach erfolgreichem Medien-Build folgen
 `version` und zuletzt `rootfs`.
+
+### Nach erfolgreichem Medien-RPM: Versionspaket bauen
+
+Der Buildhost meldete den erfolgreichen Bau von `droidmedia-localbuild`
+mit `rpm/droidmedia.spec` aus dem Archiv `droidmedia-0.20260902.0`.
+Die vier Android-Binärdateien und die Init-Dateien wurden in das Quellarchiv
+aufgenommen. Das Überspringen der beiden Audio-Glue-Pakete entspricht der
+gewählten HIDL-Konfiguration.
+[Gemeldeter Buildnachweis](../validation/media-rpm-build-user-20261025.json).
+
+Im vorhandenen **Platform SDK** das Versionspaket bauen:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+source "$HOME/n100-build/build.env"
+export RELEASE=5.1.0.11
+bash "$N100_PORT/tools/build-packages.sh" version
+)
+```
+
+Das Paket heißt `droid-hal-version-billie2`; das Buildlog liegt unter
+`$ANDROID_ROOT/hybris/droid-hal-version-billie2.log`.
+Nach dessen erfolgreichem Abschluss folgt `build-packages.sh rootfs`.
+Der RPM-Gesamtstatus bleibt bis zum Abschluss des Versionspakets offen.
+Geräteboot und Hardwarefunktionen sind weiterhin ungeprüft.
 
 Das Ergebnis des Rootfs-Schritts ist ein `sfe-billie2-*.tar.bz2`. Die
 Paketauflösung und weitere Middleware-Anpassungen sind noch nicht erprobt.
