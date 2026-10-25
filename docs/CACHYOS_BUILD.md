@@ -575,6 +575,15 @@ bash "$N100_PORT/tools/build-packages.sh" media
 Ein neuer Sync, erneutes Anwenden der Hybris-Patches oder Wiederholen der
 bereits erfolgreichen HAL-/Config-/Middleware-RPMs ist für diesen Schritt
 nicht erforderlich.
+Der anschließende Android-Build mit Port-Commit `118e31e` wurde auf dem
+Buildhost erfolgreich abgeschlossen (2:17 Minuten). Die Strukturprüfung
+bestätigte AArch64-ELF64-Header für alle vier Dateien;
+[gemeldeter Buildnachweis](../validation/android-droidmedia-build-user-20261025.json).
+Der Android-Schritt ist damit erledigt. Aus diesem Ubuntu-Chroot mit einmal
+`exit` ins Platform SDK zurückkehren und den oben gezeigten
+`build-packages.sh media`-Aufruf ausführen. Das Medien-RPM ist noch nicht
+als erfolgreich gebaut gemeldet.
+
 Die aktuellen Paketgruppen verlangen `gstreamer1.0-droid`, daher bereitet der
 Upstream-Helfer `droidmedia-localbuild` aus `external/droidmedia` vor und baut
 dessen RPM. Das Log liegt unter

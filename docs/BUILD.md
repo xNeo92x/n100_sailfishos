@@ -1,7 +1,7 @@
 # Build workflow — Android 13 HAL / Android 11 firmware / aarch64
 
 Status: **Android HAL, HAL/config RPMs and five middleware packages built on the user's host;
-Android droidmedia, media/version RPMs and Sailfish rootfs remain unfinished**.
+Android droidmedia also built successfully; media/version RPMs and Sailfish rootfs remain unfinished**.
 See [the user-reported HAL build evidence](../validation/hal-build-user-20261025.json).
 The boot image passed structural checks; it has not been boot-tested.
 No Sailfish release has been certified for this device. The locked upstream
@@ -196,6 +196,8 @@ enter the Ubuntu build chroot, source the same build environment, and run:
 bash "$N100_PORT/tools/build-hal.sh" media
 ```
 
+The user's incremental Android media build completed in 137 seconds with all
+four output headers accepted; see [the reported build evidence](../validation/android-droidmedia-build-user-20261025.json).
 This mode requires `MERSDKUBU=1`, keeps its log in
 `n100-build-logs/droidmedia.log`, and verifies all four required AArch64
 ELF64 output headers. The RPM media stage repeats this check before the

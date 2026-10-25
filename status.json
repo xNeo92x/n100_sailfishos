@@ -100,5 +100,7 @@
     "version": false
   },
   "configs_rpm_build_validation": "validation/configs-rpm-build-user-20261025.json",
-  "middleware_rpm_build_validation": "validation/middleware-rpm-build-user-20261025.json"
+  "middleware_rpm_build_validation": "validation/middleware-rpm-build-user-20261025.json",
+  "android_droidmedia_built": true,
+  "android_droidmedia_build_validation": "validation/android-droidmedia-build-user-20261025.json"
 }

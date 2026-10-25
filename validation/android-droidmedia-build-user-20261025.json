@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "device": "billie2",
+  "evidence_kind": "User-supplied terminal output from the build host",
+  "port_commit_at_build": "118e31efffc4ca5259f227c3b37c0c2f6be805a6",
+  "build_command": "bash \"$N100_PORT/tools/build-hal.sh\" media",
+  "environment": "Ubuntu HABUILD_SDK",
+  "result": "completed",
+  "reported_duration_seconds": 137,
+  "output_header_check": "All four Android droidmedia outputs have AArch64 ELF64 headers (structural check only).",
+  "required_outputs": [
+    "system/lib64/libdroidmedia.so",
+    "system/lib64/libminisf.so",
+    "system/bin/minimediaservice",
+    "system/bin/minisfservice"
+  ],
+  "raw_build_log_uploaded": false,
+  "artifacts_uploaded_or_independently_inspected": false,
+  "source_revision_reported": false,
+  "media_rpm_built": false,
+  "rootfs_built": false,
+  "boot_tested": false,
+  "flashable_release": false,
+  "next_stage": "Exit Ubuntu once and run build-packages.sh media in Platform SDK."
+}
