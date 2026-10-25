@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "source": "User-uploaded output of tools/inspect-super.py; raw prefix binary was not uploaded",
+  "report": "validation/super-metadata-report-user-20261025.json",
+  "report_sha256": "06c7e58bfa0be7b0e5fe2e342c54ed3acbd9e8e233a623994c204107e30cac1b",
+  "reported_geometry": {
+    "metadata_max_size": 65536,
+    "metadata_slot_count": 3,
+    "logical_block_size": 4096
+  },
+  "reported_metadata_region_bytes": 405504,
+  "reported_metadata_region_sha256": "bb42777e434f73ae5e4a9871af64f792a61a832be3852adf7c3d2f8b7012dcc7",
+  "reported_checksums_verified": true,
+  "reported_primary_backup_equal": true,
+  "active_slot": "b",
+  "active_partitions": [
+    "system_b",
+    "system_ext_b",
+    "product_b",
+    "vendor_b"
+  ],
+  "odm_partition_declared": false,
+  "super_bytes": 10737418240,
+  "rootfs_observations": {
+    "system_path_present": false,
+    "vendor_path_present": false,
+    "built_hal_system_present": true,
+    "rootfs_apex_empty": null,
+    "android_linker64_target": "/apex/com.android.runtime/bin/linker64",
+    "dmsetup_path": "/usr/sbin/dmsetup",
+    "systemd_version": "238",
+    "systemd_started": false,
+    "rootfs_apex_contents_collected": false
+  },
+  "prepared_probe": "tools/probe-android-mounts.sh",
+  "mapping_probe_device_tested": false,
+  "android_runtime_apex_activated": null,
+  "full_sailfish_boot_verified": false,
+  "flashable_release": false,
+  "scope": "Mappings are derived from this reported layout and bound to a live exact metadata-region SHA-256 check. Existing Android-13 HAL files remain untouched."
+}

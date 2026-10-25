@@ -13,6 +13,9 @@ registered ext4/F2FS and initialized Device Mapper. Continue with the explicit
 [userdata flash and read-only rootfs probe](ROOTFS_PROBE.md), which has now
 succeeded: Sailfish OS 5.1.0.11 runs in a read-only chroot. The next step is
 [actual super metadata and rootfs mount-path inspection](SUPER_METADATA.md).
+That report is now reviewed: four slot-B partitions are declared, and native
+Sailfish dmsetup is available. The exact snapshot-bound read-only mapping test
+and Android-13 runtime inventory are in [ANDROID_MOUNT_PROBE.md](ANDROID_MOUNT_PROBE.md).
 The exact debug/DTBO candidate, verified stock rollback file preparation and
 explicit first-test commands are in [FIRST_DEVICE_TEST.md](FIRST_DEVICE_TEST.md).
 

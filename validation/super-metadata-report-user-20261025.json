@@ -1,0 +1,210 @@
+{
+  "schema": 1,
+  "kind": "offline-super-metadata-inspection",
+  "slot": "b",
+  "metadata_slot_index": 1,
+  "source_prefix_bytes": 2097152,
+  "source_prefix_sha256": "8f2da18668a14a112f2c6a727c834b01eba1bd773a1ff38393dc6ded5f9e2c11",
+  "geometry": {
+    "metadata_max_size": 65536,
+    "metadata_slot_count": 3,
+    "logical_block_size": 4096
+  },
+  "geometry_copy_errors": {},
+  "metadata_region_bytes": 405504,
+  "metadata_region_sha256": "bb42777e434f73ae5e4a9871af64f792a61a832be3852adf7c3d2f8b7012dcc7",
+  "chosen_copy": "primary",
+  "metadata_copy_errors": {},
+  "valid_metadata_copies_equal": true,
+  "metadata": {
+    "version": "10.0",
+    "header_flags": 0,
+    "sha256": "a4817f2960696501d19dc8cf2e19c76064329333094e0a906aacb087067b7ffc",
+    "block_devices": [
+      {
+        "name": "super",
+        "first_logical_sector": 2048,
+        "alignment": 131072,
+        "alignment_offset": 98304,
+        "bytes": 10737418240,
+        "flags": 0
+      }
+    ],
+    "groups": [
+      {
+        "name": "default",
+        "flags": 0,
+        "maximum_bytes": 0
+      },
+      {
+        "name": "qti_dynamic_partitions_a",
+        "flags": 0,
+        "maximum_bytes": 5364514816
+      },
+      {
+        "name": "qti_dynamic_partitions_b",
+        "flags": 0,
+        "maximum_bytes": 5364514816
+      }
+    ],
+    "partitions": [
+      {
+        "name": "system_a",
+        "attributes": 1,
+        "readonly_attribute": true,
+        "slot_suffixed_attribute": false,
+        "disabled_attribute": false,
+        "group": "qti_dynamic_partitions_a",
+        "bytes": 1516191744,
+        "extents": [
+          {
+            "sectors": 2961312,
+            "type": "linear",
+            "physical_sector": 2240,
+            "block_device_index": 0
+          }
+        ],
+        "effective_name": "system_a"
+      },
+      {
+        "name": "system_ext_a",
+        "attributes": 1,
+        "readonly_attribute": true,
+        "slot_suffixed_attribute": false,
+        "disabled_attribute": false,
+        "group": "qti_dynamic_partitions_a",
+        "bytes": 1092100096,
+        "extents": [
+          {
+            "sectors": 2133008,
+            "type": "linear",
+            "physical_sector": 2963648,
+            "block_device_index": 0
+          }
+        ],
+        "effective_name": "system_ext_a"
+      },
+      {
+        "name": "product_a",
+        "attributes": 1,
+        "readonly_attribute": true,
+        "slot_suffixed_attribute": false,
+        "disabled_attribute": false,
+        "group": "qti_dynamic_partitions_a",
+        "bytes": 1682386944,
+        "extents": [
+          {
+            "sectors": 3285912,
+            "type": "linear",
+            "physical_sector": 5096896,
+            "block_device_index": 0
+          }
+        ],
+        "effective_name": "product_a"
+      },
+      {
+        "name": "vendor_a",
+        "attributes": 1,
+        "readonly_attribute": true,
+        "slot_suffixed_attribute": false,
+        "disabled_attribute": false,
+        "group": "qti_dynamic_partitions_a",
+        "bytes": 950452224,
+        "extents": [
+          {
+            "sectors": 1856352,
+            "type": "linear",
+            "physical_sector": 8382912,
+            "block_device_index": 0
+          }
+        ],
+        "effective_name": "vendor_a"
+      },
+      {
+        "name": "system_b",
+        "attributes": 1,
+        "readonly_attribute": true,
+        "slot_suffixed_attribute": false,
+        "disabled_attribute": false,
+        "group": "qti_dynamic_partitions_b",
+        "bytes": 1516199936,
+        "extents": [
+          {
+            "sectors": 2961328,
+            "type": "linear",
+            "physical_sector": 10486976,
+            "block_device_index": 0
+          }
+        ],
+        "effective_name": "system_b"
+      },
+      {
+        "name": "system_ext_b",
+        "attributes": 1,
+        "readonly_attribute": true,
+        "slot_suffixed_attribute": false,
+        "disabled_attribute": false,
+        "group": "qti_dynamic_partitions_b",
+        "bytes": 1092108288,
+        "extents": [
+          {
+            "sectors": 2133024,
+            "type": "linear",
+            "physical_sector": 13448384,
+            "block_device_index": 0
+          }
+        ],
+        "effective_name": "system_ext_b"
+      },
+      {
+        "name": "product_b",
+        "attributes": 1,
+        "readonly_attribute": true,
+        "slot_suffixed_attribute": false,
+        "disabled_attribute": false,
+        "group": "qti_dynamic_partitions_b",
+        "bytes": 1693224960,
+        "extents": [
+          {
+            "sectors": 3307080,
+            "type": "linear",
+            "physical_sector": 15581632,
+            "block_device_index": 0
+          }
+        ],
+        "effective_name": "product_b"
+      },
+      {
+        "name": "vendor_b",
+        "attributes": 1,
+        "readonly_attribute": true,
+        "slot_suffixed_attribute": false,
+        "disabled_attribute": false,
+        "group": "qti_dynamic_partitions_b",
+        "bytes": 950411264,
+        "extents": [
+          {
+            "sectors": 1856272,
+            "type": "linear",
+            "physical_sector": 18888896,
+            "block_device_index": 0
+          }
+        ],
+        "effective_name": "vendor_b"
+      }
+    ]
+  },
+  "active_partition_candidates": [
+    "system_b",
+    "system_ext_b",
+    "product_b",
+    "vendor_b"
+  ],
+  "checksums_verified": true,
+  "device_accessed": false,
+  "mappings_created": false,
+  "mounts_performed": false,
+  "flashable_release": false,
+  "scope": "LP metadata checksums, layout and range validation only; no AVB, filesystem or runtime validation.",
+  "rootfs_layout": "ls: /system: No such file or directory\nls: /system_ext: No such file or directory\nls: /vendor: No such file or directory\nls: /product: No such file or directory\nls: /odm: No such file or directory\ndrwxrwxr-x    2 root     root          4096 Oct 25  2026 /apex\ndrwxr-xr-x    5 root     root          4096 Oct 25  2026 /usr/libexec/droid-hybris\ndrwxr-xr-x    6 root     root          4096 Oct 25  2026 /usr/libexec/droid-hybris/system\nls: /usr/libexec/droid-hybris/vendor: No such file or directory\nls: /usr/libexec/droid-hybris/apex: No such file or directory\nlrwxrwxrwx    1 root     root            36 Oct 25  2026 /usr/libexec/droid-hybris/system/bin/linker -> /apex/com.android.runtime/bin/linker\nlrwxrwxrwx    1 root     root            38 Oct 25  2026 /usr/libexec/droid-hybris/system/bin/linker64 -> /apex/com.android.runtime/bin/linker64\nlrwxrwxrwx    1 root     root            36 Oct 25  2026 /usr/libexec/droid-hybris/system/bin/linker_asan -> /apex/com.android.runtime/bin/linker\nlrwxrwxrwx    1 root     root            38 Oct 25  2026 /usr/libexec/droid-hybris/system/bin/linker_asan64 -> /apex/com.android.runtime/bin/linker64\n-rwxrwxr-x    1 root     root       1369280 Oct 25  2026 /usr/libexec/droid-hybris/system/bin/linkerconfig\n/usr/sbin/dmsetup\nsystemd 238\n+PAM +AUDIT +SELINUX +IMA -APPARMOR -SMACK -SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT -GNUTLS +ACL +XZ -LZ4 -SECCOMP +BLKID -ELFUTILS +KMOD -IDN2 -IDN +PCRE2 default-hierarchy=hybrid\n"
+}

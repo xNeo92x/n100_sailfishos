@@ -15,8 +15,8 @@ im [Buildbericht](validation/debug-image-build-user-20261025.json) festgehalten.
 Der [erste Geräteversuch](docs/FIRST_DEVICE_TEST.md) hat die frühe
 [USB-Debug-Shell](docs/USB_DEBUG_SHELL.md) erreicht. Speichergeräte, Partitionsnamen
 und der [schreibgeschützte Rootfs-Test](docs/ROOTFS_PROBE.md) sind bestätigt.
-Nächster Schritt sind die
-[Super-Metadaten und dynamischen Android-Partitionen](docs/SUPER_METADATA.md).
+Die [Super-Metadaten](docs/SUPER_METADATA.md) für Slot B sind ausgewertet.
+Weiter mit dem [schreibgeschützten Android-Mapping-Test und der Runtime-Prüfung](docs/ANDROID_MOUNT_PROBE.md).
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,

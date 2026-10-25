@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "scope": "Snapshot-bound read-only mapping/mount probe and local Android Runtime APEX inventory",
+  "profile_report": "validation/super-metadata-report-user-20261025.json",
+  "expected_live_metadata_sha256": "bb42777e434f73ae5e4a9871af64f792a61a832be3852adf7c3d2f8b7012dcc7",
+  "metadata_bytes": 405504,
+  "script": "tools/probe-android-mounts.sh",
+  "script_sha256": "33bfbac4e3f0dac66cb2f7c0983347da7f55724559d2b89d69baf66fdb72bdfc",
+  "script_actions": [
+    "Verify root, early-debug flag, slot B, super label/device/capacity, read-only userdata and exact live metadata hash",
+    "Inspect actual APEX contents and linker target availability",
+    "Temporarily bind dev/proc/sys into Sailfish chroot for native dmsetup",
+    "Create four n100_ro_ mappings with --readonly; require sysfs ro=1",
+    "Mount ext4 ro,noload at unique RAM scratch paths and inspect stock properties/APEX directory listings",
+    "Attempt removal of own scratch mounts, mappings and bind mounts on exit; report any cleanup failure"
+  ],
+  "tests": {
+    "new_host_tests": 9,
+    "full_host_tests": 190,
+    "compat_tests": 16,
+    "passed": true,
+    "runtime_device_operations_exercised_in_host_tests": false
+  },
+  "device_probe_executed": false,
+  "mappings_verified_on_device": false,
+  "stock_filesystem_mounts_verified": false,
+  "runtime_apex_targets_verified": false,
+  "android_hal_started": false,
+  "flashable_release": false
+}

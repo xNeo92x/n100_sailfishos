@@ -1,5 +1,10 @@
 # N100: Super-Metadaten für die dynamischen Android-Partitionen
 
+Der Bericht ist eingegangen und für Slot B ausgewertet. Die vier deklarierten
+Partitionen sind System, System Ext, Product und Vendor; ein ODM-Eintrag fehlt.
+Weiter mit [ANDROID_MOUNT_PROBE.md](ANDROID_MOUNT_PROBE.md). Die folgenden
+Sammlungsbefehle bleiben als Referenz erhalten und müssen nicht wiederholt werden.
+
 Der schreibgeschützte ext4-Mount von Userdata und die Ausführung von Sailfish
 OS 5.1.0.11 im Chroot sind am N100 bestätigt.
 [Nachweis](../validation/rootfs-chroot-user-20261025.json).
