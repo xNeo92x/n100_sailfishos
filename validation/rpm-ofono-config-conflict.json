@@ -35,10 +35,34 @@
     "targeted_snapshot_upgrade_tests": 6,
     "python_syntax": "passed",
     "shell_syntax": "passed",
-    "updated_config_rpm_built": false,
-    "target_replacement_transaction_verified": false,
+    "updated_config_rpm_built": true,
+    "target_replacement_transaction_verified": true,
     "version_rpm_built": false,
     "rootfs_built": false,
     "boot_tested": false
+  },
+  "followup_evidence": {
+    "name": "droid-hal-version-billie2(1).log",
+    "sha256": "1396fcc06e36c8a7f7ec3ca6470897747b2049c2eee3154300e3af4be7b17afb",
+    "installed_config": "droid-config-billie2-1-202610251521.aarch64",
+    "file_conflict_check": "passed",
+    "initial_install_solver": "Cancelled at vendor change choice; the fallback transaction installed six packages.",
+    "fallback_commit": {
+      "total": 6,
+      "done": 6,
+      "error": 0
+    },
+    "remaining_build_requires": [
+      "droid-config-preinit-plugins",
+      "droid-config-pulseaudio-settings",
+      "droid-config-sailfish",
+      "droid-hal-kernel",
+      "hybris-libsensorfw-qt5",
+      "pulseaudio-modules-droid",
+      "qt5-qpa-hwcomposer-plugin",
+      "qtscenegraph-adaptation"
+    ],
+    "next_action": "Explicitly install these capabilities in oneplus-billie2-aarch64 using the local RPM directory and a transaction-scoped --allow-vendor-change; then retry version.",
+    "complete_dependency_installation_verified": false
   }
 }

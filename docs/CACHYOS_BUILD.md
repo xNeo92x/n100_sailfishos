@@ -665,6 +665,52 @@ SDK-Target installieren. Die tatsächliche Target-Transaktion und der
 Versionsabschluss stehen nach dieser Korrektur noch aus.
 Kein neuer Android-HAL-, Middleware- oder Medien-Build ist erforderlich.
 
+### Übrige Versions-Abhängigkeiten nach abgebrochenem Anbieterwechsel
+
+Das zweite Versionslog bestätigt den erfolgreichen Konfigurations-Neubau,
+die Installation von `droid-config-billie2-1-202610251521` und die
+Dateikonfliktprüfung ohne Fehler. Der erste mb2-Installationsversuch hatte
+jedoch zuvor den Anbieterwechsel von `ofono-configs-binder` (`meego`) zur
+Gerätekonfiguration (`oneplus`) mit `c` abgebrochen. Der anschließende
+Distributionsabgleich installierte nur sechs Pakete; acht BuildRequires
+blieben offen. Die vorherigen Logs belegen verfügbare Anbieter für diese
+Abhängigkeiten. Das ist kein Anlass, sie aus dem Versionsspec zu entfernen.
+
+Im **Platform SDK** die fehlenden Fähigkeiten gezielt im bestehenden
+`oneplus-billie2-aarch64`-Target installieren und danach den Build wiederholen:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+export RELEASE=5.1.0.11
+
+sdk-assistant maintain oneplus-billie2-aarch64 \
+  zypper --plus-repo "$ANDROID_ROOT/droid-local-repo/billie2" \
+  install --allow-vendor-change --allow-unsigned-rpm \
+  droid-config-preinit-plugins droid-config-pulseaudio-settings \
+  droid-config-sailfish droid-hal-kernel hybris-libsensorfw-qt5 \
+  pulseaudio-modules-droid qt5-qpa-hwcomposer-plugin qtscenegraph-adaptation
+
+bash "$N100_PORT/tools/build-packages.sh" version
+)
+```
+
+`--allow-vendor-change` gilt hier nur für diesen Installationsaufruf im
+SDK-Target; es ändert keine globale Solver-Konfiguration. Die
+[Zypper-Dokumentation](https://doc.opensuse.org/documentation/tumbleweed/zypper/)
+beschreibt diese Option für den Anbieterwechsel installierter Pakete.
+`--allow-unsigned-rpm` lässt die selbst gebauten lokalen RPMs zu.
+Die Paketübersicht mit `y` bestätigen. Die Paket- und Dateikonfliktprüfung
+bleibt aktiviert. Wegen `set -e` startet das Versionspaket erst, wenn die
+Installation erfolgreich abgeschlossen wurde.
+
+Das lokale Verzeichnis wird nur für diese Transaktion als zusätzliche Quelle
+verwendet. Die acht Namen sind die fehlenden RPM-Fähigkeiten des gepinnten
+Versions-Includes; etwa `hybris-libsensorfw-qt5` kann durch
+`hybris-libsensorfw-qt5-binder` erfüllt werden. Die tatsächliche komplette
+Installation und der Versionsabschluss bleiben bis zum neuen Log offen.
+
 Das Ergebnis des Rootfs-Schritts ist ein `sfe-billie2-*.tar.bz2`. Die
 Paketauflösung und weitere Middleware-Anpassungen sind noch nicht erprobt.
 Das Rootfs muss bereits die billie2-Anpassung und die AArch64-Laufzeit enthalten;
