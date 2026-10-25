@@ -12,6 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Python host tests
         run: python3 -m unittest discover -s tests -v
+      - name: Upstream fs_config Python 3 tests
+        run: python3 -m unittest discover -s compat/fs_config_generator -p 'test_*.py' -v
       - name: Shell syntax
         run: bash -n tools/build-hal.sh tools/build-packages.sh
       - name: Python syntax

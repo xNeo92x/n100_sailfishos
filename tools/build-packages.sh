@@ -17,7 +17,9 @@ case "${1:-}" in
             bash "$port_dir/tools/build-packages.sh" "$stage"
         done
         exec bash "$port_dir/tools/build-packages.sh" rootfs ;;
-    hal) exec bash rpm/dhd/helpers/build_packages.sh -d ;;
+    hal)
+        python3 "$port_dir/tools/n100.py" prepare-rpm --android-root "$ANDROID_ROOT"
+        exec bash rpm/dhd/helpers/build_packages.sh -d ;;
     configs) exec bash rpm/dhd/helpers/build_packages.sh -c ;;
     middleware) exec bash rpm/dhd/helpers/build_packages.sh -m ;;
     media) exec bash rpm/dhd/helpers/build_packages.sh -g ;;

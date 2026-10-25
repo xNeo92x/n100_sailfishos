@@ -775,6 +775,51 @@ def collect_configs(args):
     return out
 
 
+def git_blob_identity(data):
+    return hashlib.sha1(b"blob " + str(len(data)).encode("ascii") + b"\0" + data).hexdigest()
+
+
+def prepare_rpm_inputs(args):
+    android = android_path(args.android_root)
+    require_profile(android)
+    path = android / "build/make/tools/fs_config/fs_config_generator.py"
+    if path.is_symlink() or not path.is_file():
+        raise PortError("Expected the regular Android fs_config_generator.py source file")
+    replacement = (ROOT / "compat/fs_config_generator/fs_config_generator.py").read_bytes()
+    upstream_blob = "098fde664f612626bc6342aa46808d467145281c"
+    python3_blob = "44480b8aa4df0a85f9a82d772a1d7f4b3f763ffc"
+    if git_blob_identity(replacement) != python3_blob:
+        raise PortError("Bundled Python 3 fs_config generator differs from the reviewed upstream file")
+    actual = git_blob_identity(path.read_bytes())
+    if actual not in (upstream_blob, python3_blob):
+        raise PortError("Android fs_config generator has unreviewed changes; inspect manually")
+    if actual == upstream_blob:
+        mode = path.stat().st_mode & 0o777
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(prefix=".n100-fs-config-", dir=str(path.parent),
+                                             delete=False) as stream:
+                temporary = Path(stream.name)
+                stream.write(replacement)
+            temporary.chmod(mode)
+            os.replace(str(temporary), str(path))
+        finally:
+            if temporary is not None and temporary.exists():
+                temporary.unlink()
+    write_new(android / ".n100-rpm-inputs.json", json.dumps({
+        "schema": 1,
+        "fs_config_generator": {
+            "path": str(path.relative_to(android)),
+            "original_blob": upstream_blob,
+            "replacement_blob": python3_blob,
+            "source_repository": "LineageOS/android_build",
+            "source_commit": "216978e7c4bc20df2464e88f72f98bd302b419fd",
+            "purpose": "Python 3 aidarray generation in Sailfish SDK tooling",
+        },
+    }, indent=2) + "\n")
+    print("RPM fs_config generator is ready for Python 3.")
+
+
 def check_kernel(args):
     values = parse_config(Path(args.config).read_text())
     expected = parse_config((ROOT / "kernel/sailfish.config").read_text())
@@ -864,6 +909,9 @@ def main():
     p.add_argument("bundle")
     p.add_argument("--output")
     p.set_defaults(func=inspect_configs)
+    p = commands.add_parser("prepare-rpm", help="Install the reviewed Python 3 fs_config generator backport")
+    p.add_argument("--android-root", required=True)
+    p.set_defaults(func=prepare_rpm_inputs)
     p = commands.add_parser("check-kernel", help="Check the resolved kernel .config")
     p.add_argument("config")
     p.set_defaults(func=check_kernel)

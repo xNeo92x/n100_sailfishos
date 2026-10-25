@@ -1,6 +1,6 @@
 # Third-party sources and licensing
 
-Upstream projects are fetched separately, at revisions in `sources.lock.json`.
+Most upstream projects are fetched separately, at revisions in `sources.lock.json`.
 They retain their own notices and licenses. No proprietary vendor blobs or
 Jolla-licensed binary products are included in this repository.
 
@@ -38,3 +38,9 @@ The optional pre-extracted vendor source is fetched separately from
 repository and are not covered by this project's MIT license. Refer to their
 original rights and retain the external source's notices. The source selector
 records identity/integrity; it does not assert redistribution rights.
+
+The Python 3 filesystem-config compatibility files in
+`compat/fs_config_generator/` are copied verbatim from Android build upstream
+commit `216978e7c4bc20df2464e88f72f98bd302b419fd`. Their license is Apache-2.0,
+as declared by the source directory's Android.bp; the full license and exact
+file identities are included alongside them. These files are not MIT-licensed.

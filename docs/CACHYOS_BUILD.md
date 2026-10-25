@@ -346,6 +346,39 @@ export RELEASE=DEINE_TATSAECHLICHE_TARGET_VERSION
 bash "$N100_PORT/tools/build-packages.sh" all
 ```
 
+### Python-2-Abbruch im HAL-RPM-Build
+
+Tooling `SailfishOS-5.1.0.11` und Target `oneplus-billie2-aarch64` wurden
+auf dem Buildhost erfolgreich angelegt. Der erste HAL-RPM-Build erreichte die
+Buildphase und scheiterte beim direkten Aufruf von
+`build/make/tools/fs_config/fs_config_generator.py aidarray`, weil die
+Tooling-Umgebung kein `python2` enthält. Die dort ausgewählte Android-13-Datei
+enthält echte Python-2-Syntax; ein reiner Shebang-Wechsel genügt nicht.
+
+Vor dem HAL-RPM-Build führt der Wrapper jetzt `n100.py prepare-rpm` aus.
+Dieser installiert die geprüfte offizielle Python-3-Portierung dieser
+einzelnen Datei. Herkunft, Lizenz, Original-/Ziel-Blob-IDs und die 16
+Upstream-Tests stehen in
+[compat/fs_config_generator](../compat/fs_config_generator/README.md).
+Die Android-ID-Header bleiben unverändert. Abweichende lokale Änderungen
+werden nicht überschrieben. Das lokale Audit heißt `.n100-rpm-inputs.json`.
+
+Im vorhandenen **Platform SDK** fortsetzen:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+source "$HOME/n100-build/build.env"
+export RELEASE=5.1.0.11
+bash "$N100_PORT/tools/build-packages.sh" hal
+)
+```
+
+Tooling und Target nicht erneut anlegen. Der RPM-Build bleibt bis zum
+tatsächlichen erfolgreichen Abschluss als ungebaut markiert.
+
 Das Ergebnis des letzten Schritts ist ein `sfe-billie2-*.tar.bz2`. Die
 Paketauflösung und weitere Middleware-Anpassungen sind noch nicht erprobt.
 Das Rootfs muss bereits die billie2-Anpassung und die AArch64-Laufzeit enthalten;

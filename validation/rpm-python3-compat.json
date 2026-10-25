@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "scope": "Host-side fs_config aidarray compatibility; no completed device RPM or hardware validation",
+  "upstream_repository": "LineageOS/android_build",
+  "upstream_commit": "216978e7c4bc20df2464e88f72f98bd302b419fd",
+  "original_generator_blob": "098fde664f612626bc6342aa46808d467145281c",
+  "python3_generator_blob": "44480b8aa4df0a85f9a82d772a1d7f4b3f763ffc",
+  "tests": {
+    "upstream_tests_passed": 16,
+    "port_integration_tests_passed": 6,
+    "exact_original_file_replacement_verified": true,
+    "idempotent_replacement_verified": true,
+    "executable_mode_preserved": true
+  },
+  "aidarray_integration": {
+    "header_source_repository": "LineageOS/android_system_core",
+    "header_blob": "0030887a1cce79aea1ea5c328a42d2bea139a2fe",
+    "generated_identity_entries": 112,
+    "generated_c_header_compiled": true,
+    "root_system_shell_nobody_values_checked": true
+  },
+  "rpm_built": false,
+  "boot_tested": false
+}
