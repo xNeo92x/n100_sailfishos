@@ -1,164 +1,169 @@
-# N100: erster Geräteversuch mit dem gebauten Debug-Image
+# N100: erster Kernel-/USB-Test
 
-Stand: 25. Oktober 2026. Der Build ist abgeschlossen; ein Start auf dem N100
-wurde noch nicht versucht. Dieser Plan beschreibt die nächsten Gerätephasen.
-Der Benutzer hat die abgeschlossene persönliche Sicherung und den Datenverlust
-beim Entsperren am 25. Oktober 2026 bestätigt. Nächster Schritt ist der Unlock
-am CachyOS-Host; seine Durchführung ist noch nicht gemeldet.
+Der Debug-Build ist abgeschlossen. Der Benutzer hat die Datensicherung und den
+Factory Reset bestätigt; der neue [Gerätebefund](../validation/unlock-state-user-20261025.json)
+meldet `unlocked: yes` und Slot `b`. Ein Sailfish-Kernelstart wurde noch nicht
+versucht. Kein weiterer Build ist für diesen Kandidaten erforderlich.
 
-## Konkrete Testdateien
+## Testumfang und feste Dateien
 
-Alle folgenden Pfade liegen auf Eugens CachyOS-PC.
-Produktverzeichnis: `/home/eugen/n100-build/android/out/target/product/billie2`.
+Produktverzeichnis auf dem CachyOS-PC:
+`/home/eugen/n100-build/android/out/target/product/billie2`.
 
-| Datei im Produktverzeichnis | Bytes | SHA-256 |
+| Datei | Bytes | SHA-256 |
 | --- | ---: | --- |
 | `n100-debug-boot-20261025T191724Z.img` | 45.064.192 | `6dccc17b73f572a42400274ca8ce50595d9e4a8127732e4e9d53d29d1727a6ac` |
-| `dtbo.img` | 25.165.824 | `c14f4bce02f0254a5eb381940767cb00bda9c740d5ad2cefa271f69bd859d46e` |
+| gebautes `dtbo.img` | 25.165.824 | `c14f4bce02f0254a5eb381940767cb00bda9c740d5ad2cefa271f69bd859d46e` |
+| erzeugtes `dtbo-stock-24MiB.img` | 25.165.824 | `2d663aaa05568bff83c7e96abe72eef85d4e9e14c5c9e70da8b7274278c23706` |
 
-[Originaler Packerbericht](../validation/debug-image-report-user-20261025.json)
-und [Auswertung](../validation/debug-image-build-user-20261025.json).
-Der Bericht prüft die frühe Init-Sperre, statische AArch64-BusyBox und die
-Gerätebaum-Inhalte. Diese Prüfung belegt keine Ausführung auf der Hardware.
+[Debug-Packerbericht](../validation/debug-image-report-user-20261025.json) und
+[Host-Prüfungen](../validation/first-device-test-preparation.json).
+Das Debug-Image enthält `n100_debug=1` und bleibt vor dem automatischen
+Userdata-Mount in der frühen USB-Sitzung. Das 8-GiB-`userdata.img` wird für
+diesen Versuch nicht verwendet. Dynamische Android-Mounts, APEX und normaler
+Sailfish-Start bleiben spätere Portierungsarbeit.
 
-Das Debug-Image wartet vor jedem automatischen Userdata-Mount in der frühen
-USB-Debug-Sitzung. Für diesen Versuch wird das 8-GiB-`userdata.img` nicht
-benötigt. RPMs und Rootfs müssen dafür nicht neu gebaut werden.
+Das Stock-DTBO passt am Host nicht auf den gebauten Basis-DTB. Deshalb wird nur
+`dtbo_b` mit dem passenden gebauten DTBO beschrieben, während das Debug-Bootimage
+per `fastboot boot` temporär in den RAM geladen wird. Es gibt keinen
+automatischen Fallback zum Flashen des Boot-Images. Der DTBO-Schreibvorgang ist
+dauerhaft: **vor einem normalen Android-Neustart das Stock-DTBO zurückspielen**.
 
-## Phase 1: Datensicherung und Entsperren
+## 1. Testdateien auf CachyOS vorbereiten
 
-Der Bootloader war im letzten echten Preflight gesperrt. Vor einem Unlock müssen
-Fotos, Dateien, App-Daten und benötigte Anmeldedaten außerhalb des Telefons
-gesichert und die Wiederherstellbarkeit geprüft sein. Das vorhandene Firmware-ZIP
-ist keine Sicherung persönlicher Daten.
-
-[AOSP beschreibt](https://source.android.com/docs/core/architecture/bootloader/locking_unlocking)
-das Entsperren mit Bestätigung am Telefon und anschließendem Factory Reset.
-Der Benutzer hat die Sicherung und den Factory Reset ausdrücklich bestätigt.
-Der bisher gemessene Bootloaderzustand bleibt bis zum neuen Gerätebefund
-als gesperrt gespeichert.
-
-[OnePlus nennt für das Nord N100](https://service.oneplus.com/in/search/search-detail?id=op588)
-`fastboot oem unlock`. Der dort beschriebene Token-Service betrifft
-T-Mobile-Versionen; Nicht-T-Mobile-Geräte können laut Hersteller ohne diesen
-Service entsperrt werden. Für das ausgelesene EEA-Gerät ist kein Token-Schritt
-vorgesehen. Bei einer unerwarteten Token-Anforderung zuerst die Meldung prüfen.
-
-1. Ein neues Terminal direkt unter **CachyOS** öffnen; der Unlock läuft
-   außerhalb von Ubuntu-Build-Chroot und Platform SDK.
-2. Am N100 unter **Einstellungen → System → Entwickleroptionen** die
-   **OEM-Entsperrung** und **USB-Debugging** aktivieren. Falls die
-   Entwickleroptionen fehlen, unter **Über das Telefon** siebenmal auf die
-   Buildnummer tippen. Nur dieses Telefon verbinden und die ADB-Abfrage zulassen.
-3. In den Bootloader wechseln und die Produktkennung prüfen:
+Ein neues Terminal direkt auf **CachyOS** verwenden, außerhalb der SDK-Chroots:
 
 ```bash
-adb get-state
-adb reboot bootloader
-fastboot getvar product
+(
+set -e
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+python3 "$N100_PORT/tools/prepare-first-boot.py" prepare \
+  --android-root "$ANDROID_ROOT" \
+  --stock-dir "$HOME/n100-build/stock-BE2013-20261025T180040Z" \
+  --output "$HOME/n100-build/first-device-test"
+)
 ```
 
-`adb get-state` muss vor dem Neustart `device` melden; die Produktkennung
-muss wie im bisherigen Befund `bengal` lauten. Bei Abweichungen oder
-Verbindungsfehlern nicht mit dem Unlock fortfahren.
+Der Helfer prüft alle Eingaben vor dem Erstellen von Ausgaben und verweigert
+vorhandene Zielverzeichnisse. Er kopiert den exakten Debug-Boot-/DTBO-Stand und
+erzeugt die Rückspiel-Datei aus dem unveränderten Original-DTBO der passenden
+EEA-Voll-OTA. Er führt keine Telefonbefehle aus.
 
-4. Danach den eigentlichen Unlock auslösen:
+Das originale DTBO ist 8 MiB groß, die physische Partition 24 MiB. Der Helfer
+erhält DTBO-Daten und eingebettetes VBMeta und versetzt den unveränderten
+AVB-Footer ans Ende eines vollständigen 24-MiB-Images. Das Ergebnis ist
+bytegleich mit `avbtool resize_image` aus dem gepinnten LineageOS-AVB-Stand.
+Dessen `verify_image` bestätigt den eingebetteten Stock-DTBO-Hashdeskriptor.
+Die Originaldatei wird nicht geändert.
+
+Diese Host-Prüfungen belegen keine physische Wiederherstellung. Die OTA-Dateien
+sind keine Rohsicherungen beider Slots. Das originale Top-Level-VBMeta enthält
+einen DTBO-Hashdeskriptor über 146.035 Stock-Bytes; der neue Test-DTBO-Inhalt
+weicht davon ab. Das Verhalten dieses entsperrten Bootloaders bei AVB-Abweichungen
+und temporärem Boot bleibt bis zum Versuch offen. Keine VBMeta-Änderung ist
+für diesen Versuch vorgesehen. [AVB-Befund](../validation/stock-avb-info-20261025.log).
+
+## 2. Rückkehr in Fastboot über Tasten vor dem Flash prüfen
+
+Das Telefon vollständig ausschalten. Dann **Lauter + Leiser + Ein/Aus**
+zum Start in Bootloader-Fastboot halten. Diesen Weg zuerst mit unverändertem
+DTBO ausprobieren, damit er bei einem Kernelhänger bekannt ist.
+Die gerätespezifische [postmarketOS-Dokumentation](https://wiki.postmarketos.org/wiki/OnePlus_Nord_N100_(oneplus-billie2))
+nennt diese Kombination.
+
+Nur das N100 per USB anschließen. Der folgende Helfer muss den Modus als
+`is-userspace: no` erkennen. Bei abweichendem Modus oder wenn der Tastenweg
+nicht funktioniert, vor einem Schreibvorgang die konkrete Anzeige klären.
+Nicht nur die beiden Lautstärketasten beim Anstecken halten: das kann bei
+Qualcomm-Geräten einen anderen Modus auslösen.
+
+## 3. DTBO schreiben und Debug-Kernel temporär starten
+
+Der folgende Block prüft zuerst die drei Testdateien und das Stock-Original,
+genau ein Fastboot-Gerät, `bengal`, `unlocked: yes`, aktiven Slot B,
+Bootloader-Fastboot, Partitionsgrößen und Downloadkapazität. Er ändert weder
+Slot A noch Boot/VBMeta/Userdata. Alle Fastboot-Meldungen aufbewahren.
 
 ```bash
-fastboot oem unlock
+(
+set -e
+source "$HOME/n100-build/build.env"
+n100_bundle="$HOME/n100-build/first-device-test"
+python3 "$N100_PORT/tools/prepare-first-boot.py" check \
+  --bundle "$n100_bundle" \
+  --stock-dir "$HOME/n100-build/stock-BE2013-20261025T180040Z"
+
+if ! fastboot flash dtbo_b "$n100_bundle/dtbo-test.img"; then
+    echo "DTBO-Flash fehlgeschlagen: Stock-DTBO wiederherstellen."
+    fastboot flash dtbo_b "$n100_bundle/dtbo-stock-24MiB.img"
+    fastboot reboot
+    exit 1
+fi
+if ! fastboot boot "$n100_bundle/debug-boot.img"; then
+    echo "Temporärer Start fehlgeschlagen: Stock-DTBO wiederherstellen."
+    fastboot flash dtbo_b "$n100_bundle/dtbo-stock-24MiB.img"
+    fastboot reboot
+    exit 1
+fi
+echo "Debugstart gesendet. Vor normalem Android-Neustart Stock-DTBO wiederherstellen."
+)
 ```
 
-Am Telefon mit den Lautstärketasten **UNLOCK THE BOOTLOADER** auswählen und
-mit der Ein/Aus-Taste bestätigen. Anschließend folgen Datenlöschung und
-Neustart. Falls das Gerät nach Abschluss am Fastboot-Bildschirm stehen bleibt,
-`fastboot reboot` ausführen. Bei einem Fehler die genaue Meldung prüfen;
-keine Critical-Unlock- oder Erase-Befehle auf Verdacht ergänzen.
+Bei einem Fehler im temporären Start versucht der Block die Wiederherstellung.
+Ist das Gerät dabei nicht mehr in Fastboot, kann der Restore-Befehl auf USB
+warten. Dann den unten beschriebenen Tastenweg verwenden; kein weiterer Flash
+auf Verdacht. Ein erfolgreich beendetes `fastboot boot` bedeutet nur, dass der
+Bootloader den Auftrag angenommen hat.
 
-5. Stock-Android minimal einrichten und USB-Debugging sowie ADB-Autorisierung
-   erneut aktivieren. Dann den neuen Zustand ablesen und Android wieder starten:
+Ein leeres Display ist beim frühen USB-Test möglich. Etwa 30–60 Sekunden nach
+dem Bootauftrag auf CachyOS prüfen:
 
 ```bash
-adb get-state
-adb reboot bootloader
-fastboot getvar unlocked
-fastboot getvar current-slot
+ip -br addr
+lsusb
+```
+
+Die Fastboot-Ausgabe und diese beiden Ausgaben im Gespräch bereitstellen.
+Erster Erfolg ist ein neu erscheinendes RNDIS-Netzinterface. Die Ramdisk bietet
+DHCP für den USB-Host und eine Telnet-Shell auf `192.168.2.15:23`; die tatsächliche
+Enumeration und Erreichbarkeit müssen erst am Gerät bestätigt werden.
+Die unauthentifizierte Entwicklungsshell nur auf der isolierten USB-Verbindung
+verwenden. Erste Shell-Nachweise sind `/proc/cmdline`, `/proc/mounts`,
+`dmesg`, `/init.log` und gegebenenfalls `/diagnosis.log`.
+
+## 4. Stock-DTBO wiederherstellen und Android starten
+
+Vor dem normalen Android-Start zurück in Bootloader-Fastboot. Bei einem
+hängenden Debug-Kernel zum erzwungenen Ausschalten **Ein/Aus + Lauter etwa
+10 Sekunden** halten; danach aus dem ausgeschalteten Zustand den zuvor
+geprüften Fastboot-Tastenweg verwenden. Die
+[N100-Herstelleranleitung](https://manuals.plus/m/5dcc971ef81e6d18fe67dd04cef2115a599566491f9bedfaa3da9169baa5b620_optim.pdf)
+beschreibt das erzwungene Ausschalten mit Ein/Aus + Lauter.
+
+Dann am CachyOS-Host:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+python3 "$N100_PORT/tools/prepare-first-boot.py" check \
+  --bundle "$HOME/n100-build/first-device-test" \
+  --stock-dir "$HOME/n100-build/stock-BE2013-20261025T180040Z"
+fastboot flash dtbo_b "$HOME/n100-build/first-device-test/dtbo-stock-24MiB.img"
 fastboot reboot
+)
 ```
 
-Diese Ausgabe im Gespräch bereitstellen. Erwartet wird `unlocked: yes`;
-der aktuelle Slot wird aus dem neuen Befund übernommen. Der erfolgreiche
-Stock-Start nach dem Reset prüft den Ausgangspunkt vor dem DTBO-Versuch.
-Dieser Schritt enthält noch keine Image-Flash-Befehle.
+Bei verändertem Slot hält die Prüfung an; nicht einfach beide DTBO-Slots
+beschreiben. Erst den neuen Zustand klären. Bei Restore-Fehlern vor dem
+normalen Neustart die konkrete Ausgabe prüfen. Den Bootloader mit
+unverifizierten Entwicklungsimages nicht wieder sperren.
 
-## Phase 2: DTBO und Rückweg festlegen
+## Entsperren bereits erledigt
 
-Das Stock-DTBO lässt sich auf den gebauten Basis-DTB am Host nicht anwenden.
-Daher reicht ein temporärer Boot-Download allein für diesen Kandidaten nicht:
-Das passende gebaute DTBO muss für den Start verfügbar sein. Ein DTBO-Flash
-ändert eine physische Partition dauerhaft, auch wenn das Boot-Image selbst
-anschließend nur über `fastboot boot` in den RAM geladen wird.
-
-Unmittelbar vor dem Versuch aktuellen Slot, entsperrten Zustand und
-Bootloader-Fastboot erneut ablesen. Früher beobachtet: Slot B, Boot je 96 MiB,
-DTBO je 24 MiB, maximaler Download 804.280.320 Bytes. Der Slot wird nicht aus
-diesem alten Befund fest vorgegeben. Kein Slotwechsel und keine Änderungen an
-beiden Slots für den ersten Versuch.
-
-Die Originaldateien aus der passenden EEA-Voll-OTA liegen auf dem PC unter
-`/home/eugen/n100-build/stock-BE2013-20261025T180040Z`:
-
-| Originaldatei | SHA-256 |
-| --- | --- |
-| `dtbo.img` (8 MiB) | `5425e6e33ef63a06da926df47a42190ff263a3362bb8f1315a68fe92a443938e` |
-| `boot.img` (96 MiB) | `28e3497eb8e77042ef983c0654758e54e97cf07d9fae4c9e2798535c58a535f1` |
-| `vbmeta.img` (8192 Bytes) | `6ea6f938f7309ff65ab28596b27c6d885ca067165b9f67bf201d3fb7978dc180` |
-
-Diese rekonstruierten OTA-Dateien sind keine Rohsicherungen beider Slots.
-Ein noch nicht aktualisierter anderer Slot kann einen anderen Stand enthalten.
-Vor dem ersten DTBO-Schreibvorgang müssen der konkrete Zielsuffix und der
-Wiederherstellungsablauf einschließlich Rückkehr in Fastboot feststehen.
-
-Die Stock-DTBO-Datei ist kürzer als die gemessene physische DTBO-Partition.
-Ein bloßes Anhängen von Nullen verschiebt den AVB-Footer nicht korrekt.
-Auch die Annahme, ein kurzer Flash entferne sämtliche alten Bytes am
-Partitionsende, ist hier nicht am Gerät geprüft. Die Rückwegplanung muss dies
-berücksichtigen; ein getesteter Restore wird nicht behauptet.
-
-## AVB-Befund für die Planung
-
-Die unabhängig extrahierte Stock-`vbmeta.img` enthält einen
-SHA256_RSA4096-Header mit Flags 0 und einen DTBO-Hashdeskriptor für die ersten
-146.035 Bytes des Stock-DTBO. Dessen eingebetteter Footer verweist auf
-unsignierte Metadaten mit Algorithmus NONE; derselbe Salt und Digest stehen
-auch im übergeordneten VBMeta. Das Vorhandensein eines Footers bedeutet daher
-keine OEM-Signatur des Debug-DTBO.
-
-[Host-Ausgabe](../validation/stock-avb-info-20261025.log).
-Die OEM-Schlüsselauthentizität ist damit nicht unabhängig belegt. Der gebaute
-DTBO-Inhalt passt nicht zum Stock-Hashdeskriptor. Das Verhalten des konkreten
-entsperrten N100 bei diesen Abweichungen und bei temporärem Boot ist ungetestet.
-Ein automatisches Flashen von VBMeta oder Abschalten der Verifikation ist
-für diesen Versuch nicht implementiert. Bei Ablehnung zuerst den genauen
-Bootloaderfehler auswerten.
-
-## Phase 3: früher Kernel-/USB-Start
-
-Nach Abschluss der vorigen Phasen wird ausschließlich das konkrete Debug-Image
-mit passendem DTBO getestet. Es gibt keinen automatischen Fallback zum Flashen
-des Boot-Images, falls temporäres Booten abgelehnt wird.
-
-Erster Erfolg: Kernel erreicht Initramfs, RNDIS erscheint am Host und die
-Telnet-Debug-Shell auf `192.168.2.15:23` ist erreichbar. Die Host-Adresse und
-das tatsächlich neu erschienene USB-Netzinterface werden erst nach Enumeration
-zugeordnet. Die unauthentifizierte Shell nur über eine isolierte USB-Verbindung
-verwenden.
-
-Erste Nachweise aus dieser Shell sind `/proc/cmdline`, `/proc/mounts`,
-`dmesg`, `/init.log` und gegebenenfalls `/diagnosis.log`. `n100_debug=1`
-muss vorhanden sein; ein automatischer Userdata-Mount oder Rootfs-Start ist
-nicht vorgesehen. Ein leeres Display allein unterscheidet einen Kernelhänger
-nicht von einem erfolgreichen USB-Debugstart.
-
-Die anschließende Rootfs-/HAL-Arbeit umfasst weiterhin dynamische
-Android-Partitionen, APEX und Firmware-Mounts. Ein erfolgreicher Debugstart
-macht den Port noch nicht zu einem installierbaren Alltagsimage.
+Der Benutzer hat den Datenverlust bestätigt und anschließend `unlocked: yes`,
+`current-slot: b` und erfolgreichen `fastboot reboot` gemeldet.
+[OnePlus nennt für das N100 `fastboot oem unlock`](https://service.oneplus.com/in/search/search-detail?id=op588).
+Dieser Schritt muss nicht wiederholt werden. Die neue Zustandsmeldung
+bestätigt noch keinen Boot des Sailfish-Kernels.

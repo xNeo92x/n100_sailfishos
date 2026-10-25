@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "source": "User terminal transcript after authorized bootloader unlock",
+  "observations": {
+    "adb_get_state": "device",
+    "unlocked": "yes",
+    "current_slot": "b",
+    "fastboot_reboot": "OKAY"
+  },
+  "bootloader_unlocked": true,
+  "slot": "b",
+  "device_written_by_assistant": false,
+  "boot_tested": false,
+  "flashable_release": false,
+  "limitations": [
+    "Successful ADB and fastboot observations; firmware fingerprint not re-collected.",
+    "Sailfish kernel has not been started.",
+    "DTBO restore candidate validated on host only; physical restoration untested."
+  ]
+}

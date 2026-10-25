@@ -3,6 +3,10 @@
 This is a development checklist, not an installation guide. No command here
 authorizes or automates partition writes. The generated image has passed a host ext4 check; no on-device boot has been tested.
 
+The latest user observation confirms an unlocked bootloader and active slot B.
+The exact debug/DTBO candidate, verified stock rollback file preparation and
+explicit first-test commands are in [FIRST_DEVICE_TEST.md](FIRST_DEVICE_TEST.md).
+
 ## 1. Establish the device baseline
 
 The first BE2013 report has been analyzed in [DEVICE_BE2013.md](DEVICE_BE2013.md).

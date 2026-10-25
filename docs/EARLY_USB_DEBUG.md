@@ -139,9 +139,11 @@ bei Bedarf unter `$ANDROID_ROOT/n100-build-logs/boot-debug.log`.
 
 ## Vor dem Geräteversuch
 
-Der Bootloader wurde zuletzt als gesperrt erfasst. Der neue Build führt keine
-Telefonbefehle aus. Entsperren, das passende DTBO, AVB und ein konkreter
-Wiederherstellungsablauf bleiben vor einem Geräteversuch zu klären.
+Der neue Gerätebefund bestätigt den entsperrten Bootloader und aktiven Slot B.
+Die Testdateien, der DTBO-Rückweg und die konkreten Schritte stehen jetzt in
+[FIRST_DEVICE_TEST.md](FIRST_DEVICE_TEST.md). Der Build selbst führt keine
+Telefonbefehle aus; der erste Kernelstart und die physische Wiederherstellung
+sind noch ungetestet.
 Die Standardadresse der frühen USB-Shell ist `192.168.2.15`, Telnet-Port 23;
 die tatsächliche USB-Enumeration muss erst auf dem Handy geprüft werden.
 

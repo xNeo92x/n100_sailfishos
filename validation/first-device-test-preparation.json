@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "scope": "Host preparation and read-only fastboot guard; device writes remain explicit user commands",
+  "tool": "tools/prepare-first-boot.py",
+  "tests": {
+    "new_host_tests": 8,
+    "passed": true,
+    "full_host_suite_passed": 166,
+    "fs_config_compat_suite_passed": 16,
+    "real_stock_dtbo_resize_byte_identical_to_pinned_avbtool": true,
+    "real_stock_dtbo_embedded_hash_verified_by_avbtool": true
+  },
+  "avbtool_source": "LineageOS/android_external_avb@ba9d77598670f4e221490aa0e7aa9b27564cf2fb",
+  "source_stock_dtbo_sha256": "5425e6e33ef63a06da926df47a42190ff263a3362bb8f1315a68fe92a443938e",
+  "resized_stock_dtbo_sha256": "2d663aaa05568bff83c7e96abe72eef85d4e9e14c5c9e70da8b7274278c23706",
+  "resized_bytes": 25165824,
+  "retained": [
+    "original DTBO data",
+    "embedded VBMeta bytes",
+    "AVB footer contents"
+  ],
+  "changed": "padding and footer position to occupy physical 24-MiB partition",
+  "guard_checks": [
+    "exact reviewed boot hash and size",
+    "exact reviewed test DTBO hash and size",
+    "exact original and resized stock DTBO hashes",
+    "exactly one fastboot device",
+    "product bengal",
+    "unlocked yes",
+    "active slot b",
+    "is-userspace no",
+    "boot_b and dtbo_b physical sizes",
+    "maximum download capacity"
+  ],
+  "boot_tested": false,
+  "restore_procedure_device_tested": false,
+  "oem_key_authenticity_verified": false,
+  "flashable_release": false
+}
