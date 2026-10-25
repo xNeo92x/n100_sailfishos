@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "scope": "RPM mount-fixup dispatch and format compatibility",
+  "dhd_revision": "775f6c05123ca7e58422df1fcfd51943eb56920f",
+  "original_include_blob": "7717982261ad321df173e489145a2f58126691c6",
+  "makefstab_blob": "1999622bfe5246dac769f698eeeb4a095190b621",
+  "rpm_override": "hybris/fixup-rpm-mountpoints",
+  "tests_passed": 5,
+  "exact_pinned_include_patch_verified": true,
+  "actual_pinned_mount_generator_tested": true,
+  "boot_override_generation_unchanged": true,
+  "fixture_physical_mapping": "synthetic dev/sdz aliases; not hardware evidence",
+  "slotselect_aliases_not_guessed": true,
+  "slotselect_runtime_implemented": false,
+  "rpm_built": false,
+  "boot_tested": false
+}

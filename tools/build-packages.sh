@@ -19,6 +19,9 @@ case "${1:-}" in
         exec bash "$port_dir/tools/build-packages.sh" rootfs ;;
     hal)
         python3 "$port_dir/tools/n100.py" prepare-rpm --android-root "$ANDROID_ROOT"
+        : "${N100_DEVICE_REPORT:?Source build.env or set N100_DEVICE_REPORT to the saved stock report}"
+        python3 "$port_dir/tools/n100.py" prepare-rpm-mounts --android-root "$ANDROID_ROOT" \
+            --device-report "$N100_DEVICE_REPORT"
         exec bash rpm/dhd/helpers/build_packages.sh -d ;;
     configs) exec bash rpm/dhd/helpers/build_packages.sh -c ;;
     middleware) exec bash rpm/dhd/helpers/build_packages.sh -m ;;

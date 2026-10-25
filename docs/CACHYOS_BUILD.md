@@ -379,6 +379,38 @@ bash "$N100_PORT/tools/build-packages.sh" hal
 Tooling und Target nicht erneut anlegen. Der RPM-Build bleibt bis zum
 tatsächlichen erfolgreichen Abschluss als ungebaut markiert.
 
+### RPM-Mountpoint-Aufruf auf den Geräte-Override umstellen
+
+Nach der Python-3-Korrektur baute der erste HAL-RPM-Lauf die lokalen Werkzeuge
+und erzeugte sieben Mount-Units. Anschließend rief das gepinnte
+`droid-hal-device.inc` fest `hybris/hybris-boot/fixup-mountpoints` auf.
+Dieser Aufruf berücksichtigt den Geschwister-Override
+`hybris/fixup-mountpoints` nicht, den der Android-HAL-Build bereits verwendet.
+
+Der HAL-RPM-Wrapper führt deshalb nun zusätzlich
+`n100.py prepare-rpm-mounts` aus. Er prüft den gespeicherten Gerätebericht
+erneut und erzeugt zusätzlich `hybris/fixup-rpm-mountpoints`. Dieser versteht
+auch die vom Mountgenerator ausgegebenen `/dev/disk/by-partlabel/`-Pfade.
+Der Boot-Override bleibt unverändert. Genau die Aufrufstelle im gepinnten
+RPM-Include wird auf den neuen RPM-Override umgestellt. Der ursprüngliche Git-Blob muss
+`7717982261ad321df173e489145a2f58126691c6` entsprechen; ein bereits
+unverändert installierter Patch ist ebenfalls zulässig. Andere lokale
+Änderungen werden nicht überschrieben. Das Audit heißt
+`.n100-rpm-mounts.json`.
+
+Zum Fortsetzen denselben Aktualisierungs-/HAL-RPM-Block wie oben verwenden.
+Das Geräte-Spec und sein vorbereiteter Snapshot müssen nicht neu angelegt
+werden; weder ein vollständiger Sync noch ein erneuter Android-HAL-Build
+ist erforderlich.
+
+Der Fixup ersetzt nur die im Bericht belegten physischen Aliase. Die fstab
+verwendet für `modem`, `dsp` und `bluetooth` weiterhin Androids
+`slotselect`-Semantik. Es wird keine feste Auswahl aus dem damals aktiven
+Slot abgeleitet. Eine korrekte A/B-Auswahl zur Laufzeit bleibt zusammen mit
+dynamischen HAL-Mounts und der udev-Konvertierung in
+[BRINGUP.md](BRINGUP.md) offen. Ein erfolgreicher RPM-Build ist kein
+Nachweis dieser Laufzeitfunktionen.
+
 Das Ergebnis des letzten Schritts ist ein `sfe-billie2-*.tar.bz2`. Die
 Paketauflösung und weitere Middleware-Anpassungen sind noch nicht erprobt.
 Das Rootfs muss bereits die billie2-Anpassung und die AArch64-Laufzeit enthalten;

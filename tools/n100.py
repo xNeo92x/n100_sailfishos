@@ -18,6 +18,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
+DHD_MOUNT_FIXUP_BLOB = "7717982261ad321df173e489145a2f58126691c6"
 
 
 class PortError(Exception):
@@ -590,7 +591,7 @@ def boot_mount_mapping(report):
     return dict(sorted(mapping.items()))
 
 
-def mount_fixup_script(mapping):
+def mount_fixup_script(mapping, prefixes=("/dev/block/bootdevice/by-name/", "/dev/block/by-name/")):
     # Only physical aliases are rewritten. Logical super partitions need separate runtime setup.
     lines = [
         "#!/bin/sh", "# Generated from the intended phone's physical by-name evidence.",
@@ -607,7 +608,7 @@ def mount_fixup_script(mapping):
     ]
     for name in sorted(mapping, key=lambda value: (-len(value), value)):
         escaped = name.replace(".", r"\.")
-        for prefix in ("/dev/block/bootdevice/by-name/", "/dev/block/by-name/"):
+        for prefix in prefixes:
             expression = "s#" + prefix + escaped + r"\([^[:alnum:]_.-]\|$\)#" + mapping[name] + r"\1#g"
             lines.append("    -e " + shlex.quote(expression) + " \\")
     lines.append('    "$@"')
@@ -820,6 +821,63 @@ def prepare_rpm_inputs(args):
     print("RPM fs_config generator is ready for Python 3.")
 
 
+def install_rpm_mount_fixup(android):
+    lock = read_lock()
+    dependency = next(p for p in lock["packaging"] if p["path"] == "dhd")
+    require_checkout(android / dependency["parent"] / dependency["path"], dependency["revision"])
+    override = android / "hybris/fixup-rpm-mountpoints"
+    if override.is_symlink() or not override.is_file() or not os.access(str(override), os.X_OK):
+        raise PortError("Missing executable report-derived hybris/fixup-rpm-mountpoints")
+    path = android / "rpm/dhd/droid-hal-device.inc"
+    if path.is_symlink() or not path.is_file():
+        raise PortError("Expected the regular droid-hal-device.inc source file")
+    original_blob = DHD_MOUNT_FIXUP_BLOB
+    before = "hybris/hybris-boot/fixup-mountpoints %{device} tmp/units/*"
+    after = "hybris/fixup-rpm-mountpoints %{device} tmp/units/*"
+    data = path.read_bytes()
+    content = data.decode("utf-8")
+    if git_blob_identity(data) == original_blob and content.count(before) == 1:
+        replacement = content.replace(before, after)
+        mode = path.stat().st_mode & 0o777
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(prefix=".n100-dhd-mounts-", dir=str(path.parent),
+                                             delete=False) as stream:
+                temporary = Path(stream.name)
+                stream.write(replacement.encode("utf-8"))
+            temporary.chmod(mode)
+            os.replace(str(temporary), str(path))
+        finally:
+            if temporary is not None and temporary.exists():
+                temporary.unlink()
+    elif (content.count(after) != 1 or
+          git_blob_identity(content.replace(after, before).encode("utf-8")) != original_blob):
+        raise PortError("droid-hal-device.inc has unreviewed changes; inspect manually")
+    write_new(android / ".n100-rpm-mounts.json", json.dumps({
+        "schema": 1, "dhd_revision": dependency["revision"],
+        "original_include_blob": original_blob,
+        "installed_include_blob": git_blob_identity(path.read_bytes()),
+        "mount_fixup": "hybris/fixup-rpm-mountpoints",
+        "slotselect_runtime_implemented": False,
+        "boot_tested": False,
+    }, indent=2) + "\n")
+    print("RPM mount generation now uses the report-derived billie2 fixup.")
+    print("A/B firmware slot selection remains runtime bring-up work.")
+
+
+def prepare_rpm_mounts(args):
+    # Keep the boot override unchanged; makefstab additionally emits by-partlabel paths.
+    prepare_boot_inputs(args)
+    android = android_path(args.android_root)
+    mapping = boot_mount_mapping(json.loads(Path(args.device_report).read_bytes()))
+    content = mount_fixup_script(mapping, prefixes=(
+        "/dev/block/bootdevice/by-name/", "/dev/block/by-name/", "/dev/disk/by-partlabel/"))
+    path = android / "hybris/fixup-rpm-mountpoints"
+    write_new(path, content)
+    path.chmod(0o755)
+    install_rpm_mount_fixup(android)
+
+
 def check_kernel(args):
     values = parse_config(Path(args.config).read_text())
     expected = parse_config((ROOT / "kernel/sailfish.config").read_text())
@@ -912,6 +970,10 @@ def main():
     p = commands.add_parser("prepare-rpm", help="Install the reviewed Python 3 fs_config generator backport")
     p.add_argument("--android-root", required=True)
     p.set_defaults(func=prepare_rpm_inputs)
+    p = commands.add_parser("prepare-rpm-mounts", help="Use report-derived mount fixups during HAL RPM packaging")
+    p.add_argument("--android-root", required=True)
+    p.add_argument("--device-report", required=True)
+    p.set_defaults(func=prepare_rpm_mounts)
     p = commands.add_parser("check-kernel", help="Check the resolved kernel .config")
     p.add_argument("config")
     p.set_defaults(func=check_kernel)
