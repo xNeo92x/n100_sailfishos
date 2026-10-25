@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "evidence": "user-uploaded packer report; cross-checked against repository DTBO reference",
+  "report": "validation/debug-image-report-user-20261025.json",
+  "report_sha256": "2cff91b8e4c85f485892f0074b552b7732bc85480c1c61195e31a83a326353bd",
+  "collected_at": "2026-10-25T19:17:25.076258+00:00",
+  "debug_image_built_on_user_pc": true,
+  "image": "/home/eugen/n100-build/android/out/target/product/billie2/n100-debug-boot-20261025T191724Z.img",
+  "bytes": 45064192,
+  "sha256": "6dccc17b73f572a42400274ca8ce50595d9e4a8127732e4e9d53d29d1727a6ac",
+  "source_boot_sha256": "85f4021b9ffa5fbae8e4122ace52339807a59033b97765e78fd428cb509742d0",
+  "kernel_config_sha256": "6f0fb9b29c2280815d71e7fc215f4f55dd82c872ba3780f80305c8134c52d049",
+  "checks": {
+    "early_debug_guard_verified": true,
+    "static_aarch64_busybox_reported": true,
+    "cmdline_debug_flag_present": true,
+    "built_dtb_matches_previous_review": true,
+    "dtbo_table_and_entries_match_previous_review": true,
+    "whole_dtbo_file_matches_previous": false,
+    "boot_fits_reported_96_mib_partition": true,
+    "dtbo_matches_reported_24_mib_partition": true,
+    "boot_below_reported_max_download": true
+  },
+  "dtbo": {
+    "path": "/home/eugen/n100-build/android/out/target/product/billie2/dtbo.img",
+    "bytes": 25165824,
+    "sha256": "c14f4bce02f0254a5eb381940767cb00bda9c740d5ad2cefa271f69bd859d46e",
+    "table_sha256": "fad722a171d845ecb3a0b38807569e5818569ae9c76b8c9104323eebc4786e81",
+    "overlay_sha256": "5d945b2dd32aa89c774f673cd775e3444d2f2f12131ab50703094147d1113951"
+  },
+  "limitations": [
+    "New image binaries were not uploaded; current pack results are user-host evidence.",
+    "DTBO full-file change is outside the reviewed table/overlay; exact changed metadata bytes not independently inspected.",
+    "Host overlay application proves format/symbol compatibility only.",
+    "OEM key authenticity and device AVB behavior remain unvalidated.",
+    "Original OTA images are not raw backups of both physical slots.",
+    "Unlocking wipes personal data; backup completion and acceptance not yet confirmed.",
+    "No phone accessed or booted; no hardware feature validated."
+  ],
+  "automatic_userdata_mount": false,
+  "restore_procedure_validated": false,
+  "boot_tested": false,
+  "flashable_release": false,
+  "next": "Confirm personal backup and factory-reset acceptance; then unlock phase on CachyOS before any DTBO write."
+}

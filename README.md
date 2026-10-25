@@ -7,9 +7,10 @@ steht noch aus.**
 
 Die Boot-Prüfung fand eine Inkompatibilität des Stock-DTBO mit dem gebauten
 Basis-DTB. Für den frühen USB-Debugstart wurden Init und Decoderanforderungen
-angepasst; der neue Kernel ist gebaut. Der abschließende Packschritt prüft
-nun den Gerätebaum-Inhalt getrennt von veränderlichen AVB-Metadaten.
-[Vorhandenen Build verpacken](docs/EARLY_USB_DEBUG.md#bereits-gebaut-packschritt-wiederholen).
+angepasst; der neue Kernel und das separate Debug-Image sind erfolgreich gebaut.
+Die Init-Sperre vor dem Userdata-Mount und die geprüften Gerätebaum-Inhalte sind
+im [Buildbericht](validation/debug-image-build-user-20261025.json) festgehalten.
+Weiter geht es mit dem [ersten Geräteversuch](docs/FIRST_DEVICE_TEST.md).
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,

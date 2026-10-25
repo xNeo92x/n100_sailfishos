@@ -7,8 +7,8 @@ authorizes or automates partition writes. The generated image has passed a host 
 
 The first BE2013 report has been analyzed in [DEVICE_BE2013.md](DEVICE_BE2013.md).
 It confirms stock Android 11, SDK 30, platform bengal, slot B, locked bootloader,
-dynamic partitions and file-encrypted F2FS userdata. Keep Android installed for
-the next read-only collection; no unlock or downgrade is needed for diagnosis.
+dynamic partitions and file-encrypted F2FS userdata. The baseline collection is complete. The debug image is built; unlocking and
+the first kernel test are the next device phases. No downgrade is planned.
 
 Collect `tools/n100.py probe` while the existing Android installation still boots.
 Record the exact BE201x model, firmware fingerprint, Android/vendor SDK level,
@@ -49,71 +49,23 @@ installation instructions do not apply to this candidate.
 Keep SELinux compiled in and use `selinux=1 androidboot.selinux=permissive` for
 the initial development bring-up. Do not disable SELinux in Kconfig.
 
-### Collect the built boot inputs for offline review
+### Completed boot audit and debug packaging
 
-The user's [stock image report](../validation/stock-images-user-20261025.json)
-now matches all five independently extracted original image records. The ZIP
-and the original boot/DTBO/recovery/VBMeta files have been saved on the user's
-PC. A tested restoration procedure and a boot experiment remain outstanding.
+The actual uploaded boot bundle was analyzed; collection does not need repeating.
+The earlier config had `RD_LZ4=n` but already enabled `DECOMPRESS_LZ4=y`;
+it did not prove a missing decoder. Stock DTBO fails against the built base DTB
+with `FDT_ERR_NOTFOUND`, while the matching built pair applies on the host.
 
-The actual built Sailfish DTB and initramfs have not yet been received for
-offline inspection. The collector below reads local files only and creates
-one bounded ZIP. Run it on CachyOS, outside the SDK chroots:
+The user rebuilt the kernel and successfully packaged the separate early
+RNDIS debug image. Its report confirms the branch before userdata mounting,
+static AArch64 BusyBox, matching base DTB and exact previously reviewed DTBO
+table/overlay bytes. Full DTBO hashes differ outside the reviewed content.
+The complete new binaries were not uploaded for independent inspection.
 
-```bash
-(
-set -e
-source "$HOME/n100-build/build.env"
-git -C "$N100_PORT" pull --ff-only
-
-python3 "$N100_PORT/tools/collect-boot-audit.py" \
-  --work-dir "$HOME/n100-build" \
-  --android-root "$ANDROID_ROOT" \
-  --hybris-boot "$HOME/n100-build/images/billie2-20261025T160318Z/hybris-boot.img" \
-  --output "$HOME/n100-build/boot-audit-$(date -u +%Y%m%dT%H%M%SZ).zip"
-)
-```
-
-It locates the matching `stock-BE2013-*/stock-images.json` automatically. If
-multiple matching directories exist, specify `--stock-dir /absolute/path`
-rather than guessing a directory. All five original image hashes and the
-previously reported `hybris-boot.img` hash are verified before bundle creation.
-The collector refuses changed input images and existing output files.
-
-The ZIP contains `audit.json`, the Sailfish ramdisk, both base DTBs, the stock
-DTBO image, a 64-byte kernel header and the current Android kernel `.config`.
-If present, `out/target/product/billie2/dtbo.img` is included as the built DTBO.
-The config and optional built DTBO have recorded hashes, but are not thereby
-proven to belong to the pinned kernel image. No complete boot/kernel image,
-userdata image, personal files or phone identifiers are collected.
-
-Upload the ZIP at the printed path. The next analysis must review the actual
-initramfs `/init`, required executables, storage selection and USB gadget setup;
-compare device-tree IDs and test applying the original DTBO to the built base
-DTB. Collection alone does not perform or pass those checks. The kernel config
-snapshot is an additional build input, not proof of its embedded provenance.
-
-The collector's [eight tests and original-image integration check](../validation/boot-audit-collector.json)
-passed. The real user-built hybris input is still needed. Do not interpret
-these host checks as a phone boot test.
-
-### Actual boot audit and packaging check
-
-The uploaded boot bundle has now been analyzed. The original config snapshot has `RD_LZ4=n` but already enables
-`DECOMPRESS_LZ4=y`; the earlier claim of a missing decoder was too strong. Stock DTBO
-application to the built base DTB fails with `FDT_ERR_NOTFOUND`; the matching
-built pair applies successfully. Seventeen missing Stock fixup labels explain
-the host failure. The original USB configfs path also requested unsupported
-`rndis_bam` alongside RNDIS.
-
-Source fixes and a boot-only build mode now prepare a RNDIS-only early debug
-branch before userdata mounting. The user has now rebuilt the kernel and source boot image successfully;
-the final debug packaging guard stopped at the DTB/DTBO comparison. The corrected
-guard compares exact DTB/table/overlay content separately from AVB metadata.
-No phone boot has been tested. Follow [EARLY_USB_DEBUG.md](EARLY_USB_DEBUG.md) for the
-next build command and [the evidence](../validation/boot-audit-user-20261025.json)
-for exact hashes, test matrix and limitations. The previous bundle collection
-command above is retained for reference; it does not need repeating.
+See [the build assessment](../validation/debug-image-build-user-20261025.json),
+[EARLY_USB_DEBUG.md](EARLY_USB_DEBUG.md) and the concrete
+[first device test plan](FIRST_DEVICE_TEST.md). No further rebuild is required
+for this candidate. No phone boot or restoration procedure has been tested.
 
 ## 3. Dynamic partitions and Android userspace — unresolved
 
@@ -175,7 +127,7 @@ Boot compatibility, backups, restoration and the locked bootloader still require
 validation before installation. The dynamic Android HAL mounts in section 3
 remain unresolved: a userdata rootfs image alone does not supply them.
 
-## 5. First nonpersistent boot experiment
+## 5. First kernel boot experiment
 
 ### Read bootloader variables before any boot experiment
 
@@ -230,7 +182,7 @@ the exact model or firmware. [Machine-readable assessment](../validation/fastboo
 | Physical partition | Capacity | Built image | Size fits |
 | --- | ---: | ---: | --- |
 | boot_a / boot_b | 100,663,296 bytes each (96 MiB) | 45,064,192 bytes | Yes |
-| dtbo_a / dtbo_b | 25,165,824 bytes each (24 MiB) | No stock DTBO comparison yet | Not evaluated |
+| dtbo_a / dtbo_b | 25,165,824 bytes each (24 MiB) | Matching built DTBO: 25,165,824 bytes | Yes |
 | userdata | 48,062,869,504 bytes (44.76 GiB) | 8,589,934,592 bytes | Yes |
 
 The current userdata type is `f2fs`; the new image is fresh unencrypted ext4.
@@ -268,9 +220,15 @@ with display `BE2013_7_231009` and incremental `2310092135` unchanged.
 The OxygenOS version property is empty. See [STOCK_FIRMWARE.md](STOCK_FIRMWARE.md)
 for the matching EU full OTA, verified ZIP target metadata and original boot
 header evidence. The catalog helper's HTTP 403 was fixed and its live query
-completed; the next step is saving the stock package on the user's PC.
+completed. The exact package and five reconstructed stock images are now saved
+on the user's PC; see the current [device test plan](FIRST_DEVICE_TEST.md).
 
 ### First kernel/debug-shell boot
+
+Follow [FIRST_DEVICE_TEST.md](FIRST_DEVICE_TEST.md) for the current candidate.
+A temporary boot image still requires the matching built DTBO in a physical
+partition; the combined experiment therefore includes a persistent change.
+
 
 Only after validating the boot header, storage access and recovery path should
 an experienced porter attempt a temporary boot of the generated debugging image,

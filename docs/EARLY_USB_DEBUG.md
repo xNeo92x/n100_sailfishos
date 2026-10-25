@@ -1,9 +1,10 @@
 # N100: früher USB-Debug-Boot
 
-Der nächste lokale Build erzeugt ein separates Image für eine USB-Shell vor
-jedem automatischen Mount von `/data`. Kernel und Hybris-Boot wurden inzwischen auf dem Buildhost neu erstellt.
-Der abschließende Packschritt wurde am bisherigen DTB/DTBO-Dateivergleich
-angehalten und muss wiederholt werden. Ein Geräteboot ist ungetestet.
+Das separate USB-Debug-Image ist auf dem Buildhost erfolgreich erstellt.
+Der [Packerbericht](../validation/debug-image-report-user-20261025.json) bestätigt
+die Debug-Sperre vor jedem automatischen Mount von `/data` und die geprüften
+DTB/DTBO-Inhalte. Ein Geräteboot ist ungetestet. Weiter geht es mit dem
+[ersten Geräteversuch](FIRST_DEVICE_TEST.md).
 
 ## Ergebnisse der echten Boot-Prüfung
 
@@ -35,7 +36,7 @@ Die fehlenden Stock-Symbole betreffen unter anderem PMI632-Regler, Ladegerät,
 Fuel Gauge und thermische Knoten. Eine passende Board-ID allein behebt diese
 DTB/DTBO-Schnittstelle nicht. Für diesen Kernel ist das **passende gebaute DTBO**
 erforderlich. Ein späterer Startversuch benötigt deshalb zusätzlich eine
-geprüfte Vorgehensweise für DTBO und dessen Wiederherstellung. Das bloße
+konkrete Vorgehensweise für DTBO und dessen Wiederherstellung. Das bloße
 Booten eines anderen Boot-Images validiert diesen Teil nicht.
 
 Erfolgreiches Anwenden eines Overlays auf dem Host ist kein Hardwaretest.
@@ -67,45 +68,32 @@ die zuvor geprüften DTB- und DTBO-Inhalts-Hashes. Bei Abweichungen entsteht kei
 Debug-Bericht. Für die LZ4-Prüfung wird die Systembibliothek `liblz4.so.1`
 verwendet; fehlt sie in Ubuntu, nennt der Helfer das Paket `liblz4-1`.
 
-## Bereits gebaut: Packschritt wiederholen
+## Debug-Image erfolgreich verpackt
 
-Der Android-Build vom 25. Oktober lief in 25 Sekunden erfolgreich durch.
-Finale Fragmentprüfung und Kernel-Checker wurden abgeschlossen (47 optionale
-Warnungen). Der ursprüngliche Packer verglich anschließend die komplette
-DTBO-Datei mit dem älteren Image; dort wurde der Ablauf angehalten.
+Am 25. Oktober um 19:17 UTC entstand:
+`out/target/product/billie2/n100-debug-boot-20261025T191724Z.img`
 
-Das geprüfte DTBO ist ein 24-MiB-Image mit einer 186.363-Byte-DTBO-Tabelle
-einschließlich Overlay sowie einem AVB-Footer. AVB-Metadaten können bei einem
-Neubau andere Dateihashes erzeugen. Der korrigierte Packer verlangt weiterhin
-dieselben Basis-DTB-Bytes und exakt dieselbe DTBO-Tabelle einschließlich
-Overlay-Daten; zusätzlich prüft er Tabellen-/Footer-Grenzen und die Image-Größe.
-Padding und AVB-Daten werden vollständig erhalten, der tatsächliche neue
-Dateihash wird im Bericht erfasst. OEM-Signaturen werden dadurch nicht geprüft.
-[Nachweis und Reproduktion](../validation/dtbo-content-guard.json).
+- Größe: 45.064.192 Bytes; SHA-256
+  `6dccc17b73f572a42400274ca8ce50595d9e4a8127732e4e9d53d29d1727a6ac`.
+- Debug-Flag `n100_debug=1`, ausführbare Init-Sperre und statische
+  AArch64-BusyBox laut Packerprüfung vorhanden.
+- Basis-DTB und die komplette 186.363-Byte-DTBO-Tabelle einschließlich Overlay
+  stimmen mit dem zuvor am Host angewendeten Stand überein.
+- Das passende `out/target/product/billie2/dtbo.img` ist 24 MiB groß,
+  SHA-256 `c14f4bce02f0254a5eb381940767cb00bda9c740d5ad2cefa271f69bd859d46e`.
+  Sein kompletter Dateihash weicht vom früheren Build ab; die geprüften
+  Gerätebaum-Inhalte sind identisch. Die genaue Änderung außerhalb der Tabelle
+  wurde mangels hochgeladener neuer Binärdatei nicht unabhängig untersucht.
 
-Im aktuellen Ubuntu-Terminal nur den vorhandenen Build verpacken:
+Der korrigierte Packer vergleicht DTB, Tabelle und Overlays getrennt von den
+AVB-Metadaten. Er erhält die vollständigen Image-Bytes und protokolliert deren
+tatsächliche Hashes. OEM-Signaturen werden dadurch nicht geprüft.
+[Prüfumfang](../validation/debug-image-build-user-20261025.json) und
+[Guard-Nachweis](../validation/dtbo-content-guard.json).
 
-```bash
-(
-set -e
-source "$HOME/n100-build/build.env"
-git -C "$N100_PORT" pull --ff-only
-
-n100_product="$ANDROID_ROOT/out/target/product/billie2"
-python3 "$N100_PORT/tools/boot-debug.py" pack \
-  --image "$n100_product/hybris-boot.img" \
-  --kernel-config "$n100_product/obj/KERNEL_OBJ/.config" \
-  --dtbo "$n100_product/dtbo.img" \
-  --output "$n100_product/n100-debug-boot-$(date -u +%Y%m%dT%H%M%SZ).img"
-)
-```
-
-Bei identischen Gerätebaum-Inhalten entsteht die `.img.json`-Datei. Diese
-kleine Datei bereitstellen. Ändern sich die eigentlichen Gerätebaum-Daten oder
-das erwartete Layout, bleibt der Vorgang gesperrt und erstellt stattdessen eine
-kleine **`.img.review.zip`**. In diesem Fall dieses Paket bereitstellen; ein
-neues Debug-Image wurde dann nicht erzeugt. Welche Komponente des aktuellen
-Builds den alten Dateivergleich ausgelöst hat, ist erst mit diesen Daten belegt.
+Der Packschritt muss für diesen Stand nicht wiederholt werden. Die alte
+`hybris-boot.img`-Kopie unter `~/n100-build/images/billie2-20261025T160318Z`
+ist ein früheres Artefakt und wird nicht für den Debugversuch verwendet.
 
 ## Vollständiger Debug-Neubau bei Bedarf
 

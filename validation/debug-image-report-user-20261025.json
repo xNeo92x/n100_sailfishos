@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "collected_at": "2026-10-25T19:17:25.076258+00:00",
+  "kind": "early-usb-debug-only",
+  "image": "/home/eugen/n100-build/android/out/target/product/billie2/n100-debug-boot-20261025T191724Z.img",
+  "bytes": 45064192,
+  "sha256": "6dccc17b73f572a42400274ca8ce50595d9e4a8127732e4e9d53d29d1727a6ac",
+  "cmdline": "earlycon=msm_geni_serial,0x4a90000 androidboot.hardware=qcom androidboot.memcg=1 lpm_levels.sleep_disabled=1 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=2048 loop.max_part=7 selinux=1 androidboot.selinux=permissive n100_debug=1",
+  "source_boot_sha256": "85f4021b9ffa5fbae8e4122ace52339807a59033b97765e78fd428cb509742d0",
+  "kernel_config_sha256": "6f0fb9b29c2280815d71e7fc215f4f55dd82c872ba3780f80305c8134c52d049",
+  "ramdisk": {
+    "compression_config": "CONFIG_RD_LZ4",
+    "unpacked_bytes": 3110148,
+    "members": 13,
+    "init_sha256": "0eb6526fddb7ff07834601831a962587e97a84a90a2de9e88706f523ddb094b6",
+    "busybox_sha256": "340c0b59adbe23546c6e3fa243951a25bd0396bf8f12f9a3aa73d6112ba92f7e",
+    "early_debug_guard_verified": true,
+    "busybox_aarch64_without_interpreter": true
+  },
+  "dtb_sha256": "42b757cab0dd02642ab000df0cf812a3ba0ba905fd1e7689863aac574e8f3fcd",
+  "matching_dtbo": {
+    "path": "/home/eugen/n100-build/android/out/target/product/billie2/dtbo.img",
+    "bytes": 25165824,
+    "image_bytes": 25165824,
+    "image_sha256": "c14f4bce02f0254a5eb381940767cb00bda9c740d5ad2cefa271f69bd859d46e",
+    "table_bytes": 186363,
+    "table_sha256": "fad722a171d845ecb3a0b38807569e5818569ae9c76b8c9104323eebc4786e81",
+    "entries": [
+      {
+        "bytes": 186299,
+        "offset": 64,
+        "id": 0,
+        "revision": 0,
+        "custom": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sha256": "5d945b2dd32aa89c774f673cd775e3444d2f2f12131ab50703094147d1113951"
+      }
+    ],
+    "has_avb_footer": true,
+    "avb_footer": {
+      "major": 1,
+      "minor": 0,
+      "original_image_bytes": 186363,
+      "vbmeta_offset": 188416,
+      "vbmeta_bytes": 640
+    },
+    "avb_signature_verified": false,
+    "sha256": "c14f4bce02f0254a5eb381940767cb00bda9c740d5ad2cefa271f69bd859d46e",
+    "whole_image_matches_previous": false,
+    "reviewed_content_matches": true
+  },
+  "matching_dtbo_required": true,
+  "automatic_userdata_mount": false,
+  "restore_procedure_validated": false,
+  "stock_dtbo_applies_to_built_dtb": false,
+  "device_accessed": false,
+  "boot_tested": false,
+  "flashable_release": false,
+  "scope": "Debug flag enters USB shell before mount_stowaways; no userdata mount or rootfs boot"
+}

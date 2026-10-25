@@ -1,0 +1,92 @@
+Host inspection of independently reconstructed BE2013 EEA OTA files
+Tool: LineageOS/android_external_avb ba9d77598670f4e221490aa0e7aa9b27564cf2fb avbtool.py
+Scope: metadata parsing only; OEM trust key and device behavior unverified.
+
+vbmeta.img
+Minimum libavb version:   1.0
+Header Block:             256 bytes
+Authentication Block:     576 bytes
+Auxiliary Block:          4160 bytes
+Public key (sha1):        dcd6a21568bb4d10c8c267ff0a122c6597b4a045
+Algorithm:                SHA256_RSA4096
+Rollback Index:           0
+Flags:                    0
+Rollback Index Location:  0
+Release String:           'avbtool 1.1.0'
+Descriptors:
+    Chain Partition descriptor:
+      Partition Name:          vbmeta_system
+      Rollback Index Location: 2
+      Public key (sha1):       b9c8090ca304dc10fad5e09ab9185e0e32238428
+    Prop: com.android.build.vendor.fingerprint -> 'OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys'
+    Prop: com.android.build.vendor.os_version -> '11'
+    Prop: com.android.build.vendor.security_patch -> '2023-10-05'
+    Prop: com.android.build.vendor.security_patch -> '2023-10-05'
+    Prop: com.android.build.recovery.fingerprint -> 'OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys'
+    Prop: com.android.build.boot.fingerprint -> 'OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys'
+    Prop: com.android.build.boot.os_version -> '11'
+    Prop: com.android.build.boot.security_patch -> '2023-10-05'
+    Prop: com.android.build.boot.security_patch -> '2023-10-05'
+    Prop: com.android.build.dtbo.fingerprint -> 'OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys'
+    Hash descriptor:
+      Image Size:            16961536 bytes
+      Hash Algorithm:        sha256
+      Partition Name:        boot
+      Salt:                  501db2a48aa89d4f6110efce1e197e6a5b0f5d9a92ae4f6d8f43b042207f31b9
+      Digest:                9a5eda4ab81cf641c1b6123bb3b99e0cd502d4262b44a3d03747f79d553c3e47
+      Flags:                 0
+    Hash descriptor:
+      Image Size:            146035 bytes
+      Hash Algorithm:        sha256
+      Partition Name:        dtbo
+      Salt:                  c7cb34b7d6b708c46b16033a92dec8252ed8ee83c52edfb2c2f65d65e344aa33
+      Digest:                74b9296be206607450fd6bf53ed8454fcc0ad306ecf7eb8ee8125b4c903a831b
+      Flags:                 0
+    Hash descriptor:
+      Image Size:            32948224 bytes
+      Hash Algorithm:        sha256
+      Partition Name:        recovery
+      Salt:                  c276b22d691dcf0f4cc548b9adb1c84178e58fa5cf663887e08fc919fc10bf92
+      Digest:                e2ec3d1db67d3061929e030c5ba5aea4629213fbe3e6900873aa41183c17977f
+      Flags:                 0
+    Hashtree descriptor:
+      Version of dm-verity:  1
+      Image Size:            935325696 bytes
+      Tree Offset:           935325696
+      Tree Size:             7368704 bytes
+      Data Block Size:       4096 bytes
+      Hash Block Size:       4096 bytes
+      FEC num roots:         2
+      FEC offset:            942694400
+      FEC size:              7454720 bytes
+      Hash Algorithm:        sha1
+      Partition Name:        vendor
+      Salt:                  99da8aeeccfaee226e3d8c0ba80c7462b2b2b871d8be394f77cab89e94558405
+      Root Digest:           c57d3a225de2c7e98401c3f7b1b7214feceb1cfc
+      Flags:                 0
+
+dtbo.img
+Footer version:           1.0
+Image size:               8388608 bytes
+Original image size:      146035 bytes
+VBMeta offset:            147456
+VBMeta size:              640 bytes
+--
+Minimum libavb version:   1.0
+Header Block:             256 bytes
+Authentication Block:     0 bytes
+Auxiliary Block:          384 bytes
+Algorithm:                NONE
+Rollback Index:           0
+Flags:                    0
+Rollback Index Location:  0
+Release String:           'avbtool 1.1.0'
+Descriptors:
+    Hash descriptor:
+      Image Size:            146035 bytes
+      Hash Algorithm:        sha256
+      Partition Name:        dtbo
+      Salt:                  c7cb34b7d6b708c46b16033a92dec8252ed8ee83c52edfb2c2f65d65e344aa33
+      Digest:                74b9296be206607450fd6bf53ed8454fcc0ad306ecf7eb8ee8125b4c903a831b
+      Flags:                 0
+    Prop: com.android.build.dtbo.fingerprint -> 'OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys'

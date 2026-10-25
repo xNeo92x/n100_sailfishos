@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "debug-kernel-built-packaging-check-pending",
+  "stage": "debug-image-built-awaiting-device-test",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -135,7 +135,7 @@
     "stock_dtbo_applies_to_built_dtb": false,
     "built_dtbo_applies_to_built_dtb": true,
     "debug_boot_rebuild_required": false,
-    "debug_boot_packaging_retry_required": true
+    "debug_boot_packaging_retry_required": false
   },
   "firmware_identity_validation": "validation/firmware-identity-user-20261025.json",
   "stock_firmware_source_validation": "validation/stock-firmware-source-20261025.json",
@@ -148,7 +148,7 @@
   "debug_boot": {
     "source_changes_prepared": true,
     "kernel_rebuild_required": false,
-    "debug_image_built_on_user_pc": false,
+    "debug_image_built_on_user_pc": true,
     "mode": "early RNDIS USB debug before userdata mount",
     "cmdline": "n100_debug=1",
     "stock_dtbo_applies_to_built_dtb": false,
@@ -156,10 +156,17 @@
     "matching_built_dtbo_required": true,
     "phone_boot_tested": false,
     "source_hybris_boot_built_on_user_pc": true,
-    "packaging_retry_required": true,
-    "packaging_failure": "Previous whole-image DTB/DTBO hash guard",
-    "legacy_config_note": "RD_LZ4=n but DECOMPRESS_LZ4 was already y; not proof of a missing decoder"
+    "packaging_retry_required": false,
+    "legacy_config_note": "RD_LZ4=n but DECOMPRESS_LZ4 was already y; not proof of a missing decoder",
+    "image": "/home/eugen/n100-build/android/out/target/product/billie2/n100-debug-boot-20261025T191724Z.img",
+    "image_sha256": "6dccc17b73f572a42400274ca8ce50595d9e4a8127732e4e9d53d29d1727a6ac",
+    "matching_dtbo_sha256": "c14f4bce02f0254a5eb381940767cb00bda9c740d5ad2cefa271f69bd859d46e",
+    "early_debug_guard_verified": true,
+    "automatic_userdata_mount": false,
+    "validation": "validation/debug-image-build-user-20261025.json"
   },
   "current_kernel_build_validation": "validation/debug-kernel-build-user-20261025.json",
-  "dtbo_content_guard_validation": "validation/dtbo-content-guard.json"
+  "dtbo_content_guard_validation": "validation/dtbo-content-guard.json",
+  "debug_image_build_validation": "validation/debug-image-build-user-20261025.json",
+  "first_device_test_plan": "docs/FIRST_DEVICE_TEST.md"
 }
