@@ -5,11 +5,14 @@ authorizes or automates partition writes. The generated image has passed a host 
 Full rootfs/HAL boot remains untested.
 
 The latest user observation confirms an unlocked bootloader, active slot B,
-successful DTBO write and accepted temporary boot. USB ICMP and Telnet now work in the early initramfs. The mount list confirms
-that userdata has not been mounted. The runtime inventory now confirms
+successful DTBO write and accepted temporary boot. USB ICMP and Telnet now work
+in the early initramfs. The initial mount list confirmed the stop before
+userdata; userdata has since been mounted manually read-only. The runtime inventory confirms
 4.19.325-perf+ AArch64, expected super/metadata/userdata labels and capacities,
 registered ext4/F2FS and initialized Device Mapper. Continue with the explicit
-[userdata flash and read-only rootfs probe](ROOTFS_PROBE.md).
+[userdata flash and read-only rootfs probe](ROOTFS_PROBE.md), which has now
+succeeded: Sailfish OS 5.1.0.11 runs in a read-only chroot. The next step is
+[actual super metadata and rootfs mount-path inspection](SUPER_METADATA.md).
 The exact debug/DTBO candidate, verified stock rollback file preparation and
 explicit first-test commands are in [FIRST_DEVICE_TEST.md](FIRST_DEVICE_TEST.md).
 
@@ -263,8 +266,8 @@ Useful first logs: `/init.log`, `/diagnosis.log`, `/proc/cmdline`, `dmesg`,
 
 | Stage | Evidence needed | Initial state |
 | --- | --- | --- |
-| Initramfs | Kernel alive, storage and USB debug shell | Kernel + USB shell + storage enumeration verified; filesystem I/O pending |
-| Rootfs | Successful switch-root, systemd, journal | Untested |
+| Initramfs | Kernel alive, storage and USB debug shell | Kernel, USB shell and userdata read-only ext4 mount verified |
+| Rootfs | Successful switch-root, systemd, journal | Read-only Sailfish chroot verified; switch-root/systemd pending |
 | Android HAL | servicemanager/hwservicemanager/vendor services running | Untested |
 | Graphics | HWC2 + Adreno EGL, simple Qt surface, Lipstick | Untested |
 | Input | Correct touchscreen axes, buttons, permissions | Untested |

@@ -3,8 +3,9 @@
 **Experimenteller Port / pre-bringup. Android-HAL, alle fünf RPM-Stufen und ein
 Sailfish-OS-5.1.0.11-Rootfs sind gebaut. `userdata.img` (8 GiB) und
 `hybris-boot.img` wurden erzeugt; ext4-Prüfung erfolgreich. Der Kernel und die frühe Initramfs laufen auf dem N100;
-USB-Ping und Telnet-Debug-Shell sind bestätigt. Der vollständige Sailfish-Start
-steht noch aus.**
+USB-Ping und Telnet-Debug-Shell sind bestätigt. Das aufgespielte Sailfish-Rootfs
+5.1.0.11 läuft im schreibgeschützten Chroot. Der vollständige Start mit
+systemd und Android-HAL steht noch aus.**
 
 Die Boot-Prüfung fand eine Inkompatibilität des Stock-DTBO mit dem gebauten
 Basis-DTB. Für den frühen USB-Debugstart wurden Init und Decoderanforderungen
@@ -12,9 +13,10 @@ angepasst; der neue Kernel und das separate Debug-Image sind erfolgreich gebaut.
 Die Init-Sperre vor dem Userdata-Mount und die geprüften Gerätebaum-Inhalte sind
 im [Buildbericht](validation/debug-image-build-user-20261025.json) festgehalten.
 Der [erste Geräteversuch](docs/FIRST_DEVICE_TEST.md) hat die frühe
-[USB-Debug-Shell](docs/USB_DEBUG_SHELL.md) erreicht. Als Nächstes werden
-Speichergeräte und Partitionsnamen sind inzwischen bestätigt. Weiter mit dem
-[Userdata-Flash und schreibgeschützten Rootfs-Test](docs/ROOTFS_PROBE.md).
+[USB-Debug-Shell](docs/USB_DEBUG_SHELL.md) erreicht. Speichergeräte, Partitionsnamen
+und der [schreibgeschützte Rootfs-Test](docs/ROOTFS_PROBE.md) sind bestätigt.
+Nächster Schritt sind die
+[Super-Metadaten und dynamischen Android-Partitionen](docs/SUPER_METADATA.md).
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,

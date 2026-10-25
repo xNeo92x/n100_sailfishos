@@ -1,5 +1,12 @@
 # N100: Sailfish-Rootfs nach userdata schreiben und schreibgeschützt prüfen
 
+**Abgeschlossen:** Der neue [Gerätenachweis](../validation/rootfs-chroot-user-20261025.json)
+bestätigt den ext4-Mount mit `ro,norecovery` sowie Sailfish OS 5.1.0.11 und
+Kernel 4.19.325-perf+ aus dem Chroot. Die einzelnen Befehle waren erfolgreich,
+obwohl die äußere Subshell durch ein zusätzliches `Q` nicht geöffnet wurde.
+Die folgenden Schritte sind Wiederholungsreferenz. Userdata muss für die nächste
+Phase nicht erneut geflasht werden; weiter mit [SUPER_METADATA.md](SUPER_METADATA.md).
+
 Der Kernel 4.19.325-perf+ läuft auf AArch64, die frühe USB-Telnet-Shell funktioniert,
 und der neue Kernel erkennt sda10 = super, sda15 = metadata und sda16 = userdata.
 ext4 und F2FS sind registriert; Device Mapper ist initialisiert.

@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "source": "User-provided Telnet shell transcript after userdata flash and successful debug boot retry",
+  "usb_telnet_reconnected": true,
+  "mount": {
+    "device": "/dev/sda16",
+    "target": "/data",
+    "filesystem": "ext4",
+    "options": [
+      "ro",
+      "relatime",
+      "norecovery"
+    ],
+    "partition_label_checked": "userdata"
+  },
+  "rootfs": {
+    "path": "/data/.stowaways/sailfishos",
+    "bin_sh_symlink": "../usr/bin/busybox",
+    "systemd_binary_bytes": 1642120,
+    "chroot_command": "chroot /data/.stowaways/sailfishos /bin/sh -c 'cat /etc/os-release && uname -r'",
+    "observed_name": "Sailfish OS",
+    "observed_version": "5.1.0.11 (Pispala)",
+    "observed_version_id": "5.1.0.11",
+    "observed_kernel": "4.19.325-perf+"
+  },
+  "terminal_parse_errors": {
+    "initial": "Q( caused an unmatched-opening-parenthesis syntax error",
+    "final": "A trailing ) had no matching subshell opener",
+    "scope": "Individual commands subsequently completed, including mount and chroot. The intended subshell wrapper was not active."
+  },
+  "raw_userdata_filesystem_read_verified": true,
+  "sailfish_userspace_execution_verified": true,
+  "switch_root_performed": false,
+  "systemd_started": false,
+  "android_hal_started": false,
+  "rootfs_boot_tested": false,
+  "flashable_release": false,
+  "next": "Inspect actual super LP metadata and rootfs mount paths before creating read-only dynamic mappings."
+}

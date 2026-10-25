@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "userdata-flash-acknowledged-debug-boot-retry-accepted",
+  "stage": "sailfish-rootfs-readonly-chroot-verified",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -24,7 +24,7 @@
     "sensors": "untested",
     "fingerprint": "untested",
     "charging_suspend": "untested",
-    "storage": "UFS devices, super/metadata/userdata labels and capacities confirmed; ext4/F2FS registered; filesystem I/O untested"
+    "storage": "Userdata ext4 read-only mount and Sailfish chroot verified; other filesystem I/O and power behavior untested"
   },
   "device_report_analyzed": true,
   "stock_firmware_verified_for_boot": false,
@@ -35,12 +35,14 @@
     "sdk": 30,
     "slot_at_collection": "_b",
     "bootloader_locked": false,
-    "userdata_encrypted": true,
+    "userdata_encrypted": false,
     "firmware_ota": "OnePlusN100Oxygen_14.E.35_GLO_0350_2310092319",
     "firmware_display": "BE2013_7_231009",
     "firmware_incremental": "2310092135",
     "firmware_catalog_version": "11.0.15.BE83BA",
-    "latest_bootloader_state": "validation/unlock-state-user-20261025.json"
+    "latest_bootloader_state": "validation/unlock-state-user-20261025.json",
+    "userdata_filesystem": "ext4",
+    "userdata_state_validation": "validation/rootfs-chroot-user-20261025.json"
   },
   "assessment": "devices/be2013-stock11-assessment.json",
   "configuration_evidence": {
@@ -95,7 +97,8 @@
       "host_prerequisites_passed": true
     },
     "userdata_image_deployed": true,
-    "userdata_deployment_scope": "All three sparse userdata parts and writes acknowledged by fastboot; filesystem/readback not yet verified."
+    "userdata_deployment_scope": "All three sparse userdata parts and writes acknowledged by fastboot; filesystem/readback not yet verified.",
+    "userdata_image_on_device_verified": true
   },
   "hal_build_validation": "validation/hal-build-user-20261025.json",
   "hal_rpm_built": true,
@@ -147,7 +150,7 @@
     "active_slot_after_unlock": "b",
     "dtbo_b_state": "Reviewed built DTBO flashed for debug attempt; stock restoration not yet reported",
     "built_dtbo_early_kernel_boot_verified": true,
-    "userdata_filesystem_mount_verified": false
+    "userdata_filesystem_mount_verified": true
   },
   "firmware_identity_validation": "validation/firmware-identity-user-20261025.json",
   "stock_firmware_source_validation": "validation/stock-firmware-source-20261025.json",
@@ -183,12 +186,14 @@
     "usb_network_interface_observed": "enp16s0u10",
     "device_attempt_validation": "validation/first-debug-boot-user-20261025.json",
     "kernel_cmdline_debug_flag_verified": true,
-    "userdata_mount_absent_verified": true,
     "usb_interface_binding_confirmed": true,
     "runtime_kernel_version": "4.19.325-perf+",
     "shell_validation": "validation/early-debug-shell-user-20261025.json",
     "latest_retry_validation": "validation/post-userdata-debug-boot-retry-user-20261025.json",
-    "current_attempt_shell_reconnected": false
+    "current_attempt_shell_reconnected": true,
+    "userdata_mount_absent_at_initial_debug_stop_verified": true,
+    "userdata_mount_currently_present": true,
+    "userdata_mount_mode": "manual ro,noload"
   },
   "current_kernel_build_validation": "validation/debug-kernel-build-user-20261025.json",
   "dtbo_content_guard_validation": "validation/dtbo-content-guard.json",
@@ -203,5 +208,10 @@
   "kernel_runtime_inventory_validation": "validation/kernel-storage-user-20261025.json",
   "rootfs_probe_preparation_validation": "validation/rootfs-probe-preparation.json",
   "rootfs_probe_plan": "docs/ROOTFS_PROBE.md",
-  "userdata_flash_validation": "validation/userdata-flash-user-20261025.json"
+  "userdata_flash_validation": "validation/userdata-flash-user-20261025.json",
+  "rootfs_mount_verified": true,
+  "rootfs_chroot_verified": true,
+  "rootfs_release_observed": "5.1.0.11",
+  "rootfs_chroot_validation": "validation/rootfs-chroot-user-20261025.json",
+  "super_metadata_plan": "docs/SUPER_METADATA.md"
 }

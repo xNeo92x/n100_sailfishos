@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "kind": "offline super LP metadata reader",
+  "format_sources": [
+    "https://android.googlesource.com/platform/system/core/+/master/fs_mgr/liblp/include/liblp/metadata_format.h",
+    "https://android.googlesource.com/platform/system/core/+/f4cd54e51290e011bfbe9786368da42868d30844/fs_mgr/liblp/utility.cpp"
+  ],
+  "checks": [
+    "geometry copies and SHA-256",
+    "supported metadata headers and SHA-256",
+    "table SHA-256, bounds and overlaps",
+    "partition/group/device names and bounds",
+    "linear extent physical ranges and zero extents",
+    "primary/backup metadata availability and divergence",
+    "expected physical super capacity",
+    "bounded offline input and exclusive JSON output"
+  ],
+  "new_fixture_tests": 11,
+  "full_host_tests_passed": 181,
+  "fs_config_compat_tests_passed": 16,
+  "real_n100_metadata_received": false,
+  "mappings_created": false,
+  "mounts_performed": false,
+  "flashable_release": false
+}

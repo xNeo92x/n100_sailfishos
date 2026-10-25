@@ -22,7 +22,8 @@ Der neue Befund bestätigt Kernel `4.19.325-perf+` auf AArch64, die erwarteten
 Geräte/Labels für Super, Metadata und Userdata sowie registriertes ext4/F2FS
 und initialisierten Device Mapper. [Gerätenachweis](../validation/kernel-storage-user-20261025.json).
 Die folgende Inventur muss nicht wiederholt werden. Weiter mit dem
-[Userdata-Flash und schreibgeschützten Rootfs-Test](ROOTFS_PROBE.md).
+[nun ebenfalls bestätigten Rootfs-Test](ROOTFS_PROBE.md). Der folgende Schritt
+liest die [Super-Metadaten](SUPER_METADATA.md) für die Android-Mount-Integration.
 
 ### Inventurbefehle als Referenz
 
