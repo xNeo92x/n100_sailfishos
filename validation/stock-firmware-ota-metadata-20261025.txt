@@ -1,0 +1,17 @@
+india-image-size=0
+ota-id=OnePlusN100Oxygen_14.E.35_GLO_0350_2310092319
+ota-property-files=payload_metadata.bin:855:155237,payload.bin:855:2564190130,payload_properties.txt:2564191043:221,metadata:69:739       
+ota-required-cache=0
+ota-streaming-property-files=payload.bin:855:2564190130,payload_properties.txt:2564191043:221,metadata:69:739        
+ota-type=AB
+ota_version=OnePlusN100Oxygen_14.E.35_GLO_0350_2310092319
+patch_type=1
+post-build=OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys
+post-build-incremental=2310092135
+post-sdk-level=30
+post-security-patch-level=2023-10-05
+post-timestamp=1696863821
+pre-device=OnePlusN100
+reserve-image-size=0
+version_name=OnePlusN100Oxygen_14_2310092319
+wipe=0

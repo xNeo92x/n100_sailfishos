@@ -11,60 +11,93 @@ the earlier BE2013 Android report:
 | `ro.build.version.incremental` | `2310092135` |
 | `ro.oxygen.version` | Empty |
 
-The previously collected fingerprint identifies the EEA build. The `GLO`
-token in the OTA string does not establish that a North American BE81AA
-package is interchangeable. No exact OTA ZIP, stock boot or DTBO image has
-yet been verified. A public version label inferred from the patch date is
-insufficient for package selection.
+## Matching full OTA source found
 
-## Query the full-update catalog on the build host
+The corrected catalog query completed on 25 October 2026. The EU device
+record explicitly identifies `OnePlusN100_EEA,BE2013`; its `Stable (full)`
+result labels the release **11.0.15.BE83BA** and matches the installed OTA
+identity exactly. The original helper's generic User-Agent received HTTP 403
+on both developer and user hosts. Using the app protocol User-Agent
+`Oxygen_updater_7.1.0` fixed the live query. No repeated user query is needed.
 
-The development environment received HTTP 403 from the OS Updater catalog.
-`tools/query-stock-firmware.py` provides a host-side read-only alternative:
+Sources and observed bytes:
+
+- [Original catalog response](../validation/stock-firmware-catalog-20261025.json).
+- [Package metadata extracted by bounded HTTPS range](../validation/stock-firmware-ota-metadata-20261025.txt).
+- [Payload, stock image hashes and header assessment](../validation/stock-firmware-source-20261025.json).
+- [Full OTA ZIP](https://gauss-otacostmanual-sg.allawnofs.com/remove-bfe275a691ef231f29b614f1971b6dd3/ota/23/10/16/b24a7b83-7d65-4c67-b44f-c5f402f04911.zip).
+
+The ZIP metadata's EEA fingerprint and incremental `2310092135` exactly match
+the phone. Payload version 2 / minor 0 contains 25 partitions, no old partition
+information and only REPLACE, REPLACE_BZ and REPLACE_XZ operations. Thus boot
+and DTBO are source-independent, not patches requiring an older stock dump.
+
+Boot, DTBO, vbmeta and vbmeta_system were reconstructed locally from bounded
+ranges. Every compressed-operation hash and final partition hash matched the
+payload manifest. Proprietary image bytes are retained as analysis inputs and
+are not committed into this source repository. The complete ZIP has not been
+downloaded or its published MD5 recomputed in that analysis; OEM signature
+verification has not been performed.
+
+| Stock image | Bytes | Structural finding |
+| --- | ---: | --- |
+| boot | 100,663,296 | Android boot v2, 4096-byte pages |
+| dtbo | 8,388,608 | DT table v0; one 145,971-byte overlay |
+| vbmeta | 8,192 | Partition hash matched; AVB policy not yet assessed |
+| vbmeta_system | 4,096 | Partition hash matched; AVB policy not yet assessed |
+
+The stock boot contains a 15,746,308-byte kernel, 872,482-byte ramdisk and
+328,855-byte DTB. The built Sailfish image uses the same header version/page
+size. This is a format match, not kernel/DTB/DTBO runtime validation.
+
+## Save the full stock package on the CachyOS build PC
+
+The following downloads and verifies the expected 2,564,194,119-byte package.
+MD5 is checked against the HTTPS catalog to detect corruption; a local SHA-256
+is also recorded. These checks do not independently validate an OEM signing key.
+Nothing is sent to the phone, installed, unlocked or flashed.
 
 ```bash
 (
 set -e
 source "$HOME/n100-build/build.env"
 git -C "$N100_PORT" pull --ff-only
-python3 "$N100_PORT/tools/query-stock-firmware.py" \
-  --output "$HOME/n100-build/stock-firmware-catalog-$(date -u +%Y%m%dT%H%M%SZ).json"
+archive="$HOME/n100-build/downloads/BE2013-11.0.15.BE83BA-full.zip"
+mkdir -p "$HOME/n100-build/downloads"
+curl --fail --location --retry 3 --continue-at - \
+  --output "$archive" \
+  'https://gauss-otacostmanual-sg.allawnofs.com/remove-bfe275a691ef231f29b614f1971b6dd3/ota/23/10/16/b24a7b83-7d65-4c67-b44f-c5f402f04911.zip'
+test "$(stat -c %s "$archive")" -eq 2564194119
+printf '%s  %s\n' '1e0899169c583e567883f997493e46b2' "$archive" | md5sum --check
+sha256sum "$archive" | tee "$archive.sha256"
 )
 ```
 
-Run this in CachyOS. It requires Python 3 and internet access, with no SDK or
-phone connection. It requests only the public device list, the EU N100 update
-methods and the most recent stable full update's metadata. Region/method IDs
-are resolved from names, never guessed; ambiguity is an error. Existing reports
-are preserved. Share the JSON at the printed path. If access fails, share the
-terminal error instead; do not change the phone's firmware as a workaround.
+Preserve the ZIP and its `.sha256` file. Share the terminal result and SHA-256
+after completion, rather than uploading the 2.56 GB ZIP. A matching stock
+package is necessary recovery input; it does not establish a tested restoration
+procedure or back up personal data. The images have not yet been saved on the
+user's PC merely because the source was inspected in the development environment.
 
-The API endpoints and models were checked against the app's own source at
+## Catalog helper and validation
+
+`tools/query-stock-firmware.py` remains available if the URL expires or the
+catalog needs rechecking. Its API endpoints, models and User-Agent were checked
+against the app's own source at
 [50327ea3fe9ffdcd4c4134b022793ad3f0d33cf2](https://github.com/oxygen-updater/os-updater/tree/50327ea3fe9ffdcd4c4134b022793ad3f0d33cf2):
-`app/build.gradle.kts`, `apis/ServerApi.kt`, `models/DeviceRequestFilter.kt`,
-`models/Device.kt`, `models/UpdateMethod.kt`, `models/UpdateData.kt` under
-`app/src/main/java/com/oxygenupdater` (except the Gradle file).
+`app/build.gradle.kts`, and `apis/ServerApi.kt`, `utils/Network.kt`,
+`models/DeviceRequestFilter.kt`, `models/Device.kt`, `models/UpdateMethod.kt`,
+`models/UpdateData.kt` under `app/src/main/java/com/oxygenupdater`.
 
-The helper does not download an OTA, execute server-returned URLs, install
-packages or invoke ADB/fastboot. Its five local tests cover EU/full selection,
-ambiguous/wrong-region refusal, invalid IDs, both API field spellings and exact
-OTA comparison. Live end-to-end access remains unverified.
+The helper requests only public metadata, resolves EU/full IDs from names,
+preserves existing reports and never invokes ADB/fastboot. Six local tests
+passed, including the HTTP User-Agent regression, plus the real live query.
+An OTA string match in its output is deliberately not a package acceptance flag.
 
-## Package acceptance and next milestone
+## Next milestone
 
-A matching catalog result is a candidate source, not a validated restore image.
-Before using its binaries:
-
-1. Obtain the full OTA ZIP and retain its source URL, size and SHA-256.
-2. Inspect `META-INF/com/android/metadata`: target fingerprint/incremental and
-   product must match this EEA baseline. Check the payload manifest for full,
-   source-independent boot and DTBO images; an incremental OTA alone cannot
-   reconstruct arbitrary stock images.
-3. Extract and inspect stock boot/DTB/DTBO, compare with the built kernel set,
-   and retain original AVB-related images and a concrete restore procedure.
-   Stock boot/DTBO alone are not a full-device backup.
-4. Prepare the first temporary kernel/USB debug-shell experiment. A successful
-   kernel boot would still leave dynamic Android HAL mounts and hardware
-   bring-up described in [BRINGUP.md](BRINGUP.md).
-
-Firmware identity collection does not change `boot_tested` or `flashable_release`.
+Preserve the original stock files and establish a restore procedure. Compare
+the actual board/DTB/DTBO selection and inspect the built hybris ramdisk before
+the first temporary kernel/USB debug-shell experiment. The locked bootloader,
+A/B firmware selection, dynamic Android HAL mounts and hardware bring-up in
+[BRINGUP.md](BRINGUP.md) remain unresolved. No boot test has been performed.

@@ -1,6 +1,7 @@
 import importlib.util
 from pathlib import Path
 import unittest
+from unittest import mock
 
 
 spec = importlib.util.spec_from_file_location(
@@ -10,6 +11,18 @@ spec.loader.exec_module(catalog)
 
 
 class CatalogTests(unittest.TestCase):
+    def test_catalog_request_uses_the_app_protocol_user_agent(self):
+        # This header is required by the live public catalog: our previous
+        # generic User-Agent received HTTP 403 before any device selection.
+        response = mock.MagicMock()
+        response.__enter__.return_value.read.return_value = b'[]'
+        with mock.patch.object(catalog, 'urlopen', return_value=response) as request:
+            self.assertEqual(catalog.get_json('devices/all'), [])
+        sent, = request.call_args.args
+        self.assertEqual(sent.full_url, catalog.API + 'devices/all')
+        self.assertEqual(sent.get_header('User-agent'), 'Oxygen_updater_7.1.0')
+        self.assertEqual(request.call_args.kwargs['timeout'], 30)
+
     def fetch(self, ota=None, camel=False):
         def request(endpoint):
             if endpoint == "devices/all":

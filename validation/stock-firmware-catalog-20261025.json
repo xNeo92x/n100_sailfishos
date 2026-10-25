@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "collected_at": "2026-10-25T17:01:34.658504+00:00",
+  "source": "https://oxygenupdater.com/api/v2.10/",
+  "api_source_revision": "50327ea3fe9ffdcd4c4134b022793ad3f0d33cf2",
+  "expected_installed_ota": "OnePlusN100Oxygen_14.E.35_GLO_0350_2310092319",
+  "device": {
+    "id": 43,
+    "name": "OnePlus Nord N100 (EU)",
+    "product_names": "OnePlusN100_EEA,BE2013",
+    "enabled": 1
+  },
+  "method": {
+    "id": 2,
+    "name": "Stable (full)",
+    "recommended_for_non_rooted_device": 0,
+    "recommended_for_rooted_device": 1,
+    "supports_rooted_device": 1
+  },
+  "update": {
+    "id": 7175,
+    "version_number": "OnePlusN100Oxygen_14_2310092319",
+    "ota_version_number": "OnePlusN100Oxygen_14.E.35_GLO_0350_2310092319",
+    "changelog": "System\n• Integrates the October 2023 Android security patch to enhance system security",
+    "description": "#11.0.15.BE83BA\n##2023-10-25\n\n##Notice\nYour device is EOL (End of Life), and will no longer receive any updates. For more info, read\n[our article.](https://oxygenupdater.com/article/453/)\n\nSystem\n• Integrates the October 2023 Android security patch to enhance system security",
+    "download_url": "https://gauss-otacostmanual-sg.allawnofs.com/remove-bfe275a691ef231f29b614f1971b6dd3/ota/23/10/16/b24a7b83-7d65-4c67-b44f-c5f402f04911.zip",
+    "download_size": 2564194119,
+    "filename": "b24a7b83-7d65-4c67-b44f-c5f402f04911.zip",
+    "md5sum": "1e0899169c583e567883f997493e46b2",
+    "update_information_available": true,
+    "system_is_up_to_date": true
+  },
+  "catalog_ota_matches_installed": true,
+  "firmware_downloaded": false,
+  "package_metadata_verified": false,
+  "stock_images_verified": false,
+  "device_accessed": false,
+  "assessment": "catalog-match-only-package-verification-required"
+}

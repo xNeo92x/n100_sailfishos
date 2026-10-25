@@ -13,11 +13,14 @@ from urllib.request import Request, urlopen
 API = "https://oxygenupdater.com/api/v2.10/"
 EXPECTED_OTA = "OnePlusN100Oxygen_14.E.35_GLO_0350_2310092319"
 SOURCE_REVISION = "50327ea3fe9ffdcd4c4134b022793ad3f0d33cf2"
+# The public catalog rejects the generic custom UA with HTTP 403. Match the
+# app protocol in utils/Network.kt and the version in app/build.gradle.kts.
+APP_USER_AGENT = "Oxygen_updater_7.1.0"
 
 
 def get_json(endpoint):
     request = Request(API + endpoint, headers={
-        "Accept": "application/json", "User-Agent": "n100-sailfishos-firmware-catalog/1"})
+        "Accept": "application/json", "User-Agent": APP_USER_AGENT})
     with urlopen(request, timeout=30) as response:
         payload = response.read(1024 * 1024 + 1)
     if len(payload) > 1024 * 1024:
@@ -89,3 +92,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+

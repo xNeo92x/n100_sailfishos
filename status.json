@@ -37,7 +37,8 @@
     "userdata_encrypted": true,
     "firmware_ota": "OnePlusN100Oxygen_14.E.35_GLO_0350_2310092319",
     "firmware_display": "BE2013_7_231009",
-    "firmware_incremental": "2310092135"
+    "firmware_incremental": "2310092135",
+    "firmware_catalog_version": "11.0.15.BE83BA"
   },
   "assessment": "devices/be2013-stock11-assessment.json",
   "configuration_evidence": {
@@ -122,7 +123,12 @@
     "active_slot_at_preflight": "b",
     "stock_boot_dtbo_compatibility_verified": false,
     "sparse_userdata_transfer_verified": false,
-    "exact_stock_package_verified": false
+    "exact_stock_package_verified": false,
+    "stock_ota_target_matches_device": true,
+    "stock_payload_source_independent": true,
+    "stock_boot_header_format_matched": true,
+    "stock_package_saved_on_user_pc": false
   },
-  "firmware_identity_validation": "validation/firmware-identity-user-20261025.json"
+  "firmware_identity_validation": "validation/firmware-identity-user-20261025.json",
+  "stock_firmware_source_validation": "validation/stock-firmware-source-20261025.json"
 }

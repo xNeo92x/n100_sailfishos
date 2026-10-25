@@ -12,23 +12,26 @@
     "ro.build.version.incremental": "2310092135"
   },
   "matches_previous_display_and_incremental": true,
-  "public_marketing_version_independently_verified": false,
-  "stock_package_url": null,
-  "stock_package_metadata_verified": false,
+  "public_marketing_version_independently_verified": true,
+  "stock_package_url": "https://gauss-otacostmanual-sg.allawnofs.com/remove-bfe275a691ef231f29b614f1971b6dd3/ota/23/10/16/b24a7b83-7d65-4c67-b44f-c5f402f04911.zip",
+  "stock_package_metadata_verified": true,
   "stock_boot_dtbo_verified": false,
   "boot_tested": false,
   "notes": [
     "The OTA string contains GLO; preserve the previously observed EEA fingerprint and BE2013 model. This token alone does not authorize selecting the NA/BE81AA package.",
     "The empty ro.oxygen.version does not identify a public OxygenOS version.",
-    "Exact catalog access from the development environment returned HTTP 403. The helper uses the public app API but has not completed a live catalog query.",
-    "The catalog helper is read-only and downloads metadata only; an OTA string match is not package authenticity, payload completeness or restoration validation."
+    "The original generic User-Agent received HTTP 403 on both hosts. The corrected helper uses the app protocol User-Agent Oxygen_updater_7.1.0 and completed the live EU full-update query.",
+    "The catalog helper is read-only and downloads metadata only; an OTA string match is not package authenticity, payload completeness or restoration validation.",
+    "The matching ZIP OTA metadata and four reconstructed stock partition hashes were subsequently checked; full ZIP integrity, OEM signatures, runtime DTB/DTBO compatibility and device restoration remain separate."
   ],
   "catalog_helper": {
     "path": "tools/query-stock-firmware.py",
     "api": "https://oxygenupdater.com/api/v2.10/",
     "source_repository": "oxygen-updater/os-updater",
     "source_revision": "50327ea3fe9ffdcd4c4134b022793ad3f0d33cf2",
-    "tests_passed": 5,
-    "live_query_completed": false
-  }
+    "tests_passed": 6,
+    "live_query_completed": true
+  },
+  "public_marketing_version": "11.0.15.BE83BA",
+  "stock_package_validation": "validation/stock-firmware-source-20261025.json"
 }

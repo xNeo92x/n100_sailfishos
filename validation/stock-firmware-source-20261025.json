@@ -1,0 +1,403 @@
+{
+  "schema": 1,
+  "observed_date": "2026-10-25",
+  "device": "OnePlus Nord N100 BE2013 EEA",
+  "catalog_source": "validation/stock-firmware-catalog-20261025.json",
+  "catalog_response_sha256": "e8b1aae9f7be144f0acabf3d6b5d5ca9c4deabbff3d290f874561f8be892d0c6",
+  "catalog_access": {
+    "generic_user_agent_result": "HTTP 403 from both developer and user hosts",
+    "app_protocol_user_agent": "Oxygen_updater_7.1.0",
+    "corrected_helper_live_query_passed": true
+  },
+  "package": {
+    "url": "https://gauss-otacostmanual-sg.allawnofs.com/remove-bfe275a691ef231f29b614f1971b6dd3/ota/23/10/16/b24a7b83-7d65-4c67-b44f-c5f402f04911.zip",
+    "filename": "b24a7b83-7d65-4c67-b44f-c5f402f04911.zip",
+    "catalog_version_label": "11.0.15.BE83BA",
+    "catalog_bytes": 2564194119,
+    "catalog_md5": "1e0899169c583e567883f997493e46b2",
+    "full_zip_downloaded": false,
+    "full_zip_md5_recomputed": false,
+    "full_zip_sha256": null,
+    "ota_signature_verified": false
+  },
+  "ota_metadata": {
+    "path": "validation/stock-firmware-ota-metadata-20261025.txt",
+    "sha256": "511b7972a7b5c85bbadb68d64b8da25228985e1abf7f572c9c2924fc9b5721b9",
+    "zip_offset": 69,
+    "bytes": 739,
+    "post_build_matches_device": true,
+    "post_incremental_matches_device": true,
+    "ota_identity_matches_device": true
+  },
+  "payload": {
+    "major": 2,
+    "minor": 0,
+    "block_size": 4096,
+    "manifest_size": 154946,
+    "metadata_signature_size": 267,
+    "metadata_size": 155237,
+    "metadata_sha256": "09e76c26823992c1b8c0638f0c2d17191a956b85c9e75bee7a7233369e11389d",
+    "partial_update": 0,
+    "partitions": [
+      {
+        "name": "abl",
+        "size": 2183168,
+        "sha256": "a939108561dac801bb430fcc1d14a1bdbfd77a50836573021b1b5da3ff9778a3",
+        "old_partition_info": false,
+        "operation_types": [
+          1,
+          8
+        ],
+        "operation_count": 2
+      },
+      {
+        "name": "boot",
+        "size": 100663296,
+        "sha256": "28e3497eb8e77042ef983c0654758e54e97cf07d9fae4c9e2798535c58a535f1",
+        "old_partition_info": false,
+        "operation_types": [
+          0,
+          1,
+          8
+        ],
+        "operation_count": 48
+      },
+      {
+        "name": "dtbo",
+        "size": 8388608,
+        "sha256": "5425e6e33ef63a06da926df47a42190ff263a3362bb8f1315a68fe92a443938e",
+        "old_partition_info": false,
+        "operation_types": [
+          1,
+          8
+        ],
+        "operation_count": 4
+      },
+      {
+        "name": "product",
+        "size": 1693224960,
+        "sha256": "e3aec683168793ff783f2d356aa2d700f34e547b374f3d01967bf6f3e5c63d2d",
+        "old_partition_info": false,
+        "operation_types": [
+          0,
+          1,
+          8
+        ],
+        "operation_count": 808
+      },
+      {
+        "name": "recovery",
+        "size": 100663296,
+        "sha256": "7e52ee03c10fc8fadce91bf69ba567b3c6f15324b8abf11488b2d019c77cfbc4",
+        "old_partition_info": false,
+        "operation_types": [
+          0,
+          1,
+          8
+        ],
+        "operation_count": 48
+      },
+      {
+        "name": "system",
+        "size": 1516199936,
+        "sha256": "1a166c2d6bbb2f2f497ef1878015b1104b63e7dae163b8ab2f65215c5d097de0",
+        "old_partition_info": false,
+        "operation_types": [
+          0,
+          1,
+          8
+        ],
+        "operation_count": 723
+      },
+      {
+        "name": "system_ext",
+        "size": 1092108288,
+        "sha256": "d5011a496079118050f4a22ab30ce66302bc980a98669f3deaeda5eac52875cd",
+        "old_partition_info": false,
+        "operation_types": [
+          0,
+          1,
+          8
+        ],
+        "operation_count": 521
+      },
+      {
+        "name": "vbmeta",
+        "size": 8192,
+        "sha256": "6ea6f938f7309ff65ab28596b27c6d885ca067165b9f67bf201d3fb7978dc180",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 1
+      },
+      {
+        "name": "vbmeta_system",
+        "size": 4096,
+        "sha256": "32a06dc50bab237fe3d7d311a69fdeec719a489b6bba3423a305d441e78d2a23",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 1
+      },
+      {
+        "name": "vendor",
+        "size": 950411264,
+        "sha256": "2abde600384f01e5757da6bb322a8e66e0c4077bddfb0bceb455141f209ebd5f",
+        "old_partition_info": false,
+        "operation_types": [
+          0,
+          1,
+          8
+        ],
+        "operation_count": 454
+      },
+      {
+        "name": "bluetooth",
+        "size": 946176,
+        "sha256": "9d759889286227a5fe147b194d7c9e59169741d0c40c94d687e2dbf18c1d52fe",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 1
+      },
+      {
+        "name": "devcfg",
+        "size": 45056,
+        "sha256": "c00505ee62720645c44ef5ae55e35dbc519fd24903a2bbabfc5fa91b83114e02",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 1
+      },
+      {
+        "name": "dsp",
+        "size": 33554432,
+        "sha256": "e8895f0d942dd56ead242345371a051120d461b0c2bb16b1a42e518257a17600",
+        "old_partition_info": false,
+        "operation_types": [
+          1,
+          8
+        ],
+        "operation_count": 16
+      },
+      {
+        "name": "featenabler",
+        "size": 90112,
+        "sha256": "e7c928e89feaf359669e1f7437d8b7cdd35ad678167709724833f28c96eed035",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 1
+      },
+      {
+        "name": "hyp",
+        "size": 380928,
+        "sha256": "09e274b6ebb769107275a893b87b5137db1192d1355af6e685f152c2be5f3696",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 1
+      },
+      {
+        "name": "imagefv",
+        "size": 28672,
+        "sha256": "b9b3cc667ad4463a5e74cf954973ad0d2b8075d8f817c9a1db95850f95a95e54",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 1
+      },
+      {
+        "name": "keymaster",
+        "size": 237568,
+        "sha256": "203b33ce21db4e8df11617c5d0bb75a1d517a476e026bddaeb92b1c02ba0919f",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 1
+      },
+      {
+        "name": "modem",
+        "size": 134066176,
+        "sha256": "1231ca920bf7b02a52512ff2b80bf9252cc6fb6482e71b03e4e13688dc413a07",
+        "old_partition_info": false,
+        "operation_types": [
+          0,
+          8
+        ],
+        "operation_count": 64
+      },
+      {
+        "name": "qupfw",
+        "size": 57344,
+        "sha256": "b6a09c0acb682ff42702b45c13b370e2e92ef71844e30c1525034ad29ec01175",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 1
+      },
+      {
+        "name": "rpm",
+        "size": 229376,
+        "sha256": "1979b29297fdb8117098dbae9bbdc5498b298d83a10c27083987fbc83bfedc3d",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 1
+      },
+      {
+        "name": "storsec",
+        "size": 24576,
+        "sha256": "6b4beebf7d398ee819405c3c1d0c1628fc4d5382673607bf1ae988ab1988cff6",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 1
+      },
+      {
+        "name": "tz",
+        "size": 3268608,
+        "sha256": "19c94efbe5afb3be74cc5b90e47d7abfa224a3f156a7a9c54713d7298033a0d3",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 2
+      },
+      {
+        "name": "uefisecapp",
+        "size": 126976,
+        "sha256": "ab2afc39d835827ca0b8e75567b9761a559c259c325c1400e1e57244f722c413",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 1
+      },
+      {
+        "name": "xbl_config",
+        "size": 45056,
+        "sha256": "12246676c4cc08ca625937e38d0020a377384ced4711d0a7a2ae42bb4e4bf36b",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 1
+      },
+      {
+        "name": "xbl",
+        "size": 3203072,
+        "sha256": "493f0612b9a1759d39922cc0d633895ba8390307330fd0211134fdc4a5d9512d",
+        "old_partition_info": false,
+        "operation_types": [
+          8
+        ],
+        "operation_count": 2
+      }
+    ]
+  },
+  "payload_format_reference": {
+    "repository": "LineageOS/android_system_update_engine",
+    "revision": "e096c52322ef05fe11095b0b28bbb44b9375f6a5",
+    "path": "update_metadata.proto"
+  },
+  "extraction": {
+    "method": "Bounded HTTPS byte ranges, REPLACE / REPLACE_BZ / REPLACE_XZ decode, nonoverlapping complete destination extents, per-operation SHA-256 and reconstructed partition SHA-256 compared against payload manifest",
+    "zip_payload_offset": 855,
+    "payload_data_offset": 155237,
+    "images": [
+      {
+        "partition": "boot",
+        "bytes": 100663296,
+        "sha256": "28e3497eb8e77042ef983c0654758e54e97cf07d9fae4c9e2798535c58a535f1",
+        "operation_hashes_verified": true,
+        "partition_hash_verified": true,
+        "network_bytes": 16582118
+      },
+      {
+        "partition": "dtbo",
+        "bytes": 8388608,
+        "sha256": "5425e6e33ef63a06da926df47a42190ff263a3362bb8f1315a68fe92a443938e",
+        "operation_hashes_verified": true,
+        "partition_hash_verified": true,
+        "network_bytes": 26098
+      },
+      {
+        "partition": "vbmeta",
+        "bytes": 8192,
+        "sha256": "6ea6f938f7309ff65ab28596b27c6d885ca067165b9f67bf201d3fb7978dc180",
+        "operation_hashes_verified": true,
+        "partition_hash_verified": true,
+        "network_bytes": 3376
+      },
+      {
+        "partition": "vbmeta_system",
+        "bytes": 4096,
+        "sha256": "32a06dc50bab237fe3d7d311a69fdeec719a489b6bba3423a305d441e78d2a23",
+        "operation_hashes_verified": true,
+        "partition_hash_verified": true,
+        "network_bytes": 2156
+      }
+    ],
+    "proprietary_image_bytes_committed": false
+  },
+  "stock_boot_header": {
+    "header_version": 2,
+    "page_size": 4096,
+    "bytes": 100663296,
+    "kernel_bytes": 15746308,
+    "ramdisk_bytes": 872482,
+    "dtb_bytes": 328855,
+    "cmdline": "androidboot.hardware=qcom androidboot.console=ttyMSM0 androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=2048 loop.max_part=7 buildvariant=user",
+    "assessment": "structural-check-only-not-boot-validation"
+  },
+  "stock_dtbo_table": {
+    "magic": 3619138334,
+    "total_size": 146035,
+    "header_size": 32,
+    "entry_size": 32,
+    "entry_count": 1,
+    "entries_offset": 32,
+    "page_size": 4096,
+    "version": 0
+  },
+  "stock_dtbo_first_entry": {
+    "dt_size": 145971,
+    "dt_offset": 64,
+    "id": 0,
+    "rev": 0,
+    "custom0": 0,
+    "custom1": 0,
+    "custom2": 0,
+    "custom3": 0
+  },
+  "stock_vs_built_boot_format": {
+    "header_version_equal": true,
+    "page_size_equal": true,
+    "stock_header_version": 2,
+    "built_header_version": 2,
+    "stock_page_size": 4096,
+    "built_page_size": 4096,
+    "kernel_dtb_dtbo_runtime_compatibility_verified": false
+  },
+  "restore_procedure_validated": false,
+  "stock_images_saved_on_user_pc": false,
+  "boot_tested": false,
+  "limitations": [
+    "Only selected ranges of the full ZIP were downloaded. Full-package integrity and OEM signature verification remain separate.",
+    "Payload hashes verify consistency with this manifest; they do not independently authenticate the OEM signing key.",
+    "Matching OTA target and boot header format are not proof of kernel/DTB/DTBO compatibility or a working restore procedure.",
+    "No phone writes, unlock, slot changes or boot test were performed."
+  ]
+}

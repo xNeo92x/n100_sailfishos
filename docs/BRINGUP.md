@@ -26,7 +26,11 @@ installation instructions do not apply to this candidate.
 
 ## 2. Kernel and boot-image validation
 
-- Obtain the actual stock boot header, command line, DTB and DTBO information.
+- The exact EEA OTA target has now been matched and stock boot/DTBO/VBMeta
+  reconstructed with payload hashes verified. Stock boot v2 / 4096-byte pages
+  match the built format. See [STOCK_FIRMWARE.md](STOCK_FIRMWARE.md) for original
+  headers, hashes and the full package download. Board/DTB/DTBO runtime
+  compatibility and restoration remain unvalidated.
 - Confirm the pinned Lineage `bengal-perf_defconfig` and `OEM_TARGET_PRODUCT=billie2`
   select the correct board. The generated `sailfish-billie2_defconfig` adds the
   Sailfish fragment without replacing that vendor-specific selection.
@@ -100,8 +104,8 @@ recorded in [the image build evidence](../validation/image-build-user-20261025.j
 The binary images were not uploaded for independent inspection; device boot remains untested.
 
 A future deployment to userdata replaces Android user data, rather than decrypting
-or migrating it. The tool performs no device writes. Actual partition capacity,
-boot compatibility, backups, restoration and the locked bootloader still require
+or migrating it. The tool performs no device writes. Physical partition capacities were subsequently verified and the image sizes fit.
+Boot compatibility, backups, restoration and the locked bootloader still require
 validation before installation. The dynamic Android HAL mounts in section 3
 remain unresolved: a userdata rootfs image alone does not supply them.
 
@@ -176,8 +180,8 @@ dynamic Android HAL mounts described above. Unlocking causes a factory reset
 according to [AOSP](https://source.android.com/docs/core/architecture/bootloader/locking_unlocking).
 A size match alone does not justify unlocking or writing these development images.
 
-Before selecting a firmware download, read the exact OxygenOS/OTA identity
-while stock Android is running. The existing `BE2013_7_231009` display value
+The following query supplied the exact OxygenOS/OTA identity while stock
+Android was running. It is retained for reference; collection is complete. The `BE2013_7_231009` display value
 and fingerprint remain the baseline; do not infer an exact OTA ZIP solely
 from the security patch date or use the global BE2011 firmware as EEA proof.
 
@@ -196,8 +200,9 @@ do not reboot the phone or change its settings. Blank properties are retained.
 The uploaded identity log now confirms `OnePlusN100Oxygen_14.E.35_GLO_0350_2310092319`,
 with display `BE2013_7_231009` and incremental `2310092135` unchanged.
 The OxygenOS version property is empty. See [STOCK_FIRMWARE.md](STOCK_FIRMWARE.md)
-for the exact evidence and the host-side EU full-update catalog query.
-No download has yet been independently matched to the installed EEA build.
+for the matching EU full OTA, verified ZIP target metadata and original boot
+header evidence. The catalog helper's HTTP 403 was fixed and its live query
+completed; the next step is saving the stock package on the user's PC.
 
 ### First kernel/debug-shell boot
 
