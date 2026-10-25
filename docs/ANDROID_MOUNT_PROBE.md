@@ -1,5 +1,12 @@
 # N100: Slot-B-Android-Partitionen schreibgeschützt prüfen
 
+**Am Gerät abgeschlossen:** Alle vier Dateisysteme wurden read-only gemountet;
+`N100_PROBE_RESULT exit=0 cleanup_failed=0` bestätigt den gemeldeten Cleanup.
+Der neue Test belegt auch das leere Rootfs-APEX-Verzeichnis und fehlende
+Runtime-Linker. [Nachweis](../validation/android-mount-probe-user-20261025.json).
+Weiter mit [RUNTIME_APEX_PROBE.md](RUNTIME_APEX_PROBE.md); die folgenden
+Probe-Schritte müssen für diesen Befund nicht wiederholt werden.
+
 Der [hochgeladene Bericht](../validation/super-metadata-report-user-20261025.json)
 meldet gültige Geometrie-/Header-/Tabellen-Prüfsummen und identische primäre und
 Backup-Metadaten für Slot B. Die rohe Binärkopie wurde hier nicht unabhängig

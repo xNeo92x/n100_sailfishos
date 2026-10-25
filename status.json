@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "slot-b-super-metadata-reviewed-readonly-mount-probe-prepared",
+  "stage": "readonly-android-mappings-verified-runtime-apex-probe-prepared",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -24,7 +24,7 @@
     "sensors": "untested",
     "fingerprint": "untested",
     "charging_suspend": "untested",
-    "storage": "Userdata ext4 read-only mount and Sailfish chroot verified; other filesystem I/O and power behavior untested"
+    "storage": "Userdata and all four slot-B Android filesystems mounted read-only successfully; temporary mappings and binds cleaned up"
   },
   "device_report_analyzed": true,
   "stock_firmware_verified_for_boot": false,
@@ -216,11 +216,16 @@
   "super_metadata_plan": "docs/SUPER_METADATA.md",
   "super_metadata_validation": "validation/super-metadata-user-20261025.json",
   "android_mount_probe_plan": "docs/ANDROID_MOUNT_PROBE.md",
-  "android_runtime_apex_installed": null,
+  "android_runtime_apex_installed": false,
   "runtime_blockers": [
-    "Android linker targets under /apex require an actual contents/target check; previous ls output showed only directory metadata",
+    "Empty rootfs /apex and missing com.android.runtime/linker targets confirmed by device probe; matching built APEX probe prepared",
     "Stock Android-11 partitions must not obscure the built Android-13 HAL system files",
-    "Device-mapper mounting, APEX activation, full switch_root/systemd and HAL startup remain untested"
+    "Automatic early mapping/mount integration, persistent APEX activation and full switch_root/systemd/HAL startup remain unvalidated"
   ],
-  "android_mount_probe_preparation_validation": "validation/android-mount-probe-preparation.json"
+  "android_mount_probe_preparation_validation": "validation/android-mount-probe-preparation.json",
+  "android_readonly_mapping_probe_passed": true,
+  "android_mapping_probe_validation": "validation/android-mount-probe-user-20261025.json",
+  "android_mappings_currently_active": false,
+  "android_runtime_probe_plan": "docs/RUNTIME_APEX_PROBE.md",
+  "android_runtime_probe_preparation_validation": "validation/runtime-apex-probe-preparation.json"
 }

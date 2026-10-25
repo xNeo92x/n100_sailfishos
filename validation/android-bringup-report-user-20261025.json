@@ -1,0 +1,153 @@
+{
+  "schema": 1,
+  "kind": "android-runtime-output-inventory",
+  "product": "/home/eugen/n100-build/android/out/target/product/billie2",
+  "candidates": [
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/apex",
+      "directory": true,
+      "entries": [
+        "com.android.adbd",
+        "com.android.runtime"
+      ]
+    },
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/apex/com.android.runtime",
+      "directory": true,
+      "entries": [
+        "apex_manifest.pb",
+        "apex_pubkey",
+        "bin",
+        "etc",
+        "lib",
+        "lib64"
+      ]
+    },
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/apex/com.android.runtime/bin/linker",
+      "bytes": 1311204,
+      "sha256": "b4cc0d3534db2a18ec0828f394657a0aad773137c0127c3ebbe142a65ef16ae2",
+      "elf_class": 1,
+      "elf_machine": 40
+    },
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/apex/com.android.runtime/bin/linker64",
+      "bytes": 1790304,
+      "sha256": "7edbd7684bba7a53fc5d666ed23fe3f7927adc11ca060d4b079e7f73918f56cc",
+      "elf_class": 2,
+      "elf_machine": 183
+    },
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/apex/com.android.runtime/lib64/bionic/libc.so",
+      "bytes": 1020008,
+      "sha256": "d109ef03d686bd6b549a602f9ed5d774af2fdccc312f178d2f42b188787a6d3a",
+      "elf_class": 2,
+      "elf_machine": 183
+    },
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/apex/com.android.runtime/lib64/bionic/libdl.so",
+      "bytes": 13728,
+      "sha256": "316c59f9624362bd59f1fb2be6c15bfd32e8d5f47aac3356075811c4bf667e03",
+      "elf_class": 2,
+      "elf_machine": 183
+    },
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/apex/com.android.runtime/lib64/bionic/libm.so",
+      "bytes": 225176,
+      "sha256": "d5348e97648de62112f1625a70e87a93771ba641d1ee0c3f61f47e0858dec1e8",
+      "elf_class": 2,
+      "elf_machine": 183
+    },
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/system/apex",
+      "directory": true,
+      "entries": [
+        "com.android.runtime.apex"
+      ]
+    },
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/system/apex/com.android.runtime.apex",
+      "bytes": 8187904,
+      "sha256": "293e90ce25eec01a38b723731eea03d378750e7ee0287df93305d43073e8bdf0",
+      "zip_entries": [
+        {
+          "name": "apex_payload.img",
+          "bytes": 8110080,
+          "compressed_bytes": 8110080
+        },
+        {
+          "name": "assets/NOTICE.html.gz",
+          "bytes": 33156,
+          "compressed_bytes": 33156
+        },
+        {
+          "name": "resources.arsc",
+          "bytes": 40,
+          "compressed_bytes": 40
+        },
+        {
+          "name": "AndroidManifest.xml",
+          "bytes": 1088,
+          "compressed_bytes": 418
+        },
+        {
+          "name": "apex_build_info.pb",
+          "bytes": 2009,
+          "compressed_bytes": 559
+        },
+        {
+          "name": "apex_manifest.pb",
+          "bytes": 49,
+          "compressed_bytes": 48
+        },
+        {
+          "name": "apex_pubkey",
+          "bytes": 1032,
+          "compressed_bytes": 1037
+        },
+        {
+          "name": "META-INF/CERT.SF",
+          "bytes": 779,
+          "compressed_bytes": 495
+        },
+        {
+          "name": "META-INF/CERT.RSA",
+          "bytes": 2271,
+          "compressed_bytes": 1955
+        },
+        {
+          "name": "META-INF/MANIFEST.MF",
+          "bytes": 644,
+          "compressed_bytes": 406
+        }
+      ]
+    },
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/system_ext/apex",
+      "exists": false
+    },
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/product/apex",
+      "exists": false
+    },
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/root/apex",
+      "directory": true,
+      "entries": []
+    },
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/system/bin/linker",
+      "symlink": "/apex/com.android.runtime/bin/linker"
+    },
+    {
+      "path": "/home/eugen/n100-build/android/out/target/product/billie2/system/bin/linker64",
+      "symlink": "/apex/com.android.runtime/bin/linker64"
+    }
+  ],
+  "device_accessed": false,
+  "apex_extracted": false,
+  "apex_installed": false,
+  "hal_started": false,
+  "flashable_release": false,
+  "device_probe_log": "N100 read-only Android mapping probe V1\nKernel: 4.19.325-perf+; slot=_b\n792+0 records in\n792+0 records out\n405504 bytes (396.0KB) copied, 0.010623 seconds, 36.4MB/s\nLive metadata SHA-256 verified: bb42777e434f73ae5e4a9871af64f792a61a832be3852adf7c3d2f8b7012dcc7\n=== Current Sailfish rootfs APEX contents and linker targets ===\ntotal 8\ndrwxrwxr-x    2 root     root          4096 Oct 25  2026 .\ndrwxr-xr-x   24 root     root          4096 Oct 25  2026 ..\nMISSING: /apex/com.android.runtime\nMISSING: /apex/com.android.runtime/bin/linker\nMISSING: /apex/com.android.runtime/bin/linker64\nMISSING: /usr/libexec/droid-hybris/system/apex\nlrwxrwxrwx    1 root     root            36 Oct 25  2026 /usr/libexec/droid-hybris/system/bin/linker -> /apex/com.android.runtime/bin/linker\nlrwxrwxrwx    1 root     root            38 Oct 25  2026 /usr/libexec/droid-hybris/system/bin/linker64 -> /apex/com.android.runtime/bin/linker64\nlrwxrwxrwx    1 root     root            36 Oct 25  2026 /usr/libexec/droid-hybris/system/bin/linker_asan -> /apex/com.android.runtime/bin/linker\nlrwxrwxrwx    1 root     root            38 Oct 25  2026 /usr/libexec/droid-hybris/system/bin/linker_asan64 -> /apex/com.android.runtime/bin/linker64\n-rwxrwxr-x    1 root     root       1369280 Oct 25  2026 /usr/libexec/droid-hybris/system/bin/linkerconfig\nLibrary version:   1.02.206 (2025-05-05)\nDriver version:    4.39.0\nuser             v1.0.0\nverity           v1.4.0\nsnapshot-merge   v1.4.0\nsnapshot-origin  v1.9.0\nsnapshot         v1.15.0\ndefault-key      v2.1.0\ncrypt            v1.18.1\nstriped          v1.6.0\nlinear           v1.4.0\nerror            v1.5.0\n=== system_b: 0 2961328 linear 8:10 10486976 ===\n0 2961328 linear 8:10 10486976\nVerified kernel read-only flag: /dev/dm-0\n/dev/dm-0 /tmp/n100-map-probe.BUyVaW/system_b ext4 ro,relatime,norecovery 0 0\ndrwxr-xr-x   24 0        0             4096 Jan  1  2009 .\ndrwx------    3 0        0               80 Jan  1 01:03 ..\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 acct\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 apex\nlrw-r--r--    1 0        0               11 Jan  1  2009 bin -> /system/bin\nlrw-r--r--    1 0        0               50 Jan  1  2009 bugreports -> /data/user_de/0/com.android.shell/files/bugreports\nlrw-r--r--    1 0        0               11 Jan  1  2009 cache -> /data/cache\ndr-xr-xr-x    2 0        0             4096 Jan  1  2009 config\nlrw-r--r--    1 0        0               17 Jan  1  2009 d -> /sys/kernel/debug\ndrwxrwx--x    2 1000     1000          4096 Jan  1  2009 data\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 data_mirror\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 debug_ramdisk\nlrw-------    1 0        0               23 Jan  1  2009 default.prop -> system/etc/prop.default\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 dev\nlrw-r--r--    1 0        0               11 Jan  1  2009 etc -> /system/etc\nlrwxr-x---    1 0        2000            16 Jan  1  2009 init -> /system/bin/init\n-rwxr-x---    1 0        2000          3027 Jan  1  2009 init.environ.rc\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 linkerconfig\ndrwx------    2 0        0            16384 Jan  1  2009 lost+found\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 metadata\ndrwxr-xr-x    2 0        1000          4096 Jan  1  2009 mnt\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 odm\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 oem\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 postinstall\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 proc\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 product\ndrwxr-xr-x    3 0        0             4096 Jan  1  2009 res\nlrw-r--r--    1 0        0               21 Jan  1  2009 sdcard -> /storage/self/primary\ndrwxr-x--x    2 0        1028          4096 Jan  1  2009 storage\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 sys\ndrwxr-xr-x   13 0        0             4096 Jan  1  2009 system\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 system_ext\ndrwxr-xr-x    2 0        2000          4096 Jan  1  2009 vendor\n--- /tmp/n100-map-probe.BUyVaW/system_b/system/build.prop ---\nro.system.build.version.release=11\nro.system.build.version.sdk=30\nro.build.version.sdk=30\nro.build.version.preview_sdk_fingerprint=REL\nro.build.version.release=11\nro.build.version.security_patch=2023-10-05\n--- APEX directory: /tmp/n100-map-probe.BUyVaW/system_b/apex ---\n--- APEX directory: /tmp/n100-map-probe.BUyVaW/system_b/system/apex ---\n-rw-r--r--    1 0        0           334278 Jan  1  2009 com.android.apex.cts.shim.apex\n-rw-r--r--    1 0        0         87355169 Jan  1  2009 com.android.art.release.apex\n-rw-r--r--    1 0        0         25307956 Jan  1  2009 com.android.i18n.apex\n-rw-r--r--    1 0        0          5343904 Jan  1  2009 com.android.runtime.apex\n-rw-r--r--    1 0        0        113717892 Jan  1  2009 com.android.vndk.current.apex\n-rw-r--r--    1 0        0          5270304 Jan  1  2009 com.android.wifi.apex\n-rw-r--r--    1 0        0          8089902 Jan  1  2009 com.google.android.adbd.apex\n-rw-r--r--    1 0        0          7142828 Jan  1  2009 com.google.android.cellbroadcast.apex\n-rw-r--r--    1 0        0          5013893 Jan  1  2009 com.google.android.conscrypt.apex\n-rw-r--r--    1 0        0          4989417 Jan  1  2009 com.google.android.extservices.apex\n-rw-r--r--    1 0        0           671156 Jan  1  2009 com.google.android.ipsec.apex\n-rw-r--r--    1 0        0          5284150 Jan  1  2009 com.google.android.media.apex\n-rw-r--r--    1 0        0         19874098 Jan  1  2009 com.google.android.media.swcodec.apex\n-rw-r--r--    1 0        0          4088295 Jan  1  2009 com.google.android.mediaprovider.apex\n-rw-r--r--    1 0        0          5644624 Jan  1  2009 com.google.android.neuralnetworks.apex\n-rw-r--r--    1 0        0          1880446 Jan  1  2009 com.google.android.os.statsd.apex\n-rw-r--r--    1 0        0          8945071 Jan  1  2009 com.google.android.permission.apex\n-rw-r--r--    1 0        0          2609508 Jan  1  2009 com.google.android.resolv.apex\n-rw-r--r--    1 0        0           434631 Jan  1  2009 com.google.android.sdkext.apex\n-rw-r--r--    1 0        0          1065451 Jan  1  2009 com.google.android.tethering.apex\n-rw-r--r--    1 0        0           966067 Jan  1  2009 com.google.android.tzdata2.apex\n=== system_ext_b: 0 2133024 linear 8:10 13448384 ===\n0 2133024 linear 8:10 13448384\nVerified kernel read-only flag: /dev/dm-1\n/dev/dm-1 /tmp/n100-map-probe.BUyVaW/system_ext_b ext4 ro,relatime,norecovery 0 0\ndrwxr-xr-x   11 0        0             4096 Jan  1  2009 .\ndrwx------    4 0        0              100 Jan  1 01:03 ..\ndrwxr-xr-x   61 0        0             4096 Jan  1  2009 app\ndrwxr-x--x    2 0        2000          4096 Jan  1  2009 bin\n-rw-------    1 0        0              719 Jan  1  2009 build.prop\ndrwxr-xr-x   17 0        0             4096 Jan  1  2009 etc\ndrwxr-xr-x    3 0        0             4096 Jan  1  2009 framework\ndrwxr-xr-x    5 0        0            12288 Jan  1  2009 lib\ndrwxr-xr-x    4 0        0            12288 Jan  1  2009 lib64\ndrwx------    2 0        0            16384 Jan  1  2009 lost+found\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 overlay\ndrwxr-xr-x   38 0        0             4096 Jan  1  2009 priv-app\n--- /tmp/n100-map-probe.BUyVaW/system_ext_b/build.prop ---\nro.system_ext.build.fingerprint=OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys\nro.system_ext.build.version.release=11\nro.system_ext.build.version.sdk=30\n=== product_b: 0 3307080 linear 8:10 15581632 ===\n0 3307080 linear 8:10 15581632\nVerified kernel read-only flag: /dev/dm-2\n/dev/dm-2 /tmp/n100-map-probe.BUyVaW/product_b ext4 ro,relatime,norecovery 0 0\ndrwxr-xr-x   12 0        0             4096 Jan  1  2009 .\ndrwx------    5 0        0              120 Jan  1 01:03 ..\ndrwxr-xr-x   28 0        0             4096 Jan  1  2009 app\ndrwxr-x--x    2 0        2000          4096 Jan  1  2009 bin\n-rw-------    1 0        0             1779 Jan  1  2009 build.prop\ndrwxr-xr-x    9 0        0             4096 Jan  1  2009 etc\ndrwxr-xr-x    2 0        0             4096 Jan  1  2009 fonts\ndrwxr-xr-x    3 0        0             4096 Jan  1  2009 framework\ndrwx------    2 0        0            16384 Jan  1  2009 lost+found\ndrwxr-xr-x    3 0        0             4096 Jan  1  2009 media\ndrwxr-xr-x   35 0        0             4096 Jan  1  2009 overlay\ndrwxr-xr-x   18 0        0             4096 Jan  1  2009 priv-app\ndrwxr-xr-x    3 0        0             4096 Jan  1  2009 usr\n--- /tmp/n100-map-probe.BUyVaW/product_b/build.prop ---\nro.product.build.version.release=11\nro.product.build.version.sdk=30\n=== vendor_b: 0 1856272 linear 8:10 18888896 ===\n0 1856272 linear 8:10 18888896\nVerified kernel read-only flag: /dev/dm-3\n/dev/dm-3 /tmp/n100-map-probe.BUyVaW/vendor_b ext4 ro,relatime,norecovery 0 0\ndrwxr-xr-x   16 0        2000          4096 Jan  1  2009 .\ndrwx------    6 0        0              140 Jan  1 01:03 ..\ndrwxr-xr-x    9 0        2000          4096 Jan  1  2009 app\ndrwxr-x--x    4 0        2000          8192 Jan  1  2009 bin\ndrwxr-xr-x    2 0        2000          4096 Jan  1  2009 bt_firmware\n-rw-------    1 0        0            10323 Jan  1  2009 build.prop\n-rw-------    1 0        0              825 Jan  1  2009 default.prop\ndrwxr-xr-x    2 0        2000          4096 Jan  1  2009 dsp\ndrwxr-xr-x   27 0        2000          8192 Jan  1  2009 etc\ndrwxr-xr-x    4 0        2000          4096 Jan  1  2009 firmware\ndrwxr-xr-x    2 0        2000          4096 Jan  1  2009 firmware_mnt\ndrwxr-xr-x   11 0        2000         24576 Jan  1  2009 lib\ndrwxr-xr-x    9 0        2000         24576 Jan  1  2009 lib64\ndrwx------    2 0        0            16384 Jan  1  2009 lost+found\ndrwxr-xr-x    4 0        2000          4096 Jan  1  2009 odm\ndrwxr-xr-x   11 0        2000          4096 Jan  1  2009 overlay\ndrwxr-xr-x    3 0        2000          4096 Jan  1  2009 radio\ndrwxr-xr-x    5 0        2000          4096 Jan  1  2009 rfs\n-rw-r--r--    1 0        0            27589 Jan  1  2009 ueventd.rc\n--- /tmp/n100-map-probe.BUyVaW/vendor_b/build.prop ---\nro.vendor.build.security_patch=2023-10-05\nro.vendor.build.fingerprint=OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys\nro.vendor.build.version.release=11\nro.vendor.build.version.sdk=30\nro.bootimage.build.fingerprint=OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys\nAll four snapshot-bound Android filesystems mounted read-only.\nSailfish Android-13 HAL files, /apex and userdata contents were not changed.\nN100_PROBE_RESULT exit=0 cleanup_failed=0\nRAM work directory: /tmp/n100-map-probe.BUyVaW\n"
+}

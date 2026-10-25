@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "kind": "pinned APEX payload and temporary RAM runtime probe",
+  "source_inventory": "validation/android-bringup-report-user-20261025.json",
+  "source_apex_sha256": "293e90ce25eec01a38b723731eea03d378750e7ee0287df93305d43073e8bdf0",
+  "source_apex_bytes": 8187904,
+  "payload_bytes": 8110080,
+  "host_checks": [
+    "exact source package size and SHA-256",
+    "unique ZIP payload and CRC",
+    "ext4 magic",
+    "debugfs read-only extraction of five core files",
+    "ARM/AArch64 ELF ABI and actual core hashes",
+    "recorded comparison with flattened build references",
+    "exclusive bundle directory and report output",
+    "payload/script integrity at report collection"
+  ],
+  "device_plan": [
+    "download verified payload to initramfs RAM",
+    "read-only loop plus ext4 ro,noload",
+    "OverlayFS with tmpfs upper/work and read-only original userdata",
+    "bind built HAL system and runtime into temporary view",
+    "linker64 --help and bounded --list diagnostics",
+    "attempt cleanup of own mounts and loop only"
+  ],
+  "kernel_config_evidence": {
+    "CONFIG_BLK_DEV_LOOP": "y",
+    "CONFIG_OVERLAY_FS": "y",
+    "CONFIG_TMPFS_XATTR": "y",
+    "source": "Previously uploaded kernel config snapshot; new runtime operations still need device verification"
+  },
+  "tests": {
+    "new_host_tests": 5,
+    "full_host_tests": 195,
+    "fs_config_compat_tests": 16,
+    "passed": true,
+    "real_ext4_debugfs_zip_bundle_integration": true,
+    "real_phone_runtime_probe_executed": false
+  },
+  "oem_signatures_verified": false,
+  "persistent_installation_performed": false,
+  "android_hal_started": false,
+  "flashable_release": false
+}

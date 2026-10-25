@@ -16,6 +16,9 @@ succeeded: Sailfish OS 5.1.0.11 runs in a read-only chroot. The next step is
 That report is now reviewed: four slot-B partitions are declared, and native
 Sailfish dmsetup is available. The exact snapshot-bound read-only mapping test
 and Android-13 runtime inventory are in [ANDROID_MOUNT_PROBE.md](ANDROID_MOUNT_PROBE.md).
+The device has now passed all four read-only mount probes and their cleanup.
+The empty /apex directory and missing runtime linker targets are confirmed;
+continue with the [temporary runtime APEX probe](RUNTIME_APEX_PROBE.md).
 The exact debug/DTBO candidate, verified stock rollback file preparation and
 explicit first-test commands are in [FIRST_DEVICE_TEST.md](FIRST_DEVICE_TEST.md).
 

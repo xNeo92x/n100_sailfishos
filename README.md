@@ -16,7 +16,9 @@ Der [erste Geräteversuch](docs/FIRST_DEVICE_TEST.md) hat die frühe
 [USB-Debug-Shell](docs/USB_DEBUG_SHELL.md) erreicht. Speichergeräte, Partitionsnamen
 und der [schreibgeschützte Rootfs-Test](docs/ROOTFS_PROBE.md) sind bestätigt.
 Die [Super-Metadaten](docs/SUPER_METADATA.md) für Slot B sind ausgewertet.
-Weiter mit dem [schreibgeschützten Android-Mapping-Test und der Runtime-Prüfung](docs/ANDROID_MOUNT_PROBE.md).
+Alle vier [schreibgeschützten Android-Mounts](docs/ANDROID_MOUNT_PROBE.md) und
+deren Cleanup sind am Gerät bestätigt. Weiter mit dem
+[temporären Android-Runtime-Test](docs/RUNTIME_APEX_PROBE.md).
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,

@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "source": "User-uploaded Android build inventory and terminal probe log",
+  "report": "validation/android-bringup-report-user-20261025.json",
+  "report_sha256": "351f71bf0a5b867210bb7b67e96692703c0da164256699c369bc1f524c0b18bc",
+  "live_metadata_sha256_matched": true,
+  "active_slot": "b",
+  "dm_library_version": "1.02.206",
+  "dm_driver_version": "4.39.0",
+  "read_only_ext4_mounts_verified": [
+    "system_b",
+    "system_ext_b",
+    "product_b",
+    "vendor_b"
+  ],
+  "per_device_kernel_readonly_flag_verified": true,
+  "mount_options": [
+    "ro",
+    "relatime",
+    "norecovery"
+  ],
+  "stock_system_layout": "Logical system_b contains a root tree with Android system in a system/ subdirectory",
+  "vendor_fingerprint": "OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys",
+  "stock_android_sdk": 30,
+  "cleanup": {
+    "exit": 0,
+    "cleanup_failed": 0
+  },
+  "rootfs_apex_empty_confirmed": true,
+  "runtime_linker_targets_missing_confirmed": true,
+  "built_runtime_package": {
+    "bytes": 8187904,
+    "sha256": "293e90ce25eec01a38b723731eea03d378750e7ee0287df93305d43073e8bdf0",
+    "payload_bytes": 8110080
+  },
+  "persistent_installation_performed": false,
+  "systemd_started": false,
+  "android_hal_started": false,
+  "full_sailfish_boot_verified": false,
+  "flashable_release": false
+}
