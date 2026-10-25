@@ -127,8 +127,12 @@
     "stock_ota_target_matches_device": true,
     "stock_payload_source_independent": true,
     "stock_boot_header_format_matched": true,
-    "stock_package_saved_on_user_pc": false
+    "stock_package_saved_on_user_pc": true,
+    "stock_package_integrity_verified": true,
+    "stock_images_extracted_on_user_pc": false
   },
   "firmware_identity_validation": "validation/firmware-identity-user-20261025.json",
-  "stock_firmware_source_validation": "validation/stock-firmware-source-20261025.json"
+  "stock_firmware_source_validation": "validation/stock-firmware-source-20261025.json",
+  "stock_firmware_download_validation": "validation/stock-firmware-download-user-20261025.json",
+  "stock_image_extractor_validation": "validation/stock-image-extractor-20261025.json"
 }

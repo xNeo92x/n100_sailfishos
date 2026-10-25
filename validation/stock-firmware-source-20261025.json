@@ -15,10 +15,12 @@
     "catalog_version_label": "11.0.15.BE83BA",
     "catalog_bytes": 2564194119,
     "catalog_md5": "1e0899169c583e567883f997493e46b2",
-    "full_zip_downloaded": false,
-    "full_zip_md5_recomputed": false,
-    "full_zip_sha256": null,
-    "ota_signature_verified": false
+    "full_zip_downloaded": true,
+    "full_zip_md5_recomputed": true,
+    "full_zip_sha256": "d890682b7b64d1b144ce7e69c539feaa43809b4c867004150eb137722a979e4d",
+    "ota_signature_verified": false,
+    "full_zip_md5": "1e0899169c583e567883f997493e46b2",
+    "full_zip_bytes_verified": true
   },
   "ota_metadata": {
     "path": "validation/stock-firmware-ota-metadata-20261025.txt",
@@ -395,9 +397,10 @@
   "stock_images_saved_on_user_pc": false,
   "boot_tested": false,
   "limitations": [
-    "Only selected ranges of the full ZIP were downloaded. Full-package integrity and OEM signature verification remain separate.",
+    "The complete ZIP was subsequently downloaded independently and both MD5 and SHA-256 recomputed; OEM signature verification remains separate.",
     "Payload hashes verify consistency with this manifest; they do not independently authenticate the OEM signing key.",
     "Matching OTA target and boot header format are not proof of kernel/DTB/DTBO compatibility or a working restore procedure.",
     "No phone writes, unlock, slot changes or boot test were performed."
-  ]
+  ],
+  "full_zip_extraction_validation": "validation/stock-image-extractor-20261025.json"
 }

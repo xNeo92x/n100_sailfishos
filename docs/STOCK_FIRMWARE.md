@@ -35,8 +35,8 @@ and DTBO are source-independent, not patches requiring an older stock dump.
 Boot, DTBO, vbmeta and vbmeta_system were reconstructed locally from bounded
 ranges. Every compressed-operation hash and final partition hash matched the
 payload manifest. Proprietary image bytes are retained as analysis inputs and
-are not committed into this source repository. The complete ZIP has not been
-downloaded or its published MD5 recomputed in that analysis; OEM signature
+are not committed into this source repository. The complete ZIP was subsequently downloaded independently; its MD5 matches
+the catalog and its SHA-256 matches the user's download. OEM signature
 verification has not been performed.
 
 | Stock image | Bytes | Structural finding |
@@ -73,11 +73,48 @@ sha256sum "$archive" | tee "$archive.sha256"
 )
 ```
 
-Preserve the ZIP and its `.sha256` file. Share the terminal result and SHA-256
-after completion, rather than uploading the 2.56 GB ZIP. A matching stock
-package is necessary recovery input; it does not establish a tested restoration
-procedure or back up personal data. The images have not yet been saved on the
-user's PC merely because the source was inspected in the development environment.
+The user has completed this download. The MD5 check returned `OK` and SHA-256
+is `d890682b7b64d1b144ce7e69c539feaa43809b4c867004150eb137722a979e4d`.
+An independent complete download reproduced both checksums; see
+[download evidence](../validation/stock-firmware-download-user-20261025.json).
+Preserve the ZIP and its `.sha256` file. The ZIP is recovery input; it does not
+establish a tested restoration procedure or back up personal data.
+
+## Extract and verify original boot/recovery inputs locally
+
+Run this in CachyOS, outside both SDK chroots. It uses Python 3's standard
+library and the existing ZIP; no extra package, network access or phone connection
+is required. Output totals about 200 MiB. Existing output directories are refused.
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+
+python3 "$N100_PORT/tools/extract-stock-boot.py" \
+  --archive "$HOME/n100-build/downloads/BE2013-11.0.15.BE83BA-full.zip" \
+  --output "$HOME/n100-build/stock-BE2013-$(date -u +%Y%m%dT%H%M%SZ)"
+)
+```
+
+The helper first checks the exact archive size/SHA-256 and the known OTA and
+payload metadata hashes. It then handles only full version-2, minor-0 payloads
+and the source-independent REPLACE, REPLACE_BZ and REPLACE_XZ operations.
+Every compressed blob and reconstructed partition is SHA-256 checked against
+the pinned manifest, with bounded decompression and complete nonoverlapping
+destination extents. It never unpacks arbitrary ZIP paths or calls device tools.
+
+The new directory contains `boot.img`, `dtbo.img`, `recovery.img`, `vbmeta.img`,
+`vbmeta_system.img` and `stock-images.json`. Share only the small JSON report.
+If extraction fails after output creation, keep those files as incomplete; a
+success report is written only after all five image hashes pass. Use a new output
+directory on retry.
+
+[Seven local tests and a successful real-package extraction](../validation/stock-image-extractor-20261025.json)
+cover the complete flow and failure cases. These original files are verified
+restore inputs, not a tested full-device restoration procedure. The helper does
+not erase, flash, unlock, change slots or boot the phone.
 
 ## Catalog helper and validation
 

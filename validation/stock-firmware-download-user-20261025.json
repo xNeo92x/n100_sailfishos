@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "device": "OnePlus Nord N100 BE2013 EEA",
+  "source": "User terminal output after the documented curl/size/MD5/SHA256 command",
+  "user_archive_path": "/home/eugen/n100-build/downloads/BE2013-11.0.15.BE83BA-full.zip",
+  "user_reported_md5_check": "OK",
+  "user_reported_sha256": "d890682b7b64d1b144ce7e69c539feaa43809b4c867004150eb137722a979e4d",
+  "independent_developer_download": {
+    "completed": true,
+    "bytes": 2564194119,
+    "md5": "1e0899169c583e567883f997493e46b2",
+    "sha256": "d890682b7b64d1b144ce7e69c539feaa43809b4c867004150eb137722a979e4d",
+    "matches_user_sha256": true
+  },
+  "stock_package_saved_on_user_pc": true,
+  "stock_images_extracted_on_user_pc": false,
+  "phone_writes": false,
+  "restore_procedure_validated": false,
+  "boot_tested": false
+}

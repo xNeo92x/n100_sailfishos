@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "tool": "tools/extract-stock-boot.py",
+  "pinned_archive_sha256": "d890682b7b64d1b144ce7e69c539feaa43809b4c867004150eb137722a979e4d",
+  "unit_tests_passed": 7,
+  "tests_cover": [
+    "Complete ZIP/payload fixture with all five partitions and REPLACE/BZ/XZ operations",
+    "Wrong archive size/hash and mismatched OTA/payload metadata create no output",
+    "Incremental/partial payloads, old images, source operations and invalid extent coverage are refused",
+    "Operation/partition hash failures and excessive decompression produce no success report",
+    "Existing output directory and symlink are preserved",
+    "Malformed/truncated protobuf and compressed streams are refused"
+  ],
+  "real_package_validation": {
+    "passed": true,
+    "source": "validation/stock-firmware-source-20261025.json",
+    "archive_bytes": 2564194119,
+    "archive_sha256": "d890682b7b64d1b144ce7e69c539feaa43809b4c867004150eb137722a979e4d",
+    "archive_md5": "1e0899169c583e567883f997493e46b2",
+    "images": [
+      {
+        "name": "boot",
+        "file": "boot.img",
+        "bytes": 100663296,
+        "sha256": "28e3497eb8e77042ef983c0654758e54e97cf07d9fae4c9e2798535c58a535f1",
+        "operation_hashes_verified": true,
+        "partition_hash_verified": true
+      },
+      {
+        "name": "dtbo",
+        "file": "dtbo.img",
+        "bytes": 8388608,
+        "sha256": "5425e6e33ef63a06da926df47a42190ff263a3362bb8f1315a68fe92a443938e",
+        "operation_hashes_verified": true,
+        "partition_hash_verified": true
+      },
+      {
+        "name": "recovery",
+        "file": "recovery.img",
+        "bytes": 100663296,
+        "sha256": "7e52ee03c10fc8fadce91bf69ba567b3c6f15324b8abf11488b2d019c77cfbc4",
+        "operation_hashes_verified": true,
+        "partition_hash_verified": true
+      },
+      {
+        "name": "vbmeta",
+        "file": "vbmeta.img",
+        "bytes": 8192,
+        "sha256": "6ea6f938f7309ff65ab28596b27c6d885ca067165b9f67bf201d3fb7978dc180",
+        "operation_hashes_verified": true,
+        "partition_hash_verified": true
+      },
+      {
+        "name": "vbmeta_system",
+        "file": "vbmeta_system.img",
+        "bytes": 4096,
+        "sha256": "32a06dc50bab237fe3d7d311a69fdeec719a489b6bba3423a305d441e78d2a23",
+        "operation_hashes_verified": true,
+        "partition_hash_verified": true
+      }
+    ]
+  },
+  "storage_behavior": "Fresh output directory; fixed filenames only; stock-images.json written after all five image checks; failed extraction may leave incomplete files without a success report.",
+  "phone_access": false,
+  "oem_signature_verified": false,
+  "restore_procedure_validated": false,
+  "boot_tested": false,
+  "stock_images_saved_on_user_pc": false
+}
