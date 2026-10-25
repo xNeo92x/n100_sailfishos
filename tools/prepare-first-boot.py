@@ -20,10 +20,25 @@ DTBO_SHA = 'c14f4bce02f0254a5eb381940767cb00bda9c740d5ad2cefa271f69bd859d46e'
 STOCK_SHA = '5425e6e33ef63a06da926df47a42190ff263a3362bb8f1315a68fe92a443938e'
 RESTORE_SHA = '2d663aaa05568bff83c7e96abe72eef85d4e9e14c5c9e70da8b7274278c23706'
 BOOT_NAME = 'n100-debug-boot-20261025T191724Z.img'
+USERDATA_BYTES = 8589934592
+USERDATA_SHA = '3c7bc615c566ccd3634dd829bdea41a2df32aa9419f360f7969a189aff6e3e3d'
+USERDATA_PARTITION_BYTES = 48062869504
+SPARSE_LIMIT = 512 * 1024 * 1024
 
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def checked_userdata(path):
+    if not path.is_file() or path.stat().st_size != USERDATA_BYTES:
+        raise ValueError('Expected the reviewed 8-GiB regular userdata image')
+    result = hashlib.sha256()
+    with path.open('rb') as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b''):
+            result.update(block)
+    if result.hexdigest() != USERDATA_SHA:
+        raise ValueError('Userdata SHA-256 mismatch; do not flash this file')
 
 
 def checked_file(path, size, sha):
@@ -98,13 +113,15 @@ def fastboot(*args):
     return result.stdout + result.stderr
 
 
-def check(bundle, stock_dir):
+def check(bundle, stock_dir, userdata=None):
     # Recompute against constants and the independently pinned stock source;
     # do not trust a manifest-provided hash or source path.
     checked_file(bundle / 'debug-boot.img', 45064192, BOOT_SHA)
     checked_file(bundle / 'dtbo-test.img', DTBO_SIZE, DTBO_SHA)
     rollback = stock_restore(stock_dir / 'dtbo.img')
     checked_file(bundle / 'dtbo-stock-24MiB.img', DTBO_SIZE, digest(rollback))
+    if userdata is not None:
+        checked_userdata(userdata)
     devices = [line.split() for line in fastboot('devices').splitlines() if line.strip()]
     if len(devices) != 1 or len(devices[0]) != 2 or devices[0][1] != 'fastboot':
         raise ValueError('Connect exactly one bootloader fastboot device')
@@ -112,6 +129,8 @@ def check(bundle, stock_dir):
     expected = {'product': 'bengal', 'unlocked': 'yes', 'current-slot': 'b',
                 'is-userspace': 'no', 'partition-size:dtbo_b': DTBO_SIZE,
                 'partition-size:boot_b': 100663296}
+    if userdata is not None:
+        expected['partition-size:userdata'] = USERDATA_PARTITION_BYTES
     observed = {}
     for key in list(expected) + ['max-download-size']:
         text = fastboot('-s', serial, 'getvar', key)
@@ -127,8 +146,12 @@ def check(bundle, stock_dir):
         observed[key] = value
     if observed['max-download-size'] < 45064192:
         raise ValueError('Maximum download too small')
+    if userdata is not None and observed['max-download-size'] < SPARSE_LIMIT:
+        raise ValueError('Maximum download below the planned 512-MiB sparse limit')
     print(json.dumps(observed, indent=2))
     print('PASS: reviewed files, stock rollback, unlocked bootloader fastboot, active slot B.')
+    if userdata is not None:
+        print('PASS: exact userdata image/hash, physical capacity and 512-MiB download limit.')
 
 
 def main():
@@ -141,12 +164,14 @@ def main():
     verify = sub.add_parser('check')
     verify.add_argument('--bundle', type=Path, required=True)
     verify.add_argument('--stock-dir', type=Path, required=True)
+    verify.add_argument('--userdata', type=Path,
+                        help='Also stream-check the exact 8-GiB image and userdata capacity')
     args = parser.parse_args()
     try:
         if args.mode == 'prepare':
             prepare(args.android_root, args.stock_dir, args.output)
         else:
-            check(args.bundle, args.stock_dir)
+            check(args.bundle, args.stock_dir, args.userdata)
     except (OSError, ValueError, subprocess.SubprocessError) as exc:
         parser.exit(1, 'First boot preparation/check failed: {}\n'.format(exc))
 

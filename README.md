@@ -13,7 +13,8 @@ Die Init-Sperre vor dem Userdata-Mount und die geprüften Gerätebaum-Inhalte si
 im [Buildbericht](validation/debug-image-build-user-20261025.json) festgehalten.
 Der [erste Geräteversuch](docs/FIRST_DEVICE_TEST.md) hat die frühe
 [USB-Debug-Shell](docs/USB_DEBUG_SHELL.md) erreicht. Als Nächstes werden
-Speicherzugriff und der Rootfs-Start vorbereitet.
+Speichergeräte und Partitionsnamen sind inzwischen bestätigt. Weiter mit dem
+[Userdata-Flash und schreibgeschützten Rootfs-Test](docs/ROOTFS_PROBE.md).
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,

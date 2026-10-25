@@ -16,7 +16,15 @@ Die USB-ID `18d1:d001` wird von unserem
 Die lokale lsusb-Bezeichnung „Nexus 4 (fastboot)“ bezeichnet hier nicht den
 tatsächlich laufenden Modus; die erreichte Shell belegt die Kernel-/Initramfs-Ausführung.
 
-## Nächster Schritt: Speicherinventur in der bestehenden Telnet-Shell
+## Speicherinventur abgeschlossen
+
+Der neue Befund bestätigt Kernel `4.19.325-perf+` auf AArch64, die erwarteten
+Geräte/Labels für Super, Metadata und Userdata sowie registriertes ext4/F2FS
+und initialisierten Device Mapper. [Gerätenachweis](../validation/kernel-storage-user-20261025.json).
+Die folgende Inventur muss nicht wiederholt werden. Weiter mit dem
+[Userdata-Flash und schreibgeschützten Rootfs-Test](ROOTFS_PROBE.md).
+
+### Inventurbefehle als Referenz
 
 In der bereits geöffneten Shell **auf dem N100**:
 
@@ -120,6 +128,10 @@ Zusätzliche Neubauten oder Flash-Versuche sind für die Host-IP-Konfiguration
 nicht erforderlich.
 
 ## Rückweg
+
+Diese DTBO-Rückspielanleitung bezieht sich auf die erste Kernel-/USB-Phase.
+Nach dem Userdata-Flash aus [ROOTFS_PROBE.md](ROOTFS_PROBE.md) ist zusätzlich
+das Android-Datenlayout ersetzt; Stock-DTBO allein stellt es nicht wieder her.
 
 `dtbo_b` enthält weiterhin das gebaute Test-DTBO. Vor dem normalen Android-Start
 die [Stock-DTBO-Wiederherstellung](FIRST_DEVICE_TEST.md#4-stock-dtbo-wiederherstellen-und-android-starten)

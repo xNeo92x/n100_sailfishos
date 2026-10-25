@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "kind": "planned userdata flash and read-only chroot probe",
+  "guard": "tools/prepare-first-boot.py check --userdata",
+  "raw_userdata_bytes": 8589934592,
+  "raw_userdata_sha256": "3c7bc615c566ccd3634dd829bdea41a2df32aa9419f360f7969a189aff6e3e3d",
+  "physical_userdata_bytes": 48062869504,
+  "planned_sparse_limit_bytes": 536870912,
+  "previous_max_download_bytes": 804280320,
+  "fastboot_reference": "https://android.googlesource.com/platform/system/core/+/d441d52540a4e8edd0fa33d8c6a7c43ce609bd8f/fastboot/fastboot.cpp",
+  "sparse_userdata_transfer_verified_on_device": false,
+  "userdata_image_flashed": false,
+  "read_only_chroot_verified": false,
+  "systemd_start_planned": false,
+  "automatic_userdata_mount": false,
+  "tests": {
+    "first_device_guard_tests": 12,
+    "full_host_tests": 170,
+    "fs_config_compat_tests": 16,
+    "passed": true
+  },
+  "limitations": [
+    "Host fastboot supports raw import/resparse; actual phone sparse transfer must still be tested.",
+    "Guard verifies the exact previous user-built image; the binary is on the user's PC and not present here.",
+    "Writing userdata replaces its Android contents; stock DTBO restoration alone will no longer restore Android data layout.",
+    "Matching built DTBO must remain installed for the known debug kernel.",
+    "Mount/chroot is a userspace probe inside the debug kernel, not switch_root or systemd/HAL validation."
+  ]
+}

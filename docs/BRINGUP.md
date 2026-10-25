@@ -6,8 +6,10 @@ Full rootfs/HAL boot remains untested.
 
 The latest user observation confirms an unlocked bootloader, active slot B,
 successful DTBO write and accepted temporary boot. USB ICMP and Telnet now work in the early initramfs. The mount list confirms
-that userdata has not been mounted. Continue with the storage inventory in
-[USB_DEBUG_SHELL.md](USB_DEBUG_SHELL.md).
+that userdata has not been mounted. The runtime inventory now confirms
+4.19.325-perf+ AArch64, expected super/metadata/userdata labels and capacities,
+registered ext4/F2FS and initialized Device Mapper. Continue with the explicit
+[userdata flash and read-only rootfs probe](ROOTFS_PROBE.md).
 The exact debug/DTBO candidate, verified stock rollback file preparation and
 explicit first-test commands are in [FIRST_DEVICE_TEST.md](FIRST_DEVICE_TEST.md).
 
@@ -261,7 +263,7 @@ Useful first logs: `/init.log`, `/diagnosis.log`, `/proc/cmdline`, `dmesg`,
 
 | Stage | Evidence needed | Initial state |
 | --- | --- | --- |
-| Initramfs | Kernel alive, storage and USB debug shell | Kernel + USB shell verified; storage pending |
+| Initramfs | Kernel alive, storage and USB debug shell | Kernel + USB shell + storage enumeration verified; filesystem I/O pending |
 | Rootfs | Successful switch-root, systemd, journal | Untested |
 | Android HAL | servicemanager/hwservicemanager/vendor services running | Untested |
 | Graphics | HWC2 + Adreno EGL, simple Qt surface, Lipstick | Untested |

@@ -135,6 +135,10 @@ verwenden. Erste Shell-Nachweise sind `/proc/cmdline`, `/proc/mounts`,
 
 ## 4. Stock-DTBO wiederherstellen und Android starten
 
+Diese Rückkehr gilt für den ersten Kernel-/USB-Test mit unverändertem Android-
+Userdata. Nach dem späteren [Userdata-Flash](ROOTFS_PROBE.md) benötigt die
+Rückkehr zu Android zusätzlich einen passenden Daten-/Recovery-Restore.
+
 Vor dem normalen Android-Start zurück in Bootloader-Fastboot. Bei einem
 hängenden Debug-Kernel zum erzwungenen Ausschalten **Ein/Aus + Lauter etwa
 10 Sekunden** halten; danach aus dem ausgeschalteten Zustand den zuvor

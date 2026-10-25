@@ -63,7 +63,7 @@ class FirstDeviceTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 first.prepare(root, root, root)
 
-    def run_guard(self, overrides=None, devices='private-id\tfastboot\n'):
+    def run_guard(self, overrides=None, devices='private-id\tfastboot\n', userdata=None):
         values = {'product': 'bengal', 'unlocked': 'yes', 'current-slot': 'b',
                   'is-userspace': 'no', 'partition-size:dtbo_b': '0x1800000',
                   'partition-size:boot_b': '0x6000000', 'max-download-size': '804280320'}
@@ -77,8 +77,8 @@ class FirstDeviceTests(unittest.TestCase):
             self.assertEqual(args[:3], ('-s', 'private-id', 'getvar'))
             return '(bootloader) {}: {}\nFinished. Total time: 0.001s\n'.format(args[3], values[args[3]])
 
-        with patch.object(first, 'checked_file'), patch.object(first, 'stock_restore', return_value=b'rollback'), patch.object(first, 'fastboot', side_effect=fake):
-            first.check(Path('/bundle'), Path('/stock'))
+        with patch.object(first, 'checked_file'), patch.object(first, 'checked_userdata'), patch.object(first, 'stock_restore', return_value=b'rollback'), patch.object(first, 'fastboot', side_effect=fake):
+            first.check(Path('/bundle'), Path('/stock'), userdata)
         return calls
 
     def test_guard_reads_only_and_selects_one_device(self):
@@ -99,6 +99,41 @@ class FirstDeviceTests(unittest.TestCase):
         for devices in ['', 'private-id\tfastboot\nother\tfastboot\n']:
             with self.assertRaises(ValueError):
                 self.run_guard(devices=devices)
+
+    def test_userdata_hash_is_streamed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / 'userdata.img'
+            content = b'fixture' * (500000)
+            path.write_bytes(content)
+            with patch.object(first, 'USERDATA_BYTES', len(content)), patch.object(first, 'USERDATA_SHA', first.digest(content)), patch.object(Path, 'read_bytes', side_effect=AssertionError('Do not read whole image')):
+                first.checked_userdata(path)
+
+    def test_userdata_rejects_missing_size_and_changed_hash(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / 'userdata.img'
+            with self.assertRaises(ValueError):
+                first.checked_userdata(path)
+            path.write_bytes(b'wrong')
+            with self.assertRaises(ValueError):
+                first.checked_userdata(path)
+            with patch.object(first, 'USERDATA_BYTES', 5):
+                with self.assertRaisesRegex(ValueError, 'SHA-256 mismatch'):
+                    first.checked_userdata(path)
+
+    def test_userdata_guard_checks_physical_size_and_download(self):
+        good = {'partition-size:userdata': '48062869504'}
+        calls = self.run_guard(good, userdata=Path('/userdata.img'))
+        self.assertEqual(len(calls), 9)
+        for overrides in [{'partition-size:userdata': '4096'},
+                          dict(good, **{'max-download-size': '402653184'})]:
+            with self.assertRaises(ValueError):
+                self.run_guard(overrides, userdata=Path('/userdata.img'))
+
+    def test_bad_userdata_stops_before_device_access(self):
+        with patch.object(first, 'checked_file'), patch.object(first, 'stock_restore', return_value=b'rollback'), patch.object(first, 'checked_userdata', side_effect=ValueError('bad input')), patch.object(first, 'fastboot') as fb:
+            with self.assertRaises(ValueError):
+                first.check(Path('/bundle'), Path('/stock'), Path('/userdata.img'))
+            fb.assert_not_called()
 
 
 if __name__ == '__main__':

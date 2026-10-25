@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "early-usb-debug-shell-working",
+  "stage": "kernel-storage-enumerated-rootfs-probe-prepared",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -23,7 +23,8 @@
     "gps": "untested",
     "sensors": "untested",
     "fingerprint": "untested",
-    "charging_suspend": "untested"
+    "charging_suspend": "untested",
+    "storage": "UFS devices, super/metadata/userdata labels and capacities confirmed; ext4/F2FS registered; filesystem I/O untested"
   },
   "device_report_analyzed": true,
   "stock_firmware_verified_for_boot": false,
@@ -92,7 +93,8 @@
       "cpus": 16,
       "filesystem": "btrfs",
       "host_prerequisites_passed": true
-    }
+    },
+    "userdata_image_deployed": false
   },
   "hal_build_validation": "validation/hal-build-user-20261025.json",
   "hal_rpm_built": true,
@@ -181,7 +183,7 @@
     "kernel_cmdline_debug_flag_verified": true,
     "userdata_mount_absent_verified": true,
     "usb_interface_binding_confirmed": true,
-    "runtime_kernel_version": null,
+    "runtime_kernel_version": "4.19.325-perf+",
     "shell_validation": "validation/early-debug-shell-user-20261025.json"
   },
   "current_kernel_build_validation": "validation/debug-kernel-build-user-20261025.json",
@@ -193,5 +195,8 @@
   "boot_test_scope": "Kernel and early hybris initramfs execute on the N100; USB ICMP and Telnet shell verified. Full Sailfish/rootfs boot remains untested.",
   "device_boot_attempt_validation": "validation/first-debug-boot-user-20261025.json",
   "rootfs_boot_tested": false,
-  "early_debug_shell_validation": "validation/early-debug-shell-user-20261025.json"
+  "early_debug_shell_validation": "validation/early-debug-shell-user-20261025.json",
+  "kernel_runtime_inventory_validation": "validation/kernel-storage-user-20261025.json",
+  "rootfs_probe_preparation_validation": "validation/rootfs-probe-preparation.json",
+  "rootfs_probe_plan": "docs/ROOTFS_PROBE.md"
 }

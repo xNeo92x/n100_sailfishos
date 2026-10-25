@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "source": "User terminal output from confirmed early Telnet shell",
+  "kernel": {
+    "release": "4.19.325-perf+",
+    "build": "#2 SMP PREEMPT Sun Oct 25 18:53:17 UTC 2026",
+    "machine": "aarch64"
+  },
+  "partitions": [
+    {
+      "device": "sda10",
+      "label": "super",
+      "major": 8,
+      "minor": 10,
+      "blocks_1024": 10485760,
+      "bytes": 10737418240
+    },
+    {
+      "device": "sda15",
+      "label": "metadata",
+      "major": 8,
+      "minor": 15,
+      "blocks_1024": 16384,
+      "bytes": 16777216
+    },
+    {
+      "device": "sda16",
+      "label": "userdata",
+      "major": 259,
+      "minor": 0,
+      "blocks_1024": 46936396,
+      "bytes": 48062869504
+    }
+  ],
+  "physical_device_nodes_present": true,
+  "registered_filesystems_relevant": [
+    "ext2",
+    "ext3",
+    "ext4",
+    "f2fs",
+    "configfs",
+    "pstore",
+    "binder"
+  ],
+  "device_mapper": {
+    "initialized": true,
+    "ioctl_version": "4.39.0-ioctl (2018-04-03)",
+    "logical_devices_observed_in_proc_partitions": []
+  },
+  "ufs": {
+    "controller": "4804000.ufshc",
+    "model": "MICRON MT064GASAO2U21",
+    "firmware": "0109",
+    "observed_warnings": [
+      "vccq-supply missing; assuming enabled",
+      "no vccq2-voltage-level property",
+      "qcom,vccq-parent-supply missing; assuming enabled",
+      "qcom,vccq2-parent-supply missing; assuming enabled",
+      "Could not find valid icc_level = 0"
+    ],
+    "scope": "Devices and partitions enumerated; warnings do not prevent the observed enumeration. Power-management correctness and filesystem I/O remain unvalidated."
+  },
+  "kernel_and_shell_working": true,
+  "userdata_mounted": false,
+  "sailfish_userdata_image_flashed": false,
+  "rootfs_chroot_verified": false,
+  "rootfs_boot_tested": false,
+  "flashable_release": false
+}
