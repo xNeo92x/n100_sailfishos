@@ -11,6 +11,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zipfile
 from unittest.mock import patch
 
 
@@ -78,6 +79,23 @@ def busybox(interpreter=False):
     return bytes(data)
 
 
+def dtbo_image():
+    overlay = bytes.fromhex('d00dfeed') + b'DTBO-fixture'
+    total = 64 + len(overlay)
+    data = bytearray(1024)
+    struct.pack_into('>8I', data, 0, 0xd7b7ab1e, total, 32, 32, 1, 32, 4096, 0)
+    struct.pack_into('>8I', data, 32, len(overlay), 64, 0, 0, 0, 0, 0, 0)
+    data[64:total] = overlay
+    data[256:260] = b'AVB0'
+    struct.pack_into('>4sIIQQQ28s', data, len(data) - 64, b'AVBf', 1, 0, total, 256, 256, b'\0' * 28)
+    reference = {'image_bytes': len(data), 'table_bytes': total,
+                 'table_sha256': hashlib.sha256(data[:total]).hexdigest(),
+                 'entries': [{'bytes': len(overlay), 'offset': 64, 'id': 0, 'revision': 0,
+                              'custom': [0, 0, 0, 0], 'sha256': hashlib.sha256(overlay).hexdigest()}],
+                 'has_avb_footer': True}
+    return bytes(data), reference
+
+
 CONFIG = '\n'.join(key + '=y' for key in (
     'CONFIG_BLK_DEV_INITRD', 'CONFIG_RD_GZIP', 'CONFIG_RD_LZ4', 'CONFIG_DEVTMPFS',
     'CONFIG_DEVTMPFS_MOUNT', 'CONFIG_CONFIGFS_FS', 'CONFIG_USB_GADGET',
@@ -120,7 +138,9 @@ class DebugBootTests(unittest.TestCase):
         image = self.root / 'hybris-boot.img'
         image.write_bytes(data)
         dtbo = self.root / 'dtbo.img'
-        dtbo.write_bytes(b'fixture-dtbo')
+        dtbo_data, content_reference = dtbo_image()
+        dtbo.write_bytes(dtbo_data)
+        (self.port / 'validation/boot-dtbo-content-20261025.json').write_text(json.dumps(content_reference))
         (self.port / 'validation/boot-audit-report-user-20261025.json').write_text(json.dumps({'members':[
             {'file':'hybris/dtb.img','sha256':hashlib.sha256(dtb).hexdigest()},
             {'file':'hybris/dtbo.img','sha256':hashlib.sha256(dtbo.read_bytes()).hexdigest()}]}))
@@ -146,9 +166,10 @@ class DebugBootTests(unittest.TestCase):
                 self.assertFalse(report['boot_tested'])
                 self.assertEqual(report['sha256'], hashlib.sha256(built).hexdigest())
 
-    def test_missing_lz4_kernel_decoder_stops_before_output(self):
+    def test_missing_explicit_lz4_initramfs_option_stops_before_output(self):
         image, config, dtbo = self.image(self.ramdisk('lz4'))
-        config.write_text(CONFIG.replace('CONFIG_RD_LZ4=y', '# CONFIG_RD_LZ4 is not set'))
+        config.write_text(CONFIG.replace('CONFIG_RD_LZ4=y', '# CONFIG_RD_LZ4 is not set')
+                          + 'CONFIG_DECOMPRESS_LZ4=y\n')
         with self.assertRaisesRegex(debug.n100.PortError, 'CONFIG_RD_LZ4'):
             debug.pack(image, config, dtbo, self.root / 'debug.img')
         self.assertFalse((self.root / 'debug.img').exists())
@@ -163,15 +184,49 @@ class DebugBootTests(unittest.TestCase):
 
     def test_changed_dtbo_or_existing_output_are_preserved(self):
         image, config, dtbo = self.image(self.ramdisk())
-        dtbo.write_bytes(b'changed')
+        changed = bytearray(dtbo.read_bytes())
+        changed[70] ^= 1
+        dtbo.write_bytes(changed)
         output = self.root / 'debug.img'
-        with self.assertRaisesRegex(debug.n100.PortError, 'DTB/DTBO changed'):
+        with self.assertRaisesRegex(debug.n100.PortError, 'DTB/DTBO content changed'):
             debug.pack(image, config, dtbo, output)
         self.assertFalse(output.exists())
+        with zipfile.ZipFile(output.with_suffix('.img.review.zip')) as review:
+            self.assertEqual(review.read('dtbo.img'), changed[:dtbo_image()[1]['table_bytes']])
         output.write_bytes(b'keep')
         with self.assertRaises(debug.n100.PortError):
             debug.pack(image, config, dtbo, output)
         self.assertEqual(output.read_bytes(), b'keep')
+
+    def test_changed_avb_metadata_keeps_reviewed_content_and_records_actual_file_hash(self):
+        image, config, dtbo = self.image(self.ramdisk())
+        previous_hash = hashlib.sha256(dtbo.read_bytes()).hexdigest()
+        changed = bytearray(dtbo.read_bytes())
+        changed[300] = 123  # Metadata inside the AVB block, outside the DTBO table.
+        dtbo.write_bytes(changed)
+        output = self.root / 'debug.img'
+        with contextlib.redirect_stdout(io.StringIO()):
+            debug.pack(image, config, dtbo, output)
+        result = json.loads(output.with_suffix('.img.json').read_text())['matching_dtbo']
+        self.assertFalse(result['whole_image_matches_previous'])
+        self.assertNotEqual(result['sha256'], previous_hash)
+        self.assertEqual(result['sha256'], hashlib.sha256(changed).hexdigest())
+        self.assertTrue(result['reviewed_content_matches'])
+        self.assertFalse(result['avb_signature_verified'])
+
+    def test_malformed_dtbo_table_or_footer_is_refused(self):
+        original, unused = dtbo_image()
+        cases = [b'bad']
+        for offset, value in ((4, 5000), (32, 5000), (36, 9999)):
+            data = bytearray(original)
+            struct.pack_into('>I', data, offset, value)
+            cases.append(bytes(data))
+        data = bytearray(original)
+        data[256:260] = b'BAD!'
+        cases.append(bytes(data))
+        for data in cases:
+            with self.subTest(size=len(data)), self.assertRaises(debug.n100.PortError):
+                debug.dtbo_content_identity(data)
 
     def test_corrupt_ramdisk_and_cpio_traversal_are_refused(self):
         for data in (bytes.fromhex('02214c18') + b'\xff\xff\xff\xff', b'not a ramdisk', gzip.compress(b'bad cpio')):

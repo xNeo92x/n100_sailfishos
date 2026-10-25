@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "tool": "tools/boot-debug.py",
+  "problem": "Whole signed/padded DTBO image hash may change despite identical reviewed overlay content.",
+  "audited_dtbo_content_reference": "validation/boot-dtbo-content-20261025.json",
+  "validation_method": "Require exact previous base DTB bytes, exact DTBO table/overlay bytes, matching image size/footer presence and valid bounds. Preserve full image and record its actual SHA-256. AVB signatures are not verified.",
+  "avb_source": {
+    "repository": "LineageOS/android_external_avb",
+    "revision": "ba9d77598670f4e221490aa0e7aa9b27564cf2fb",
+    "path": "avbtool.py",
+    "behavior": "add_hash_footer selects random salt when none is supplied"
+  },
+  "real_metadata_regeneration_test": {
+    "source": "Original audited DTBO copied locally and reprocessed with avbtool add_hash_footer --algorithm NONE",
+    "before_image_sha256": "0dba332178bcf5f3c56e76ac7b65e26e6a2e9cee6c79fda31bfbf3ca3520aca6",
+    "after_image_sha256": "b5134a5d9ff21efd9a8063ef5d224d4b20909dc942150098e934cf25e74ced5c",
+    "table_sha256_unchanged": "fad722a171d845ecb3a0b38807569e5818569ae9c76b8c9104323eebc4786e81",
+    "overlay_sha256_unchanged": "5d945b2dd32aa89c774f673cd775e3444d2f2f12131ab50703094147d1113951",
+    "same_reviewed_inputs": true,
+    "device_accessed": false,
+    "oem_signature_verified": false
+  },
+  "new_regression_tests": [
+    "Changed AVB metadata accepted only when reviewed DTBO content is identical; report records actual full-file hash",
+    "Changed overlay still rejected and review bundle emitted",
+    "Malformed table/footer bounds rejected"
+  ],
+  "actual_new_user_dtbo_bytes_received": false,
+  "new_user_debug_image_built": false,
+  "device_accessed": false,
+  "boot_tested": false,
+  "tests": {
+    "host_suite_passed": 158,
+    "fs_config_compatibility_passed": 16,
+    "debug_tool_tests_passed": 10,
+    "python_3_8_grammar_passed": true,
+    "shell_syntax_passed": true,
+    "whitespace_check_passed": true
+  }
+}

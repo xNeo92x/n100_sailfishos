@@ -1,0 +1,467 @@
+[eugen@cachyos-junior ~]$ bash "$N100_PORT/tools/build-hal.sh" boot
+LZ4 kernel configuration and early RNDIS-only debug init prepared.
+{
+  "profile": "lineage20-pre-extracted-candidate",
+  "repository": "TheMuppets/proprietary_vendor_oneplus_billie2",
+  "revision": "20645052cd9a7b9907294c334cf23c4e0796ea58",
+  "required_blob_files": 1161,
+  "tracked_files_verified": 1165,
+  "catalog_sha256": "81494a5b85cd43bcf90cc3ea7b3a451229583efb2341c64cf656fc254f719c04",
+  "raw_reference_pins_matched": 34,
+  "declared_packaged_reference_differences": [
+    "system_ext/lib/libmmrtpdecoder.so",
+    "system_ext/lib/libwfdclient.so",
+    "system_ext/lib/libwfdconfigutils.so",
+    "system_ext/lib/libwfddisplayconfig.so",
+    "system_ext/lib/libwfdmminterface.so",
+    "system_ext/lib64/libmmparser_lite.so",
+    "system_ext/lib64/libmmrtpdecoder.so",
+    "system_ext/lib64/libwfdclient.so",
+    "system_ext/lib64/libwfdconfigutils.so",
+    "system_ext/lib64/libwfddisplayconfig.so",
+    "system_ext/lib64/libwfdmminterface.so",
+    "system_ext/priv-app/WfdService/WfdService.apk"
+  ],
+  "build_inputs_complete": true,
+  "stock_eea_runtime_compatibility_verified": false,
+  "hal_built": false,
+  "boot_tested": false
+}
+Boot mount fixup ready: physical userdata -> /dev/sda16
+Existing Android encryption and logical HAL mounts remain separate bring-up work.
+WebView manifest link OK
+18:53:05 Build sandboxing disabled due to nsjail error.
+Looking for dependencies in device/oneplus/billie2
+Looking for dependencies in hardware/oneplus
+hardware/oneplus has no additional dependencies.
+Looking for dependencies in kernel/oneplus/sm4250
+kernel/oneplus/sm4250 has no additional dependencies.
+18:53:05 Build sandboxing disabled due to nsjail error.
+
+============================================
+PLATFORM_VERSION_CODENAME=REL
+PLATFORM_VERSION=13
+LINEAGE_VERSION=20.0-20261025-UNOFFICIAL-billie2
+TARGET_PRODUCT=lineage_billie2
+TARGET_BUILD_VARIANT=userdebug
+TARGET_BUILD_TYPE=release
+TARGET_ARCH=arm64
+TARGET_ARCH_VARIANT=armv8-a
+TARGET_CPU_VARIANT=generic
+TARGET_2ND_ARCH=arm
+TARGET_2ND_ARCH_VARIANT=armv8-a
+TARGET_2ND_CPU_VARIANT=generic
+HOST_ARCH=x86_64
+HOST_2ND_ARCH=x86
+HOST_OS=linux
+HOST_OS_EXTRA=Linux-7.3.0-5-cachyos-x86_64-Ubuntu-20.04.2-LTS
+HOST_CROSS_OS=windows
+HOST_CROSS_ARCH=x86
+HOST_CROSS_2ND_ARCH=x86_64
+HOST_BUILD_TYPE=release
+BUILD_ID=TQ3A.230901.001
+OUT_DIR=out
+PRODUCT_SOONG_NAMESPACES=vendor/oneplus/billie2 device/oneplus/billie2 hardware/oneplus vendor/qcom/opensource/usb/etc hardware/qcom-caf/sm8250 vendor/qcom/opensource/commonsys/display vendor/qcom/opensource/commonsys-intf/display vendor/qcom/opensource/display vendor/qcom/opensource/data-ipa-cfg-mgr-legacy-um vendor/qcom/opensource/dataservices
+============================================
+18:53:05 Build sandboxing disabled due to nsjail error.
+============================================
+PLATFORM_VERSION_CODENAME=REL
+PLATFORM_VERSION=13
+LINEAGE_VERSION=20.0-20261025-UNOFFICIAL-billie2
+TARGET_PRODUCT=lineage_billie2
+TARGET_BUILD_VARIANT=userdebug
+TARGET_BUILD_TYPE=release
+TARGET_ARCH=arm64
+TARGET_ARCH_VARIANT=armv8-a
+TARGET_CPU_VARIANT=generic
+TARGET_2ND_ARCH=arm
+TARGET_2ND_ARCH_VARIANT=armv8-a
+TARGET_2ND_CPU_VARIANT=generic
+HOST_ARCH=x86_64
+HOST_2ND_ARCH=x86
+HOST_OS=linux
+HOST_OS_EXTRA=Linux-7.3.0-5-cachyos-x86_64-Ubuntu-20.04.2-LTS
+HOST_CROSS_OS=windows
+HOST_CROSS_ARCH=x86
+HOST_CROSS_2ND_ARCH=x86_64
+HOST_BUILD_TYPE=release
+BUILD_ID=TQ3A.230901.001
+OUT_DIR=out
+PRODUCT_SOONG_NAMESPACES=vendor/oneplus/billie2 device/oneplus/billie2 hardware/oneplus vendor/qcom/opensource/usb/etc hardware/qcom-caf/sm8250 vendor/qcom/opensource/commonsys/display vendor/qcom/opensource/commonsys-intf/display vendor/qcom/opensource/display vendor/qcom/opensource/data-ipa-cfg-mgr-legacy-um vendor/qcom/opensource/dataservices
+============================================
+ninja: no work to do.
+No need to regenerate ninja file
+18:53:06 Disallowed PATH tool "xmllint" used: []string{"xmllint", "--xpath", "string(/device[@name=\"Android\"]/item[@name=\"battery.capacity\"])", "device/oneplus/billie2/overlay/frameworks/base/core/res/res/xml/power_profile.xml"}
+18:53:06 See https://android.googlesource.com/platform/build/+/master/Changes.md#PATH_Tools for more information.
+No need to regenerate ninja file
+No need to regenerate ninja file
+Starting ninja...
+[ 10% 1/10] build out/target/product/billie2/obj/ROOT/hybris-boot_intermediates/init
+Fixing physical mount-point aliases for billie2
+[ 20% 2/10] Making initramfs : out/target/product/billie2/obj/ROOT/hybris-boot_intermediates/boot-initramfs.gz
+cpio: : No such file or directory
+[ 30% 3/10] Building Kernel Config
+make: Entering directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+make[1]: Entering directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/KERNEL_OBJ'
+  GEN     ./Makefile
+#
+# configuration written to .config
+#
+make[1]: Leaving directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/KERNEL_OBJ'
+make: Leaving directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+[ 40% 4/10] Building dtb.img
+make: Entering directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+make[1]: Entering directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/DTB_OBJ'
+  GEN     ./Makefile
+#
+# configuration written to .config
+#
+make[1]: Leaving directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/DTB_OBJ'
+make: Leaving directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+make: Entering directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+make[1]: Entering directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/DTB_OBJ'
+  GEN     ./Makefile
+scripts/kconfig/conf  --syncconfig Kconfig
+  GEN     ./Makefile
+  Using /home/eugen/n100-build/android/kernel/oneplus/sm4250 as source for kernel
+  CALL    /home/eugen/n100-build/android/kernel/oneplus/sm4250/scripts/checksyscalls.sh
+  DTC     arch/arm64/boot/dts/vendor/billie2/bengal.dtb
+  DTC     arch/arm64/boot/dts/vendor/billie2/billie2-qrd-overlay.dtbo
+make[1]: Leaving directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/DTB_OBJ'
+make: Leaving directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+[ 50% 5/10] Building dtbo.img
+make: Entering directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+make[1]: Entering directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/DTBO_OBJ'
+  GEN     ./Makefile
+#
+# configuration written to .config
+#
+make[1]: Leaving directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/DTBO_OBJ'
+make: Leaving directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+make: Entering directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+make[1]: Entering directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/DTBO_OBJ'
+  GEN     ./Makefile
+scripts/kconfig/conf  --syncconfig Kconfig
+  GEN     ./Makefile
+  Using /home/eugen/n100-build/android/kernel/oneplus/sm4250 as source for kernel
+  CALL    /home/eugen/n100-build/android/kernel/oneplus/sm4250/scripts/checksyscalls.sh
+  DTC     arch/arm64/boot/dts/vendor/billie2/bengal.dtb
+  DTC     arch/arm64/boot/dts/vendor/billie2/billie2-qrd-overlay.dtbo
+make[1]: Leaving directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/DTBO_OBJ'
+make: Leaving directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+[ 60% 6/10] build out/target/product/billie2/dtbo.img
+[ 70% 7/10] Building Kernel Image (Image)
+make: Entering directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+make[1]: Entering directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/KERNEL_OBJ'
+  GEN     ./Makefile
+scripts/kconfig/conf  --syncconfig Kconfig
+  GEN     ./Makefile
+  Using /home/eugen/n100-build/android/kernel/oneplus/sm4250 as source for kernel
+  CALL    /home/eugen/n100-build/android/kernel/oneplus/sm4250/scripts/checksyscalls.sh
+  CHK     include/generated/compile.h
+  GZIP    kernel/config_data.gz
+  CHK     kernel/kheaders_data.tar.xz
+  GEN     kernel/kheaders_data.tar.xz
+  CC      kernel/kheaders.o
+  UPD     kernel/config_data.h
+  CC      kernel/configs.o
+  AR      kernel/built-in.a
+  GEN     .version
+  CHK     include/generated/compile.h
+  UPD     include/generated/compile.h
+  CC      init/version.o
+  AR      init/built-in.a
+  AR      built-in.a
+  MODPOST vmlinux.o
+  KSYM    .tmp_kallsyms1.o
+  KSYM    .tmp_kallsyms2.o
+  LD      vmlinux
+  SORTEX  vmlinux
+  SYSMAP  System.map
+  OBJCOPY arch/arm64/boot/Image
+make[1]: Leaving directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/KERNEL_OBJ'
+make: Leaving directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+Building DTBs
+make: Entering directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+make[1]: Entering directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/KERNEL_OBJ'
+  GEN     ./Makefile
+  Using /home/eugen/n100-build/android/kernel/oneplus/sm4250 as source for kernel
+  CALL    /home/eugen/n100-build/android/kernel/oneplus/sm4250/scripts/checksyscalls.sh
+  DTC     arch/arm64/boot/dts/vendor/billie2/bengal.dtb
+  DTC     arch/arm64/boot/dts/vendor/billie2/billie2-qrd-overlay.dtbo
+make[1]: Leaving directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/KERNEL_OBJ'
+make: Leaving directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+Building Kernel Modules
+make: Entering directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+make[1]: Entering directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/KERNEL_OBJ'
+  GEN     ./Makefile
+  Using /home/eugen/n100-build/android/kernel/oneplus/sm4250 as source for kernel
+  CALL    /home/eugen/n100-build/android/kernel/oneplus/sm4250/scripts/checksyscalls.sh
+  Building modules, stage 2.
+  MODPOST 3 modules
+make[1]: Leaving directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/KERNEL_OBJ'
+make: Leaving directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+Installing Kernel Modules
+make: Entering directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+make[1]: Entering directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/KERNEL_OBJ'
+  INSTALL drivers/video/backlight/lcd.ko
+  INSTALL techpack/data/drivers/rmnet/perf/rmnet_perf.ko
+  INSTALL techpack/data/drivers/rmnet/shs/rmnet_shs.ko
+  DEPMOD  4.19.325-perf+
+make[1]: Leaving directory '/home/eugen/n100-build/android/out/target/product/billie2/obj/KERNEL_OBJ'
+make: Leaving directory '/home/eugen/n100-build/android/kernel/oneplus/sm4250'
+depmod: WARNING: could not open modules.order at /home/eugen/n100-build/android/out/target/product/billie2/obj/PACKAGING/depmod_vendor_intermediates/lib/modules/0.0: No such file or directory
+depmod: WARNING: could not open modules.builtin at /home/eugen/n100-build/android/out/target/product/billie2/obj/PACKAGING/depmod_vendor_intermediates/lib/modules/0.0: No such file or directory
+[ 80% 8/10] target Prebuilt: hybris-boot (out/target/product/billie2/kernel)
+[ 90% 9/10] Making hybris-boot.img in out/target/product/billie2/obj/ROOT/hybris-boot_intermediates/ using out/target/product/billie2/kernel out/target/product/billie2/obj/ROOT/hybris-boot_intermediates/boot-initramfs.gz
+[100% 10/10] Install: out/target/product/billie2/hybris-boot.img
+
+#### build completed successfully (25 seconds) ####
+
+Fragment requirements met. Also run the pinned hybris/mer-kernel-check tool.
+WARNING: CONFIG_NFS_USE_KERNEL_DNS is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_CUSE is invalid
+It is unset
+Allowed values : y, !, >=2.6
+Comment says: CUSE (optional): Required for software security modules support.
+
+WARNING: CONFIG_NFS_V3 is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_NFS_V3_ACL is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_SUNRPC is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_CHECKPOINT_RESTORE is invalid
+It is unset
+Allowed values : y, !
+Comment says: rich-core-dumper (https://github.com/mer-tools/sp-rich-core/) needs this to collect all data for environment recreation.
+
+WARNING: CONFIG_NETFILTER_XT_MATCH_NFACCT is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman (optional): for routing and statistic support in sessions, http://git.kernel.org/cgit/network/connman/connman.git/commit/README?id=41f37125887cb9208da2441e350e1e3324c17ee6
+
+WARNING: CONFIG_LBDAF is invalid
+It is unset
+Allowed values : y, !
+Comment says: ext4 filesystem requires this in order to support filesysetms with huge_file feature, which is enabled by default by mke2fs.ext4, not needed for 64bit architectures
+
+WARNING: CONFIG_CIFS is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional extra filesystem (CIFS - Windows net fs)
+
+WARNING: CONFIG_BT_HCIUART is invalid
+It is unset
+Allowed values : y, !
+Comment says: Bluez (optional): Needed if bluez used as bluetooth stack
+
+WARNING: CONFIG_NF_CONNTRACK_IPV4 is invalid
+It is unset
+Allowed values : y, m, !, <=4.18
+Comment says: optional, exists up to 4.18
+
+WARNING: CONFIG_NFS_V4 is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_NET_DROP_MONITOR is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: Enable package drop monitoring
+
+WARNING: CONFIG_ISO9660_FS is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional extra filesystem (CD-ROM)
+
+WARNING: CONFIG_NFS_V4_1 is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_NF_NAT_IPV6 is invalid
+It is unset
+Allowed values : y, m, !, >=3.7, <=5.0
+Comment says: connman: to enable IPv6 NAT, optional as exists in kernel between 3.7 to 5.0
+
+WARNING: CONFIG_WATCHDOG_NOWAYOUT is invalid
+It is unset
+Allowed values : y, !
+Comment says: If device uses watchdogs with dsme (https://github.com/sailfishos/dsme), this option should be enabled or watchdog does not protect the device in case dsme crashes.
+
+WARNING: CONFIG_NETFILTER_XT_MATCH_RECENT is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman: for iptables recent match
+
+WARNING: CONFIG_UDF_FS is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional extra filesystem (DVD & portable USB)
+
+WARNING: CONFIG_NFS_ACL_SUPPORT is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_IP6_NF_MATCH_FRAG is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman: for ip6tables frag match
+
+WARNING: CONFIG_LOCKD is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_BLK_DEV_NBD is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional, for NFS & CIFS support
+
+WARNING: CONFIG_ECRYPT_FS is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional extra filesystem (ecryptfs)
+
+WARNING: CONFIG_NF_CONNTRACK_IPV6 is invalid
+It is unset
+Allowed values : y, m, !, <=4.18
+Comment says: optional, exists up to 4.18
+
+WARNING: CONFIG_NETFILTER_XT_MATCH_SCTP is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman: for iptables sctp match
+
+WARNING: CONFIG_SECURITY_YAMA is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, prevents user's processes from ptracing each other
+
+WARNING: CONFIG_NET_CLS_CGROUP is invalid
+It is unset
+Allowed values : y, !
+Comment says: systemd (optional): https://github.com/systemd/systemd/blob/v238/README
+
+WARNING: CONFIG_NETFILTER_NETLINK_ACCT is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman (optional): for routing and statistic support in sessions, http://git.kernel.org/cgit/network/connman/connman.git/commit/README?id=41f37125887cb9208da2441e350e1e3324c17ee6
+
+WARNING: CONFIG_NETFILTER_XT_MATCH_DCCP is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman: for iptables dccp match
+
+WARNING: CONFIG_CGROUP_PERF is invalid
+It is unset
+Allowed values : y, !
+Comment says: systemd (optional): https://github.com/systemd/systemd/blob/v238/README
+
+WARNING: CONFIG_CGROUP_NET_PRIO is invalid
+It is unset
+Allowed values : y, !, >=3.14
+Comment says: systemd (optional): https://github.com/systemd/systemd/blob/v238/README
+
+WARNING: CONFIG_BTRFS_FS is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional extra filesystem (BTRFS)
+
+WARNING: CONFIG_NFS_COMMON is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_SECURITY_YAMA_STACKED is invalid
+It is unset
+Allowed values : y, !, <4.3
+Comment says: optional, only valid for kernel < 4.3
+
+WARNING: CONFIG_SUNRPC_GSS is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_NETWORK_FILESYSTEMS is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_IP6_NF_MATCH_MH is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman: for ip6tables mh match
+
+WARNING: CONFIG_FANOTIFY is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, required for systemd readahead.
+
+WARNING: CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE is invalid
+Value is: 1
+Allowed values : 0, !
+Comment says: Alternative way to disable SELinux at boottime
+
+WARNING: CONFIG_LOCKD_V4 is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_HIDRAW is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional: Support HID devices
+
+WARNING: CONFIG_NFS_FS is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_IP6_NF_MATCH_AH is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman: for ip6tables ah match
+
+WARNING: CONFIG_RTC_DRV_CMOS is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, but highly recommended, not available on arm64
+
+WARNING: CONFIG_ANDROID_LOW_MEMORY_KILLER is invalid
+It is unset
+Allowed values : y, !
+Comment says: Helping memory handling at least with Android runtime (tested on Jolla C)
+
+WARNING: CONFIG_BT_HCIUART_H4 is invalid
+It is unset
+Allowed values : y, !
+Comment says: Bluez (optional): Needed if bluez used as bluetooth stack
+
+{
+  "header_version": 2,
+  "page_size": 4096,
+  "bytes": 45064192,
+  "kernel_bytes": 42947072,
+  "ramdisk_bytes": 1824597,
+  "dtb_bytes": 279793,
+  "cmdline": "earlycon=msm_geni_serial,0x4a90000 androidboot.hardware=qcom androidboot.memcg=1 lpm_levels.sleep_disabled=1 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=2048 loop.max_part=7 selinux=1 androidboot.selinux=permissive",
+  "assessment": "structural-check-only-not-boot-validation"
+}
+error: Built DTB/DTBO changed; repeat the overlay compatibility analysis

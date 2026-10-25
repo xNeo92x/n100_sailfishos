@@ -11,6 +11,7 @@ import stat
 import struct
 import tempfile
 import zlib
+import zipfile
 
 import n100
 
@@ -193,6 +194,55 @@ def verify_ramdisk(data, config):
             "early_debug_guard_verified": True, "busybox_aarch64_without_interpreter": True}
 
 
+def dtbo_content_identity(data):
+    if len(data) < 32:
+        raise n100.PortError("Truncated DTBO table")
+    magic, total, header, entry_size, count, entries_offset, page, version = struct.unpack_from(">8I", data)
+    if (magic != 0xd7b7ab1e or version != 0 or header != 32 or entry_size != 32
+            or not 0 < count <= 32 or entries_offset < header
+            or entries_offset + count * entry_size > total or total > len(data)):
+        raise n100.PortError("Invalid DTBO table bounds or format")
+    entries = []
+    for index in range(count):
+        entry = struct.unpack_from(">8I", data, entries_offset + index * entry_size)
+        size, offset = entry[:2]
+        if not size or offset < entries_offset + count * entry_size or offset + size > total:
+            raise n100.PortError("DTBO overlay exceeds table bounds")
+        overlay = data[offset:offset + size]
+        if not overlay.startswith(bytes.fromhex("d00dfeed")):
+            raise n100.PortError("DTBO entry lacks FDT magic")
+        entries.append({"bytes": size, "offset": offset, "id": entry[2], "revision": entry[3],
+                        "custom": list(entry[4:]), "sha256": hashlib.sha256(overlay).hexdigest()})
+    has_footer = len(data) >= 64 and data[-64:-60] == b"AVBf"
+    footer = None
+    if has_footer:
+        unused, major, minor, original, vbmeta_offset, vbmeta_size, unused_padding = struct.unpack(
+            ">4sIIQQQ28s", data[-64:])
+        if (major != 1 or total > original or original > vbmeta_offset
+                or vbmeta_size < 256 or vbmeta_offset + vbmeta_size > len(data) - 64
+                or data[vbmeta_offset:vbmeta_offset + 4] != b"AVB0"):
+            raise n100.PortError("Invalid AVB footer bounds")
+        footer = {"major": major, "minor": minor, "original_image_bytes": original,
+                  "vbmeta_offset": vbmeta_offset, "vbmeta_bytes": vbmeta_size}
+    return {"image_bytes": len(data), "image_sha256": hashlib.sha256(data).hexdigest(),
+            "table_bytes": total, "table_sha256": hashlib.sha256(data[:total]).hexdigest(),
+            "entries": entries, "has_avb_footer": has_footer, "avb_footer": footer,
+            "avb_signature_verified": False}
+
+
+def review_changed_pair(output, dtb_data, dtbo_data, identity, details):
+    bundle = output.with_suffix(output.suffix + ".review.zip")
+    report = {"reason": "Device-tree content differs from the applied/ reviewed pair",
+              "actual_dtb_sha256": hashlib.sha256(dtb_data).hexdigest(),
+              "dtbo": identity, "differences": details, "device_accessed": False, "boot_tested": False}
+    with bundle.open("xb") as stream:
+        with zipfile.ZipFile(stream, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr("review.json", json.dumps(report, indent=2) + "\n")
+            archive.writestr("dtb.img", dtb_data)
+            archive.writestr("dtbo.img", dtbo_data[:identity["table_bytes"]])
+    raise n100.PortError("Built DTB/DTBO content changed; no debug image created. Upload " + str(bundle.absolute()))
+
+
 def pack(image, config_path, dtbo, output):
     report_path = output.with_suffix(output.suffix + ".json")
     if any(path.exists() or path.is_symlink() for path in (output, report_path)):
@@ -219,10 +269,16 @@ def pack(image, config_path, dtbo, output):
     reference = json.loads((ROOT / "validation/boot-audit-report-user-20261025.json").read_text())
     expected = {entry["file"]: entry["sha256"] for entry in reference["members"]}
     dtbo_data = dtbo.read_bytes()
-    if (hashlib.sha256(dtb_data).hexdigest() != expected["hybris/dtb.img"]
-            or len(dtbo_data) > 32 * 1024 * 1024
-            or hashlib.sha256(dtbo_data).hexdigest() != expected["hybris/dtbo.img"]):
-        raise n100.PortError("Built DTB/DTBO changed; repeat the overlay compatibility analysis")
+    identity = dtbo_content_identity(dtbo_data)
+    reviewed = json.loads((ROOT / "validation/boot-dtbo-content-20261025.json").read_text())
+    differences = []
+    if hashlib.sha256(dtb_data).hexdigest() != expected["hybris/dtb.img"]:
+        differences.append("Base DTB bytes changed")
+    for key in ("image_bytes", "table_bytes", "table_sha256", "entries", "has_avb_footer"):
+        if identity[key] != reviewed[key]:
+            differences.append("DTBO " + key + " changed")
+    if differences:
+        review_changed_pair(output, dtb_data, dtbo_data, identity, differences)
     cmdline = inspection["cmdline"].split()
     if data[608:1632].split(b"\0", 1)[0]:
         raise n100.PortError("This N100 debug packer requires the command line to fit the primary field")
@@ -241,7 +297,10 @@ def pack(image, config_path, dtbo, output):
               "source_boot_sha256": source_hash,
               "kernel_config_sha256": hashlib.sha256(config_data).hexdigest(),
               "ramdisk": ramdisk_check, "dtb_sha256": hashlib.sha256(dtb_data).hexdigest(),
-              "matching_dtbo": {"path": str(dtbo.absolute()), "bytes": len(dtbo_data), "sha256": expected["hybris/dtbo.img"]},
+              "matching_dtbo": {"path": str(dtbo.absolute()), "bytes": len(dtbo_data), **identity,
+                                "sha256": identity["image_sha256"],
+                                "whole_image_matches_previous": identity["image_sha256"] == expected["hybris/dtbo.img"],
+                                "reviewed_content_matches": True},
               "matching_dtbo_required": True, "automatic_userdata_mount": False,
               "restore_procedure_validated": False,
               "stock_dtbo_applies_to_built_dtb": False, "device_accessed": False,

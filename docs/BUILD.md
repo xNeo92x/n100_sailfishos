@@ -190,8 +190,9 @@ reuse stock kernel modules based solely on the shared 4.19 major/minor version.
 
 ### Early USB debug rebuild after the actual boot audit
 
-The uploaded initramfs is legacy LZ4 while its companion config snapshot has
-`CONFIG_RD_LZ4=n`. The fragment now requires that decoder. Existing generic
+The uploaded initramfs is legacy LZ4. Its old config snapshot has `RD_LZ4=n`
+but already enables `DECOMPRESS_LZ4=y`, so the earlier missing-decoder claim
+was not established. The fragment now explicitly requests `RD_LZ4=y`. Existing generic
 defconfigs are upgraded only from the known previous hash; unknown edits are
 preserved. The hybris init template receives a configfs RNDIS-only early debug
 guard selected by `n100_debug=1` before userdata mounting.
@@ -199,7 +200,9 @@ guard selected by `n100_debug=1` before userdata mounting.
 Inside Ubuntu HABUILD_SDK, `bash "$N100_PORT/tools/build-hal.sh" boot` builds
 only `hybris-boot` and creates a timestamped debug image plus `.img.json` report.
 The packer checks the actual compressed ramdisk and the final config before
-setting the debug flag; it requires the reviewed built DTB/DTBO hashes. The
+setting the debug flag; it requires the reviewed base-DTB bytes and DTBO table/overlay content hashes.
+Image size and AVB-footer bounds are checked; full-image hashes are recorded
+rather than treated as fixed across regenerations of AVB metadata. The
 normal `all` mode also performs this preparation/check after its full build.
 
 The original Stock overlay cannot apply to this base DTB. A matching built

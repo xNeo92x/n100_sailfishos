@@ -914,9 +914,16 @@ die vollständige Kette auf dem Gerät validiert ist.
 
 ## 7. Boot-Prüfung: korrigierten frühen Debug-Boot bauen
 
-Das echte Boot-Paket hat die LZ4-Konfigurationslücke und die DTBO-Inkompatibilität
-sichtbar gemacht. Der nächste Schritt ist in [EARLY_USB_DEBUG.md](EARLY_USB_DEBUG.md)
+Das echte Boot-Paket hat die DTBO-Inkompatibilität sichtbar gemacht. Die
+LZ4-Bewertung wurde präzisiert: Der alte Snapshot hatte bereits den Dekompressor
+aktiviert; `RD_LZ4=y` wird nun zusätzlich explizit angefordert. Der nächste Schritt ist in [EARLY_USB_DEBUG.md](EARLY_USB_DEBUG.md)
 mit den konkreten Befehlen für CachyOS, Platform SDK und Ubuntu beschrieben.
 Der Modus `build-hal.sh boot` aktualisiert Kernel und Hybris-Boot, prüft die
 Ramdisk und erstellt ein separates Debug-Image mit `.img.json`-Bericht. RPMs und
 Rootfs werden dabei nicht neu gebaut; ein Geräteboot ist noch nicht bestätigt.
+
+Der anschließende reale Debug-Kernel-Build war erfolgreich. Der Packschritt
+wurde beim ursprünglichen ganzen DTBO-Dateivergleich angehalten. Mit dem
+korrigierten [Packschritt](EARLY_USB_DEBUG.md#bereits-gebaut-packschritt-wiederholen)
+kann der vorhandene Build erneut geprüft werden; tatsächliche Inhaltsänderungen
+erzeugen ein Review-Paket und bleiben gesperrt.

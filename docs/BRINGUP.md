@@ -97,18 +97,20 @@ The collector's [eight tests and original-image integration check](../validation
 passed. The real user-built hybris input is still needed. Do not interpret
 these host checks as a phone boot test.
 
-### Actual boot audit: rebuild required
+### Actual boot audit and packaging check
 
-The uploaded boot bundle has now been analyzed. The supplied kernel config
-snapshot disables the decoder for its actual legacy LZ4 ramdisk. Stock DTBO
+The uploaded boot bundle has now been analyzed. The original config snapshot has `RD_LZ4=n` but already enables
+`DECOMPRESS_LZ4=y`; the earlier claim of a missing decoder was too strong. Stock DTBO
 application to the built base DTB fails with `FDT_ERR_NOTFOUND`; the matching
 built pair applies successfully. Seventeen missing Stock fixup labels explain
 the host failure. The original USB configfs path also requested unsupported
 `rndis_bam` alongside RNDIS.
 
 Source fixes and a boot-only build mode now prepare a RNDIS-only early debug
-branch before userdata mounting. The actual new kernel/debug image has not yet
-been built or booted. Follow [EARLY_USB_DEBUG.md](EARLY_USB_DEBUG.md) for the
+branch before userdata mounting. The user has now rebuilt the kernel and source boot image successfully;
+the final debug packaging guard stopped at the DTB/DTBO comparison. The corrected
+guard compares exact DTB/table/overlay content separately from AVB metadata.
+No phone boot has been tested. Follow [EARLY_USB_DEBUG.md](EARLY_USB_DEBUG.md) for the
 next build command and [the evidence](../validation/boot-audit-user-20261025.json)
 for exact hashes, test matrix and limitations. The previous bundle collection
 command above is retained for reference; it does not need repeating.

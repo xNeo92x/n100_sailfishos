@@ -34,7 +34,9 @@
     "CONFIG_USB_CONFIGFS": "y",
     "CONFIG_USB_CONFIGFS_RNDIS": "y",
     "CONFIG_USB_CONFIGFS_QCRNDIS": "n",
-    "provenance": "Current Android output snapshot, not extracted from the embedded kernel"
+    "provenance": "Current Android output snapshot, not extracted from the embedded kernel",
+    "CONFIG_DECOMPRESS_LZ4": "y",
+    "CONFIG_LZ4_DECOMPRESS": "y"
   },
   "device_trees": {
     "stock/dtb.img": {
@@ -164,7 +166,6 @@
     }
   },
   "blockers_found": [
-    "Legacy LZ4 external initramfs conflicts with CONFIG_RD_LZ4=n in the supplied kernel config snapshot.",
     "Stock DTBO cannot apply to the built base DTB; matching built DTBO is required.",
     "Original configfs setup attempts unsupported rndis_bam and unnecessary storage functions; debug entry followed userdata mount attempts."
   ],
@@ -204,15 +205,22 @@
     "shell_syntax_passed": true,
     "whitespace_check_passed": true
   },
-  "debug_kernel_rebuilt": false,
+  "debug_kernel_rebuilt": true,
   "debug_boot_built_on_user_pc": false,
   "device_accessed": false,
   "boot_tested": false,
   "flashable_release": false,
   "limitations": [
     "The uploaded bundle contains the built DTB and ramdisk but not the full kernel, so the supplied .config was not independently tied to embedded IKCONFIG.",
-    "Patched ramdisk verification used a simulated corrected .config; a real kernel/debug image rebuild is still required.",
+    "The patched payload was initially checked with a simulated corrected .config. The user's subsequent real kernel/config check passed; final debug packaging stopped at DTB/DTBO hash comparison.",
     "Unlocked bootloader, matching DTBO handling and an established restore procedure are required before any boot experiment.",
     "Dynamic Android HAL mapping and normal Sailfish/rootfs boot remain separate bring-up work."
-  ]
+  ],
+  "lz4_assessment_correction": {
+    "prior_claim": "CONFIG_RD_LZ4=n with a legacy LZ4 ramdisk was treated as a missing-decoder boot blocker.",
+    "corrected_finding": "The supplied config already has CONFIG_DECOMPRESS_LZ4=y and CONFIG_LZ4_DECOMPRESS=y. RD_LZ4=n alone does not prove the kernel lacked a decoder.",
+    "reason": "lib/decompress.c gates the LZ4 decompressor on CONFIG_DECOMPRESS_LZ4. RD_LZ4 selects it but is not the only path to enable it.",
+    "current_policy": "Keep explicit RD_LZ4=y for the initramfs build contract; do not claim that it establishes a prior boot failure."
+  },
+  "debug_kernel_build_validation": "validation/debug-kernel-build-user-20261025.json"
 }

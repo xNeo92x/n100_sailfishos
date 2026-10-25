@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "source": "boot-audit-20261025T181511Z.zip:hybris/dtbo.img",
+  "source_image_sha256": "0dba332178bcf5f3c56e76ac7b65e26e6a2e9cee6c79fda31bfbf3ca3520aca6",
+  "image_bytes": 25165824,
+  "table_bytes": 186363,
+  "table_sha256": "fad722a171d845ecb3a0b38807569e5818569ae9c76b8c9104323eebc4786e81",
+  "entries": [
+    {
+      "bytes": 186299,
+      "offset": 64,
+      "id": 0,
+      "revision": 0,
+      "custom": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "5d945b2dd32aa89c774f673cd775e3444d2f2f12131ab50703094147d1113951"
+    }
+  ],
+  "header": {
+    "magic": 3619138334,
+    "header_bytes": 32,
+    "entry_bytes": 32,
+    "entries_offset": 32,
+    "page_size": 4096,
+    "version": 0
+  },
+  "has_avb_footer": true,
+  "scope": "Exact previously applied DTBO table and overlay bytes; image padding and AVB metadata excluded from this content identity, but retained and hashed in build outputs."
+}

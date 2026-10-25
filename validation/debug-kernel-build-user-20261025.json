@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "source": "validation/debug-boot-build-user-20261025.log",
+  "source_sha256": "87de77142f22da1c388aea58f25f8fa7274f159213805fae648caa287cd7e111",
+  "scope": "User terminal build output, not independently accessed rebuilt image bytes.",
+  "android_build_completed": true,
+  "android_build_seconds": 25,
+  "current_fragment_check_passed": true,
+  "upstream_kernel_check_completed": true,
+  "optional_kernel_warning_count": 47,
+  "source_hybris_boot_rebuilt": true,
+  "final_debug_image_created": false,
+  "failure_stage": "boot-debug.py pack: previous whole-file DTB/DTBO hash comparison",
+  "ramdisk_verifier_reached_and_passed_before_failure": true,
+  "ramdisk_verification_note": "Inferred from the e58ec2b packer order: DTB/DTBO comparison follows verify_ramdisk().",
+  "source_boot_header": {
+    "header_version": 2,
+    "page_size": 4096,
+    "bytes": 45064192,
+    "kernel_bytes": 42947072,
+    "ramdisk_bytes": 1824597,
+    "dtb_bytes": 279793,
+    "sha256": null
+  },
+  "exact_changed_component_identified": false,
+  "stock_dtbo_compatibility_changed": null,
+  "next_step": "Retry pack with exact reviewed DTB and DTBO table/overlay byte checks, excluding AVB/padding from content identity.",
+  "device_accessed": false,
+  "boot_tested": false,
+  "flashable_release": false,
+  "stock_dtbo_compatibility_note": "Current DTB/DTBO content was not uploaded; packaging guard must establish equality with the previously applied pair."
+}

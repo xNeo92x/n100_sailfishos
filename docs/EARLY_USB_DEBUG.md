@@ -1,8 +1,9 @@
 # N100: früher USB-Debug-Boot
 
 Der nächste lokale Build erzeugt ein separates Image für eine USB-Shell vor
-jedem automatischen Mount von `/data`. Der neue Kernel und das Debug-Image
-müssen noch auf dem Buildhost erstellt werden. Ein Geräteboot ist ungetestet.
+jedem automatischen Mount von `/data`. Kernel und Hybris-Boot wurden inzwischen auf dem Buildhost neu erstellt.
+Der abschließende Packschritt wurde am bisherigen DTB/DTBO-Dateivergleich
+angehalten und muss wiederholt werden. Ein Geräteboot ist ungetestet.
 
 ## Ergebnisse der echten Boot-Prüfung
 
@@ -12,9 +13,12 @@ und [Analyse](../validation/boot-audit-user-20261025.json) sind gespeichert.
 
 - Die tatsächliche Start-Ramdisk ist Legacy-LZ4 und enthält 13 CPIO-Einträge.
   `/init` ist ausführbar; BusyBox ist AArch64 ELF64 ohne ELF-Interpreter.
-- Die mitgelieferte `.config` hat `CONFIG_RD_LZ4=n`. Sie stammt aus dem aktuellen
-  Android-Ausgabeverzeichnis; sie wurde nicht aus dem eingebetteten Kernel
-  extrahiert. Der Build muss den Decoder explizit aktivieren und neu prüfen.
+- Präzisierung zur alten `.config`: `CONFIG_RD_LZ4=n`, aber bereits
+  `CONFIG_DECOMPRESS_LZ4=y` und `CONFIG_LZ4_DECOMPRESS=y`. Die frühere
+  Einordnung als sicher fehlender Decoder war zu weitgehend. Die explizite
+  `RD_LZ4=y`-Anforderung bleibt als Buildvertrag erhalten. Der neue Build hat
+  die Fragmentprüfung bestanden. Die alte Konfiguration war ein Snapshot aus
+  dem Ausgabeverzeichnis, kein unabhängig aus dem Kernel extrahiertes IKCONFIG.
 - Das ursprüngliche Configfs-Skript versucht zusätzlich `rndis_bam.rndis`,
   obwohl `CONFIG_USB_CONFIGFS_QCRNDIS=n` ist. Außerdem wählte der Debugpfad
   Massenspeicher und wurde erst nach den Userdata-Mountversuchen erreicht.
@@ -59,11 +63,51 @@ diesen Parameter bleibt für die spätere Rootfs-Arbeit vorgesehen.
 Der neue Modus `build-hal.sh boot` baut `hybris-boot` samt Kernel und erzeugt
 danach ein neues `n100-debug-boot-<UTC-Zeit>.img`. Er prüft die finale `.config`,
 die tatsächlich eingepackte Ramdisk, die ausführbare Init-Sperre, BusyBox und
-die zuvor geprüften DTB/DTBO-Hashes. Bei Abweichungen entsteht kein freigegebener
+die zuvor geprüften DTB- und DTBO-Inhalts-Hashes. Bei Abweichungen entsteht kein freigegebener
 Debug-Bericht. Für die LZ4-Prüfung wird die Systembibliothek `liblz4.so.1`
 verwendet; fehlt sie in Ubuntu, nennt der Helfer das Paket `liblz4-1`.
 
-## Auf dem vorhandenen CachyOS-Buildhost bauen
+## Bereits gebaut: Packschritt wiederholen
+
+Der Android-Build vom 25. Oktober lief in 25 Sekunden erfolgreich durch.
+Finale Fragmentprüfung und Kernel-Checker wurden abgeschlossen (47 optionale
+Warnungen). Der ursprüngliche Packer verglich anschließend die komplette
+DTBO-Datei mit dem älteren Image; dort wurde der Ablauf angehalten.
+
+Das geprüfte DTBO ist ein 24-MiB-Image mit einer 186.363-Byte-DTBO-Tabelle
+einschließlich Overlay sowie einem AVB-Footer. AVB-Metadaten können bei einem
+Neubau andere Dateihashes erzeugen. Der korrigierte Packer verlangt weiterhin
+dieselben Basis-DTB-Bytes und exakt dieselbe DTBO-Tabelle einschließlich
+Overlay-Daten; zusätzlich prüft er Tabellen-/Footer-Grenzen und die Image-Größe.
+Padding und AVB-Daten werden vollständig erhalten, der tatsächliche neue
+Dateihash wird im Bericht erfasst. OEM-Signaturen werden dadurch nicht geprüft.
+[Nachweis und Reproduktion](../validation/dtbo-content-guard.json).
+
+Im aktuellen Ubuntu-Terminal nur den vorhandenen Build verpacken:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+
+n100_product="$ANDROID_ROOT/out/target/product/billie2"
+python3 "$N100_PORT/tools/boot-debug.py" pack \
+  --image "$n100_product/hybris-boot.img" \
+  --kernel-config "$n100_product/obj/KERNEL_OBJ/.config" \
+  --dtbo "$n100_product/dtbo.img" \
+  --output "$n100_product/n100-debug-boot-$(date -u +%Y%m%dT%H%M%SZ).img"
+)
+```
+
+Bei identischen Gerätebaum-Inhalten entsteht die `.img.json`-Datei. Diese
+kleine Datei bereitstellen. Ändern sich die eigentlichen Gerätebaum-Daten oder
+das erwartete Layout, bleibt der Vorgang gesperrt und erstellt stattdessen eine
+kleine **`.img.review.zip`**. In diesem Fall dieses Paket bereitstellen; ein
+neues Debug-Image wurde dann nicht erzeugt. Welche Komponente des aktuellen
+Builds den alten Dateivergleich ausgelöst hat, ist erst mit diesen Daten belegt.
+
+## Vollständiger Debug-Neubau bei Bedarf
 
 Zuerst im **CachyOS-Terminal** aktualisieren und das Platform SDK öffnen:
 
