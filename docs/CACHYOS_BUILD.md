@@ -620,6 +620,51 @@ Nach dessen erfolgreichem Abschluss folgt `build-packages.sh rootfs`.
 Der RPM-Gesamtstatus bleibt bis zum Abschluss des Versionspakets offen.
 Geräteboot und Hardwarefunktionen sind weiterhin ungeprüft.
 
+### Dateikonflikt beim Versionspaket: ofono-Konfiguration ersetzen
+
+Der erste Versionspaket-Build löste seine Abhängigkeiten auf und plante
+19 Installationen. Danach brach die Transaktion wegen genau eines
+Dateikonflikts ab: `droid-config-billie2` und das bereits im SDK-Target
+installierte `ofono-configs-binder-1.1.25-1.12.2.jolla` lieferten beide
+`/etc/ofono/binder.conf`. Die abschließende Liste fehlender BuildRequires
+war eine Folge der abgebrochenen Installation.
+
+Die Datei kommt aus dem gepinnten gemeinsamen `droid-hal-configs`-Sparsebaum.
+Das Gerätespec deklariert jetzt `Provides: ofono-configs` und
+`Obsoletes: ofono-configs-binder`. Dadurch ersetzt die Gerätekonfiguration
+das generische Konfigurationspaket über die normale RPM-Paketauflösung.
+Der oFono-Daemon und das Binder-Plugin werden dadurch nicht ersetzt.
+Die Dateikonflikt- und BuildRequires-Prüfungen bleiben aktiviert.
+
+`n100.py prepare-config-spec` aktualisiert beim nächsten `configs`-Aufruf
+ausschließlich das eigene Spec im vorhandenen Snapshot. Es akzeptiert den
+geprüften Vorgänger-Blob `8ea1bd5ce17e05abac0cbb689f1946010d56ee6b` oder
+den bereits passenden Stand und prüft alle übrigen Dateien und Symlinks
+gegen den Snapshot-Marker. Lokale Änderungen stoppen den Vorgang.
+Gemeinsame Upstream-Quellen und Sparse-Dateien bleiben erhalten.
+
+Im **Platform SDK** Konfiguration neu bauen und danach das Versionspaket
+erneut versuchen:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+source "$HOME/n100-build/build.env"
+export RELEASE=5.1.0.11
+bash "$N100_PORT/tools/build-packages.sh" configs
+bash "$N100_PORT/tools/build-packages.sh" version
+)
+```
+
+Der Konfigurationsschritt entfernt über seinen vorhandenen Upstream-Helfer
+alte Konfigurations-RPMs aus dem lokalen Paketverzeichnis und schreibt die
+neuen Pakete. Der Versions-Build lässt mb2 die Abhängigkeiten erneut im
+SDK-Target installieren. Die tatsächliche Target-Transaktion und der
+Versionsabschluss stehen nach dieser Korrektur noch aus.
+Kein neuer Android-HAL-, Middleware- oder Medien-Build ist erforderlich.
+
 Das Ergebnis des Rootfs-Schritts ist ein `sfe-billie2-*.tar.bz2`. Die
 Paketauflösung und weitere Middleware-Anpassungen sind noch nicht erprobt.
 Das Rootfs muss bereits die billie2-Anpassung und die AArch64-Laufzeit enthalten;

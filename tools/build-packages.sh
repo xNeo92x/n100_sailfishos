@@ -24,7 +24,9 @@ case "${1:-}" in
         python3 "$port_dir/tools/n100.py" prepare-rpm-mounts --android-root "$ANDROID_ROOT" \
             --device-report "$N100_DEVICE_REPORT"
         exec bash rpm/dhd/helpers/build_packages.sh -d ;;
-    configs) exec bash rpm/dhd/helpers/build_packages.sh -c ;;
+    configs)
+        python3 "$port_dir/tools/n100.py" prepare-config-spec --android-root "$ANDROID_ROOT"
+        exec bash rpm/dhd/helpers/build_packages.sh -c ;;
     middleware) exec bash rpm/dhd/helpers/build_packages.sh -m ;;
     media)
         python3 "$port_dir/tools/check-droidmedia.py" --android-root "$ANDROID_ROOT"

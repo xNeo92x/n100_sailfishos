@@ -939,6 +939,63 @@ def prepare_rpm_spec(args):
     print("RPM spec upgraded with the targeted Android-root alias cleanup.")
 
 
+def prepare_config_spec(args):
+    """Upgrade only the reviewed device config spec; preserve all sparse files."""
+    android = android_path(args.android_root)
+    require_profile(android)
+    dependency = next(p for p in read_lock()["packaging"] if p["parent"] == "hybris/droid-configs")
+    destination = android / dependency["parent"]
+    require_checkout(destination / dependency["path"], dependency["revision"])
+    source = ROOT / "adaptation/droid-configs"
+    spec_name = "rpm/droid-config-billie2.spec"
+
+    def digest(path):
+        if path.is_symlink():
+            return "symlink:" + os.readlink(path)
+        return hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
+
+    wanted = {"dependency": dependency, "files": {
+        str(path.relative_to(source)): digest(path) for path in source.rglob("*")
+        if path.is_file() or path.is_symlink()}}
+    marker = destination / ".n100-prepared.json"
+    if marker.is_symlink() or not marker.is_file():
+        raise PortError("Missing config snapshot marker; prepare sources first")
+    installed = json.loads(marker.read_text())
+    if (not isinstance(installed, dict) or installed.get("dependency") != dependency or
+            not isinstance(installed.get("files"), dict) or
+            set(installed["files"]) != set(wanted["files"])):
+        raise PortError("Unexpected config snapshot metadata")
+    for name, expected in installed["files"].items():
+        path = destination / name
+        if any(parent.is_symlink() for parent in path.parents if parent != destination.parent):
+            raise PortError(f"Config snapshot has a symlink parent: {path}")
+        if digest(path) != expected:
+            raise PortError(f"Installed config snapshot has local edits: {path}")
+    if installed == wanted:
+        print("Config spec already replaces the generic ofono binder config package.")
+        return
+    spec = destination / spec_name
+    source_spec = source / spec_name
+    if (spec.is_symlink() or source_spec.is_symlink() or
+            git_blob_identity(spec.read_bytes()) != "8ea1bd5ce17e05abac0cbb689f1946010d56ee6b" or
+            any(installed["files"][name] != expected for name, expected in wanted["files"].items()
+                if name != spec_name)):
+        raise PortError("Config snapshot is not the reviewed predecessor; inspect manually")
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(prefix=".n100-config-spec-", dir=str(spec.parent),
+                                         delete=False) as stream:
+            temporary = Path(stream.name)
+            stream.write(source_spec.read_bytes())
+        temporary.chmod(source_spec.stat().st_mode & 0o777)
+        os.replace(str(temporary), str(spec))
+    finally:
+        if temporary is not None and temporary.exists():
+            temporary.unlink()
+    marker.write_text(json.dumps(wanted, indent=2) + "\n")
+    print("Config spec upgraded: device binder.conf replaces ofono-configs-binder.")
+
+
 def check_kernel(args):
     values = parse_config(Path(args.config).read_text())
     expected = parse_config((ROOT / "kernel/sailfish.config").read_text())
@@ -1038,6 +1095,9 @@ def main():
     p = commands.add_parser("prepare-rpm-spec", help="Upgrade the owned RPM spec snapshot with root-alias cleanup")
     p.add_argument("--android-root", required=True)
     p.set_defaults(func=prepare_rpm_spec)
+    p = commands.add_parser("prepare-config-spec", help="Upgrade the config snapshot to replace generic ofono configs")
+    p.add_argument("--android-root", required=True)
+    p.set_defaults(func=prepare_config_spec)
     p = commands.add_parser("check-kernel", help="Check the resolved kernel .config")
     p.add_argument("config")
     p.set_defaults(func=check_kernel)

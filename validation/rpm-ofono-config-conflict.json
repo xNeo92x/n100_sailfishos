@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "device": "billie2",
+  "evidence": {
+    "name": "droid-hal-version-billie2.log",
+    "sha256": "8d8cd6497b766a33e618fe0dae40220bd5a0d7c976b746ae522f4789e6a12ee7",
+    "planned_dependency_installations": 19,
+    "first_fatal_problem": "File conflict at /etc/ofono/binder.conf",
+    "owners": [
+      "droid-config-billie2-1-202610251428.aarch64",
+      "ofono-configs-binder-1.1.25-1.12.2.jolla.aarch64"
+    ],
+    "following_error": "BuildRequires were unavailable after the install transaction aborted"
+  },
+  "fix": {
+    "provides": "ofono-configs",
+    "obsoletes": "ofono-configs-binder",
+    "preserved": [
+      "oFono daemon",
+      "Binder plugin",
+      "device and common sparse config files",
+      "RPM file conflict checking",
+      "RPM build dependency checking"
+    ],
+    "snapshot_upgrade_command": "prepare-config-spec",
+    "reviewed_old_spec_blob": "8ea1bd5ce17e05abac0cbb689f1946010d56ee6b"
+  },
+  "source_evidence": {
+    "common_configs_revision": "1dae7f21ba676194f4cdafd6a6fc16d97462101d",
+    "common_binder_config_blob": "4e5ac7dee4fa86e8f896f6b5ed6bcfb944b21c57",
+    "generic_package_source": "https://github.com/mer-hybris/ofono-binder-plugin/blob/master/rpm/ofono-binder-plugin.spec"
+  },
+  "validation": {
+    "targeted_snapshot_upgrade_tests": 6,
+    "python_syntax": "passed",
+    "shell_syntax": "passed",
+    "updated_config_rpm_built": false,
+    "target_replacement_transaction_verified": false,
+    "version_rpm_built": false,
+    "rootfs_built": false,
+    "boot_tested": false
+  }
+}
