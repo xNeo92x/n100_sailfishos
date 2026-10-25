@@ -940,7 +940,7 @@ def prepare_rpm_spec(args):
 
 
 def prepare_config_spec(args):
-    """Upgrade only the reviewed device config spec; preserve all sparse files."""
+    """Upgrade reviewed config inputs; preserve existing sparse and upstream files."""
     android = android_path(args.android_root)
     require_profile(android)
     dependency = next(p for p in read_lock()["packaging"] if p["parent"] == "hybris/droid-configs")
@@ -948,6 +948,7 @@ def prepare_config_spec(args):
     require_checkout(destination / dependency["path"], dependency["revision"])
     source = ROOT / "adaptation/droid-configs"
     spec_name = "rpm/droid-config-billie2.spec"
+    additions = {"kickstart/pack_package-droid-updater", "kickstart/attachment_hybris"}
 
     def digest(path):
         if path.is_symlink():
@@ -963,7 +964,7 @@ def prepare_config_spec(args):
     installed = json.loads(marker.read_text())
     if (not isinstance(installed, dict) or installed.get("dependency") != dependency or
             not isinstance(installed.get("files"), dict) or
-            set(installed["files"]) != set(wanted["files"])):
+            set(installed["files"]) not in (set(wanted["files"]), set(wanted["files"]) - additions)):
         raise PortError("Unexpected config snapshot metadata")
     for name, expected in installed["files"].items():
         path = destination / name
@@ -972,28 +973,41 @@ def prepare_config_spec(args):
         if digest(path) != expected:
             raise PortError(f"Installed config snapshot has local edits: {path}")
     if installed == wanted:
-        print("Config spec already replaces the generic ofono binder config package.")
+        print("Config inputs are ready: ofono replacement and rootfs archive packaging.")
         return
     spec = destination / spec_name
     source_spec = source / spec_name
     if (spec.is_symlink() or source_spec.is_symlink() or
-            git_blob_identity(spec.read_bytes()) != "8ea1bd5ce17e05abac0cbb689f1946010d56ee6b" or
-            any(installed["files"][name] != expected for name, expected in wanted["files"].items()
+            git_blob_identity(spec.read_bytes()) not in (
+                "8ea1bd5ce17e05abac0cbb689f1946010d56ee6b",  # before ofono replacement
+                "343bd7aadd5eae6a028fe94cc1fdd5d08d971058") or
+            any(expected != wanted["files"][name] for name, expected in installed["files"].items()
                 if name != spec_name)):
         raise PortError("Config snapshot is not the reviewed predecessor; inspect manually")
-    temporary = None
-    try:
-        with tempfile.NamedTemporaryFile(prefix=".n100-config-spec-", dir=str(spec.parent),
-                                         delete=False) as stream:
-            temporary = Path(stream.name)
-            stream.write(source_spec.read_bytes())
-        temporary.chmod(source_spec.stat().st_mode & 0o777)
-        os.replace(str(temporary), str(spec))
-    finally:
-        if temporary is not None and temporary.exists():
-            temporary.unlink()
+    missing = set(wanted["files"]) - set(installed["files"])
+    for name in missing:
+        path = destination / name
+        if path.exists() or path.is_symlink() or any(parent.is_symlink() for parent in path.parents):
+            raise PortError(f"Refusing an existing config packaging path: {path}")
+        if (source / name).is_symlink():
+            raise PortError(f"Expected regular config packaging source: {name}")
+    # Validate every input before changing any file. Never copy the upstream submodule.
+    for name in sorted(missing | {spec_name}):
+        path = destination / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(prefix=".n100-config-", dir=str(path.parent),
+                                             delete=False) as stream:
+                temporary = Path(stream.name)
+                stream.write((source / name).read_bytes())
+            temporary.chmod((source / name).stat().st_mode & 0o777)
+            os.replace(str(temporary), str(path))
+        finally:
+            if temporary is not None and temporary.exists():
+                temporary.unlink()
     marker.write_text(json.dumps(wanted, indent=2) + "\n")
-    print("Config spec upgraded: device binder.conf replaces ofono-configs-binder.")
+    print("Config inputs upgraded: ofono replacement and rootfs archive packaging.")
 
 
 def check_kernel(args):
@@ -1095,7 +1109,7 @@ def main():
     p = commands.add_parser("prepare-rpm-spec", help="Upgrade the owned RPM spec snapshot with root-alias cleanup")
     p.add_argument("--android-root", required=True)
     p.set_defaults(func=prepare_rpm_spec)
-    p = commands.add_parser("prepare-config-spec", help="Upgrade the config snapshot to replace generic ofono configs")
+    p = commands.add_parser("prepare-config-spec", help="Upgrade reviewed config spec and rootfs packaging inputs")
     p.add_argument("--android-root", required=True)
     p.set_defaults(func=prepare_config_spec)
     p = commands.add_parser("check-kernel", help="Check the resolved kernel .config")

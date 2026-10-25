@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "device": "billie2",
+  "evidence": {
+    "kind": "Uploaded user build log",
+    "file": "rootfs.log",
+    "sha256": "06d48eaf18c9b0a97edcff98481a380cf9a2d0afbf8ed790283805f0be8b6e21",
+    "release": "5.1.0.11",
+    "packages_installed": 756,
+    "package_installation_reached_end": true,
+    "rootfs_archive_write_reported": true,
+    "archive_independently_inspected": false,
+    "last_phase": "pack",
+    "failure": "mv: cannot stat 'update-binary': No such file or directory; Failed to execute %pack script",
+    "missing_recovery_attachments": [
+      "/boot/hybris-updater-script",
+      "/boot/hybris-updater-unpack.sh",
+      "/boot/update-binary"
+    ]
+  },
+  "fix": {
+    "strategy": "Use the supported device kickstart pack/attachment overrides to produce the rootfs archive required by the experimental userdata image builder.",
+    "recovery_zip_generated": false,
+    "pack_validation": "Read the complete bzip2 tar stream before generating its SHA-256 checksum.",
+    "snapshot_upgrade": "Accept either reviewed config spec predecessor and unchanged sparse files; add only the two missing kickstart inputs.",
+    "image_inspection": "Resolve metadata links only against archive members, including the version package's etc/hw-release -> ../usr/lib/hw-release."
+  },
+  "upstream": {
+    "configs_revision": "1dae7f21ba676194f4cdafd6a6fc16d97462101d",
+    "override_hook": "droid-configs.inc: device kickstart/pack_package-droid-updater and kickstart/attachment_hybris",
+    "version_revision": "09c2745f7cd0eb5f5b941e97272914b03a9cadf2"
+  },
+  "validation": {
+    "targeted_host_tests": 16,
+    "shell_syntax": "passed",
+    "python_syntax": "passed",
+    "real_rootfs_packaging_after_fix": false,
+    "rootfs_built": false,
+    "userdata_image_built": false,
+    "boot_tested": false,
+    "flashable_release": false
+  }
+}

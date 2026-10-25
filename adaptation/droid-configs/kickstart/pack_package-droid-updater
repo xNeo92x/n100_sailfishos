@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: MIT
+# N100_ROOTFS_ARCHIVE_ONLY_V1: input for make-userdata-image.py, no recovery ZIP.
+set -euo pipefail
+cd -- "${IMG_OUT_DIR:?MIC must supply IMG_OUT_DIR}"
+shopt -s nullglob
+archives=(sfe-billie2-*.tar.bz2)
+if [[ ${#archives[@]} -ne 1 ]]; then
+    echo 'Expected exactly one billie2 rootfs archive in MIC output.' >&2
+    exit 1
+fi
+archive=${archives[0]}
+if [[ ! -s "$archive" || ! -f "$archive" || -L "$archive" ]]; then
+    echo 'Rootfs archive must be a nonempty regular file.' >&2
+    exit 1
+fi
+# Read the complete archive; a truncated or corrupt stream must fail the build.
+tar --list --bzip2 --file "$archive" >/dev/null
+checksum=$archive.sha256
+if [[ -L "$checksum" || ( -e "$checksum" && ! -f "$checksum" ) ]]; then
+    echo 'Refusing an unexpected rootfs checksum output.' >&2
+    exit 1
+fi
+sha256sum -- "$archive" > "$checksum"
+echo "Rootfs archive ready: $PWD/$archive"
+echo 'Use make-userdata-image.py for experimental image assembly; device boot remains unvalidated.'

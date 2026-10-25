@@ -3,7 +3,8 @@
 Ziel sind ein passendes `hybris-boot.img` und ein `userdata.img` mit dem gebauten
 Sailfish-System. **Kernel und Android-HAL sind auf dem CachyOS-Buildhost erfolgreich
 gebaut; HAL-RPM, Gerätekonfiguration, fünf Middleware-Pakete und das Medien-RPM
-sowie das Versionspaket sind fertig. Der Sailfish-Rootfs-Build steht noch aus.** Der gemeldete HAL-Build vom
+sowie das Versionspaket sind fertig. Der erste Rootfs-Lauf installierte alle
+756 Pakete; sein abschließender Verpackungsschritt wird noch korrigiert.** Der gemeldete HAL-Build vom
 25. Oktober 2026 erzeugte ein strukturell geprüftes `hybris-boot.img` mit
 45.064.192 Byte. [Buildnachweis](../validation/hal-build-user-20261025.json).
 Die Binärdatei wurde nicht hochgeladen; ihre Startfähigkeit ist noch ungetestet.
@@ -745,6 +746,63 @@ Bei einem Abbruch dieses Log prüfen und die Paketauflösung beheben.
 Der erste echte Rootfs-Build und die Vollständigkeit seiner Paketauflösung
 sind noch nicht bestätigt. Ein erfolgreicher RPM-Satz allein ist kein
 Nachweis, dass das komplette Rootfs bereits gebaut werden kann.
+
+### Rootfs installiert, Recovery-ZIP-Verpackung fehlgeschlagen
+
+Der erste Rootfs-Lauf installierte alle 756 Pakete, führte die Post-Skripte
+aus und schrieb `sfe-billie2-5.1.0.11.tar.bz2`. Erst danach scheiterte der
+Upstream-`%pack`-Schritt an `mv update-binary`: Die Recovery-Anhänge
+`update-binary`, `hybris-updater-script` und `hybris-updater-unpack.sh`
+waren nicht enthalten. Die Meldungen über auf den ersten Boot verschobene
+Oneshots sind im Log explizit als solche markiert.
+[Auswertung](../validation/rootfs-packaging.json).
+
+Für den hier gewählten Weg über ein separates `userdata.img` wird ein
+Rootfs-Archiv benötigt. Die zwei geräteeigenen Kickstart-Overrides
+`kickstart/pack_package-droid-updater` und `kickstart/attachment_hybris`
+verwenden die bereits vorgesehenen Upstream-Hooks. Der neue Pack-Schritt
+belässt das Archiv im MIC-Ausgabeordner, liest den vollständigen bzip2-Tar-
+Stream zur Integritätsprüfung und schreibt eine Datei `.tar.bz2.sha256`.
+Er erzeugt kein Recovery-ZIP. Als Anhang bleibt nur das gebaute Bootimage.
+Paketinstallation, Post-Skripte und Konfiguration werden weiterhin ausgeführt.
+
+`prepare-config-spec` aktualisiert auch den bereits vorhandenen Snapshot
+mit dem ofono-Fix. Der geprüfte Spec-Blob `343bd7aadd5eae6a028fe94cc1fdd5d08d971058`
+und der ältere Vorgänger `8ea1bd5ce17e05abac0cbb689f1946010d56ee6b` sind erlaubt.
+Abweichende Sparse-Dateien, lokale Änderungen, unbekannte Marker oder
+bereits vorhandene fremde Override-Dateien stoppen die Aktualisierung.
+
+Im **Platform SDK** die Konfiguration neu bauen, damit ihr Kickstart die
+Overrides enthält, und danach den Rootfs-Build wiederholen:
+
+```bash
+(
+set -eo pipefail
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+source "$HOME/n100-build/build.env"
+export RELEASE=5.1.0.11
+bash "$N100_PORT/tools/build-packages.sh" configs
+export EXTRA_NAME="-rootfs-$(date -u +%Y%m%dT%H%M%SZ)"
+mkdir -p "$ANDROID_ROOT/n100-build-logs"
+bash "$N100_PORT/tools/build-packages.sh" rootfs 2>&1 \
+  | tee "$ANDROID_ROOT/n100-build-logs/rootfs-retry$EXTRA_NAME.log"
+)
+```
+
+Der UTC-Zeitstempel in `EXTRA_NAME` erzeugt einen neuen MIC-Ausgabeordner und
+ein neues Archiv. Der bisherige Versuch bleibt erhalten. Die Paketdownloads
+können aus dem vorhandenen MIC-Cache wiederverwendet werden.
+Das abschließende `Rootfs archive ready:` nennt den tatsächlichen Archivpfad.
+Die `.sha256`-Datei bestätigt die Archivintegrität; die anschließende
+Image-Erstellung prüft zusätzlich Geräteidentität und AArch64-Header.
+
+Das Versionspaket erzeugt `/etc/hw-release` als Link auf
+`../usr/lib/hw-release`. Die Image-Prüfung kann diese und andere begrenzte
+Metadaten-Linkketten nun innerhalb des Archivs lesen. Sie folgt dabei keinen
+Pfaden auf dem Buildhost. Archivpfad-, Zyklus- und ELF-Prüfungen bleiben erhalten.
+Rootfs-Verpackung, Image-Erstellung und Geräteboot gelten bis zu ihren
+tatsächlichen Abschlüssen weiterhin als unbestätigt.
 
 Das Ergebnis des Rootfs-Schritts ist ein `sfe-billie2-*.tar.bz2`. Die
 Paketauflösung und weitere Middleware-Anpassungen sind noch nicht erprobt.

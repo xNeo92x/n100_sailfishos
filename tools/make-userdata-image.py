@@ -66,6 +66,32 @@ def inspect_rootfs(path):
                     raise n100.PortError("Hardlink must refer directly to a regular archive member")
 
         def read(name, limit=65536):
+            # Resolve only the archive's own entries, never host filesystem paths.
+            # droid-hal-version intentionally makes etc/hw-release a relative link.
+            visited = set()
+            for _ in range(40):
+                if name in visited:
+                    raise n100.PortError("Cyclic rootfs metadata link: " + name)
+                visited.add(name)
+                member = members.get(name)
+                if member is None or not (member.issym() or member.islnk()):
+                    break
+                if member.islnk():
+                    name = archive_name(member.linkname)
+                    continue
+                parts = [] if member.linkname.startswith("/") else list(PurePosixPath(name).parent.parts)
+                for part in member.linkname.split("/"):
+                    if part in ("", "."):
+                        continue
+                    if part == "..":
+                        if not parts:
+                            raise n100.PortError("Metadata link escapes rootfs: " + name)
+                        parts.pop()
+                    else:
+                        parts.append(part)
+                name = "/".join(parts)
+            else:
+                raise n100.PortError("Too many rootfs metadata links")
             member = members.get(name)
             if member is None or not member.isfile():
                 raise n100.PortError("Required built rootfs file missing: " + name)
