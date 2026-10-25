@@ -49,6 +49,54 @@ installation instructions do not apply to this candidate.
 Keep SELinux compiled in and use `selinux=1 androidboot.selinux=permissive` for
 the initial development bring-up. Do not disable SELinux in Kconfig.
 
+### Collect the built boot inputs for offline review
+
+The user's [stock image report](../validation/stock-images-user-20261025.json)
+now matches all five independently extracted original image records. The ZIP
+and the original boot/DTBO/recovery/VBMeta files have been saved on the user's
+PC. A tested restoration procedure and a boot experiment remain outstanding.
+
+The actual built Sailfish DTB and initramfs have not yet been received for
+offline inspection. The collector below reads local files only and creates
+one bounded ZIP. Run it on CachyOS, outside the SDK chroots:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+
+python3 "$N100_PORT/tools/collect-boot-audit.py" \
+  --work-dir "$HOME/n100-build" \
+  --android-root "$ANDROID_ROOT" \
+  --hybris-boot "$HOME/n100-build/images/billie2-20261025T160318Z/hybris-boot.img" \
+  --output "$HOME/n100-build/boot-audit-$(date -u +%Y%m%dT%H%M%SZ).zip"
+)
+```
+
+It locates the matching `stock-BE2013-*/stock-images.json` automatically. If
+multiple matching directories exist, specify `--stock-dir /absolute/path`
+rather than guessing a directory. All five original image hashes and the
+previously reported `hybris-boot.img` hash are verified before bundle creation.
+The collector refuses changed input images and existing output files.
+
+The ZIP contains `audit.json`, the Sailfish ramdisk, both base DTBs, the stock
+DTBO image, a 64-byte kernel header and the current Android kernel `.config`.
+If present, `out/target/product/billie2/dtbo.img` is included as the built DTBO.
+The config and optional built DTBO have recorded hashes, but are not thereby
+proven to belong to the pinned kernel image. No complete boot/kernel image,
+userdata image, personal files or phone identifiers are collected.
+
+Upload the ZIP at the printed path. The next analysis must review the actual
+initramfs `/init`, required executables, storage selection and USB gadget setup;
+compare device-tree IDs and test applying the original DTBO to the built base
+DTB. Collection alone does not perform or pass those checks. The kernel config
+snapshot is an additional build input, not proof of its embedded provenance.
+
+The collector's [eight tests and original-image integration check](../validation/boot-audit-collector.json)
+passed. The real user-built hybris input is still needed. Do not interpret
+these host checks as a phone boot test.
+
 ## 3. Dynamic partitions and Android userspace — unresolved
 
 The inspected Lineage fstab declares `system`, `system_ext`, `product`, `vendor`

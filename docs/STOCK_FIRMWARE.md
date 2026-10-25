@@ -131,8 +131,15 @@ preserves existing reports and never invokes ADB/fastboot. Six local tests
 passed, including the HTTP User-Agent regression, plus the real live query.
 An OTA string match in its output is deliberately not a package acceptance flag.
 
-## Next milestone
+## Verified user extraction and next milestone
 
+The user's [uploaded extraction report](../validation/stock-images-user-20261025.json)
+now matches the archive identity and all five original image records from the
+independent extraction. Original restore inputs are present on the user's PC;
+a tested restore procedure has not yet been established.
+
+Next collect the actual built DTB/initramfs using the command in
+[BRINGUP.md](BRINGUP.md#collect-the-built-boot-inputs-for-offline-review).
 Preserve the original stock files and establish a restore procedure. Compare
 the actual board/DTB/DTBO selection and inspect the built hybris ramdisk before
 the first temporary kernel/USB debug-shell experiment. The locked bootloader,

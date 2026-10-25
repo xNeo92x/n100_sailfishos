@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "tool": "tools/collect-boot-audit.py",
+  "unit_tests_passed": 8,
+  "tests_cover": [
+    "Complete selected-section ZIP and per-member inventory hashes",
+    "Corrupted stock or hybris input refused before ZIP creation",
+    "Unsupported/truncated boot headers refused",
+    "Stock report identity, discovery and ambiguity handling",
+    "Untrusted report paths refused",
+    "Existing output preserved",
+    "Missing/symlinked kernel configuration refused",
+    "Missing optional built DTBO recorded"
+  ],
+  "real_stock_inputs_tested": true,
+  "real_stock_test_scope": "All five original image hashes and stock boot section extraction tested using the independently downloaded firmware; synthetic hybris input and kernel .config used for the collection integration test.",
+  "actual_user_hybris_input_received": false,
+  "boot_header_source": {
+    "repository": "LineageOS/android_system_tools_mkbootimg",
+    "revision": "40a19c4c5ffe8b86c6c61318c8aa4ffe35d6e7ad",
+    "path": "include/bootimg/bootimg.h"
+  },
+  "device_accessed": false,
+  "dtbo_application_tested": false,
+  "ramdisk_contents_reviewed": false,
+  "boot_tested": false
+}

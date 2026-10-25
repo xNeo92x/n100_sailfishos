@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "collected_at": "2026-10-25T18:00:42.539824+00:00",
+  "device": "OnePlus Nord N100 BE2013 EEA",
+  "archive": "/home/eugen/n100-build/downloads/BE2013-11.0.15.BE83BA-full.zip",
+  "archive_bytes": 2564194119,
+  "archive_sha256": "d890682b7b64d1b144ce7e69c539feaa43809b4c867004150eb137722a979e4d",
+  "ota_metadata_sha256": "511b7972a7b5c85bbadb68d64b8da25228985e1abf7f572c9c2924fc9b5721b9",
+  "images": [
+    {
+      "name": "boot",
+      "file": "boot.img",
+      "bytes": 100663296,
+      "sha256": "28e3497eb8e77042ef983c0654758e54e97cf07d9fae4c9e2798535c58a535f1",
+      "operation_hashes_verified": true,
+      "partition_hash_verified": true
+    },
+    {
+      "name": "dtbo",
+      "file": "dtbo.img",
+      "bytes": 8388608,
+      "sha256": "5425e6e33ef63a06da926df47a42190ff263a3362bb8f1315a68fe92a443938e",
+      "operation_hashes_verified": true,
+      "partition_hash_verified": true
+    },
+    {
+      "name": "recovery",
+      "file": "recovery.img",
+      "bytes": 100663296,
+      "sha256": "7e52ee03c10fc8fadce91bf69ba567b3c6f15324b8abf11488b2d019c77cfbc4",
+      "operation_hashes_verified": true,
+      "partition_hash_verified": true
+    },
+    {
+      "name": "vbmeta",
+      "file": "vbmeta.img",
+      "bytes": 8192,
+      "sha256": "6ea6f938f7309ff65ab28596b27c6d885ca067165b9f67bf201d3fb7978dc180",
+      "operation_hashes_verified": true,
+      "partition_hash_verified": true
+    },
+    {
+      "name": "vbmeta_system",
+      "file": "vbmeta_system.img",
+      "bytes": 4096,
+      "sha256": "32a06dc50bab237fe3d7d311a69fdeec719a489b6bba3423a305d441e78d2a23",
+      "operation_hashes_verified": true,
+      "partition_hash_verified": true
+    }
+  ],
+  "device_accessed": false,
+  "oem_signature_verified": false,
+  "restore_procedure_validated": false,
+  "boot_tested": false
+}

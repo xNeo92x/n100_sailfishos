@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "device": "OnePlus Nord N100 BE2013 EEA",
+  "source": "validation/stock-images-user-20261025.json",
+  "source_sha256": "17a28298d689b2de8d092e614dfae15dfa205092d3af077f3d4404d448216a0c",
+  "archive_identity_matches_verified_full_package": true,
+  "all_five_image_records_match_independent_extraction": true,
+  "stock_images_extracted_on_user_pc": true,
+  "expected_images": [
+    "boot",
+    "dtbo",
+    "recovery",
+    "vbmeta",
+    "vbmeta_system"
+  ],
+  "verification_scope": "Uploaded extractor report compared against independently extracted stock records; actual image bytes on the user's PC were not accessed remotely.",
+  "device_accessed": false,
+  "restore_procedure_validated": false,
+  "boot_tested": false,
+  "next_step": "Collect actual hybris DTB/ramdisk and kernel configuration for offline boot analysis."
+}

@@ -394,7 +394,7 @@
     "kernel_dtb_dtbo_runtime_compatibility_verified": false
   },
   "restore_procedure_validated": false,
-  "stock_images_saved_on_user_pc": false,
+  "stock_images_saved_on_user_pc": true,
   "boot_tested": false,
   "limitations": [
     "The complete ZIP was subsequently downloaded independently and both MD5 and SHA-256 recomputed; OEM signature verification remains separate.",
@@ -402,5 +402,6 @@
     "Matching OTA target and boot header format are not proof of kernel/DTB/DTBO compatibility or a working restore procedure.",
     "No phone writes, unlock, slot changes or boot test were performed."
   ],
-  "full_zip_extraction_validation": "validation/stock-image-extractor-20261025.json"
+  "full_zip_extraction_validation": "validation/stock-image-extractor-20261025.json",
+  "user_stock_image_validation": "validation/stock-image-extraction-user-20261025.json"
 }
