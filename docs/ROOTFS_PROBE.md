@@ -91,6 +91,13 @@ Der anschließende RAM-Boot blieb laut letzter Ausgabe bei
 Download- und Boot-Bestätigung. Die Ursache und die genaue Wartezeit sind
 noch nicht bekannt; das ist kein Beleg für ein beschädigtes Bootimage.
 
+Der anschließend gemeldete Wiederholungsversuch hat Download und Bootauftrag
+in 1,225 Sekunden erfolgreich bestätigt, ohne Userdata erneut zu flashen.
+[Neuer Gerätebefund](../validation/post-userdata-debug-boot-retry-user-20261025.json).
+Die verwendete Neustartmethode wurde nicht mitgeliefert; eine bestimmte
+Ursache des ersten Hängers wird deshalb nicht behauptet. Aktuell mit
+Abschnitt 3 und 4 fortfahren. Die Wiederanlaufschritte unten sind Referenz.
+
 Wenn diese Zeile länger als zwei Minuten unverändert bleibt:
 
 1. Den laufenden `fastboot boot` mit **Strg+C** abbrechen und auf die Rückkehr

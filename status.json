@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "userdata-flash-acknowledged-debug-download-stalled",
+  "stage": "userdata-flash-acknowledged-debug-boot-retry-accepted",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -186,7 +186,9 @@
     "userdata_mount_absent_verified": true,
     "usb_interface_binding_confirmed": true,
     "runtime_kernel_version": "4.19.325-perf+",
-    "shell_validation": "validation/early-debug-shell-user-20261025.json"
+    "shell_validation": "validation/early-debug-shell-user-20261025.json",
+    "latest_retry_validation": "validation/post-userdata-debug-boot-retry-user-20261025.json",
+    "current_attempt_shell_reconnected": false
   },
   "current_kernel_build_validation": "validation/debug-kernel-build-user-20261025.json",
   "dtbo_content_guard_validation": "validation/dtbo-content-guard.json",
