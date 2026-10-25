@@ -77,6 +77,56 @@ Wenn nur der anschließende temporäre Bootauftrag scheitert, ist Userdata
 möglicherweise bereits vollständig beschrieben. Ein normaler Android-Neustart
 ist kein Ersatz für den geplanten Debugstart.
 
+## Wenn „Sending boot.img“ nach dem Userdata-Flash stehen bleibt
+
+Der erste Userdata-Flash wurde inzwischen mit drei bestätigten Sparse-Teilen
+und `Finished. Total time: 44.923s` gemeldet.
+[Geräteprotokoll](../validation/userdata-flash-user-20261025.json).
+Die vorangehende Meldung „Invalid sparse file format at header magic“ hat diesen
+Ablauf nicht abgebrochen. Ob das Dateisystem auf dem Gerät lesbar ist, muss
+weiterhin durch den Mount geprüft werden.
+
+Der anschließende RAM-Boot blieb laut letzter Ausgabe bei
+`Sending 'boot.img' (44008 KB)` stehen. Für diesen Versuch fehlen bisher die
+Download- und Boot-Bestätigung. Die Ursache und die genaue Wartezeit sind
+noch nicht bekannt; das ist kein Beleg für ein beschädigtes Bootimage.
+
+Wenn diese Zeile länger als zwei Minuten unverändert bleibt:
+
+1. Den laufenden `fastboot boot` mit **Strg+C** abbrechen und auf die Rückkehr
+   zum Host-Prompt warten. Der zuvor abgeschlossene Userdata-Flash wird nicht
+   wiederholt. Der aktuell hängende Befehl lädt ein Bootimage in den RAM und
+   beschreibt keine Boot-Partition.
+2. Den Bootloader gezielt neu starten:
+
+```bash
+timeout 15s fastboot reboot-bootloader
+```
+
+Auf die erneute Bootloader-Anzeige warten. Falls der Befehl nicht reagiert
+oder nach dem Timeout kein Fastboot-Gerät erscheint, USB abziehen, mit
+Ein/Aus + Lauter etwa zehn Sekunden ausschalten, dann aus ausgeschaltetem
+Zustand mit Lauter + Leiser + Ein/Aus in Bootloader-Fastboot starten und
+wieder verbinden. Keinen normalen Android-Neustart anfordern.
+
+3. Ausschließlich den geprüften temporären Bootversuch wiederholen:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+n100_bundle="$HOME/n100-build/first-device-test"
+python3 "$N100_PORT/tools/prepare-first-boot.py" check \
+  --bundle "$n100_bundle" \
+  --stock-dir "$HOME/n100-build/stock-BE2013-20261025T180040Z"
+fastboot --verbose boot "$n100_bundle/debug-boot.img"
+)
+```
+
+Die Vorprüfung hält bei geändertem Slot oder Modus an. Bei erneutem Hänger
+diese Ausgabe und `lsusb` bereitstellen; keinen erneuten Userdata-Flash als
+Diagnose durchführen. Nach erfolgreichem Boot mit Abschnitt 3 fortfahren.
+
 ## 3. USB-Verbindung erneut herstellen
 
 Nach erfolgreichem Bootauftrag etwa 30–60 Sekunden warten. Auf dem CachyOS-PC:

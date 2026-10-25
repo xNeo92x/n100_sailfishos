@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "source": "User-provided host fastboot transcript",
+  "preflight": {
+    "passed": true,
+    "exact_userdata_sha256_checked": true,
+    "active_slot": "b",
+    "unlocked": "yes",
+    "is_userspace": "no",
+    "userdata_capacity_bytes": 48062869504,
+    "max_download_bytes": 804280320
+  },
+  "userdata_transfer": {
+    "command": "fastboot -S 512M flash userdata <reviewed userdata.img>",
+    "raw_image_bytes": 8589934592,
+    "raw_image_sha256": "3c7bc615c566ccd3634dd829bdea41a2df32aa9419f360f7969a189aff6e3e3d",
+    "chunks": [
+      {
+        "part": 1,
+        "parts": 3,
+        "kilobytes": 505848,
+        "send": "OKAY",
+        "write": "OKAY"
+      },
+      {
+        "part": 2,
+        "parts": 3,
+        "kilobytes": 524284,
+        "send": "OKAY",
+        "write": "OKAY"
+      },
+      {
+        "part": 3,
+        "parts": 3,
+        "kilobytes": 340528,
+        "send": "OKAY",
+        "write": "OKAY"
+      }
+    ],
+    "finished": true,
+    "total_seconds": 44.923,
+    "diagnostic": "Invalid sparse file format at header magic",
+    "diagnostic_scope": "The command subsequently sent and acknowledged all three sparse parts; this line did not abort this observed transfer.",
+    "filesystem_readback_verified": false
+  },
+  "subsequent_boot": {
+    "command": "fastboot boot <reviewed debug-boot.img>",
+    "last_output": "Sending 'boot.img' (44008 KB)",
+    "download_completion_acknowledged": false,
+    "boot_command_acknowledged": false,
+    "hang_duration_seconds": null,
+    "cause_confirmed": false
+  },
+  "known_prior_success": "Same reviewed debug image previously reached kernel 4.19.325-perf+ and early USB Telnet shell with matching dtbo_b.",
+  "recovery_plan": "If unchanged for more than two minutes, cancel only the pending RAM boot command, restart bootloader (software with bounded wait or previously verified hardware path), then recheck slot/device and retry only temporary boot.",
+  "rootfs_mount_verified": false,
+  "rootfs_chroot_verified": false,
+  "rootfs_boot_tested": false,
+  "flashable_release": false
+}

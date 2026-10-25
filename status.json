@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "kernel-storage-enumerated-rootfs-probe-prepared",
+  "stage": "userdata-flash-acknowledged-debug-download-stalled",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -94,7 +94,8 @@
       "filesystem": "btrfs",
       "host_prerequisites_passed": true
     },
-    "userdata_image_deployed": false
+    "userdata_image_deployed": true,
+    "userdata_deployment_scope": "All three sparse userdata parts and writes acknowledged by fastboot; filesystem/readback not yet verified."
   },
   "hal_build_validation": "validation/hal-build-user-20261025.json",
   "hal_rpm_built": true,
@@ -125,7 +126,7 @@
     "bootloader_locked": false,
     "active_slot_at_preflight": "b",
     "stock_boot_dtbo_compatibility_verified": false,
-    "sparse_userdata_transfer_verified": false,
+    "sparse_userdata_transfer_verified": true,
     "exact_stock_package_verified": false,
     "stock_ota_target_matches_device": true,
     "stock_payload_source_independent": true,
@@ -145,7 +146,8 @@
     "unlock_completed": true,
     "active_slot_after_unlock": "b",
     "dtbo_b_state": "Reviewed built DTBO flashed for debug attempt; stock restoration not yet reported",
-    "built_dtbo_early_kernel_boot_verified": true
+    "built_dtbo_early_kernel_boot_verified": true,
+    "userdata_filesystem_mount_verified": false
   },
   "firmware_identity_validation": "validation/firmware-identity-user-20261025.json",
   "stock_firmware_source_validation": "validation/stock-firmware-source-20261025.json",
@@ -198,5 +200,6 @@
   "early_debug_shell_validation": "validation/early-debug-shell-user-20261025.json",
   "kernel_runtime_inventory_validation": "validation/kernel-storage-user-20261025.json",
   "rootfs_probe_preparation_validation": "validation/rootfs-probe-preparation.json",
-  "rootfs_probe_plan": "docs/ROOTFS_PROBE.md"
+  "rootfs_probe_plan": "docs/ROOTFS_PROBE.md",
+  "userdata_flash_validation": "validation/userdata-flash-user-20261025.json"
 }
