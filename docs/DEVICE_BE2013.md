@@ -15,6 +15,7 @@ is not published. The machine-readable assessment is
 | Android version / SDK | 11 / 30 |
 | Vendor SDK / VNDK | 30 / 30, confirmed by the V2 report |
 | Firmware display / incremental | BE2013_7_231009 / 2310092135 |
+| OTA identity (later ADB query) | OnePlusN100Oxygen_14.E.35_GLO_0350_2310092319 |
 | Framework and vendor security patch | 2023-10-05 |
 | Build fingerprint | OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys |
 | Vendor fingerprint | Same as the build fingerprint |

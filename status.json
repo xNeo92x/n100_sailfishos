@@ -34,7 +34,10 @@
     "sdk": 30,
     "slot_at_collection": "_b",
     "bootloader_locked": true,
-    "userdata_encrypted": true
+    "userdata_encrypted": true,
+    "firmware_ota": "OnePlusN100Oxygen_14.E.35_GLO_0350_2310092319",
+    "firmware_display": "BE2013_7_231009",
+    "firmware_incremental": "2310092135"
   },
   "assessment": "devices/be2013-stock11-assessment.json",
   "configuration_evidence": {
@@ -118,6 +121,8 @@
     "bootloader_locked": true,
     "active_slot_at_preflight": "b",
     "stock_boot_dtbo_compatibility_verified": false,
-    "sparse_userdata_transfer_verified": false
-  }
+    "sparse_userdata_transfer_verified": false,
+    "exact_stock_package_verified": false
+  },
+  "firmware_identity_validation": "validation/firmware-identity-user-20261025.json"
 }

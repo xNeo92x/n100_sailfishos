@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "device": "OnePlus Nord N100 BE2013 EEA",
+  "observed_date": "2026-10-25",
+  "source": "validation/firmware-identity-user-20261025.log",
+  "source_sha256": "1c54beaf3e3f35483118fddcd1c6980d8e8287cdbe3c761db367cf85ca929237",
+  "adb_get_state": "device",
+  "properties": {
+    "ro.oxygen.version": "",
+    "ro.build.version.ota": "OnePlusN100Oxygen_14.E.35_GLO_0350_2310092319",
+    "ro.build.display.id": "BE2013_7_231009",
+    "ro.build.version.incremental": "2310092135"
+  },
+  "matches_previous_display_and_incremental": true,
+  "public_marketing_version_independently_verified": false,
+  "stock_package_url": null,
+  "stock_package_metadata_verified": false,
+  "stock_boot_dtbo_verified": false,
+  "boot_tested": false,
+  "notes": [
+    "The OTA string contains GLO; preserve the previously observed EEA fingerprint and BE2013 model. This token alone does not authorize selecting the NA/BE81AA package.",
+    "The empty ro.oxygen.version does not identify a public OxygenOS version.",
+    "Exact catalog access from the development environment returned HTTP 403. The helper uses the public app API but has not completed a live catalog query.",
+    "The catalog helper is read-only and downloads metadata only; an OTA string match is not package authenticity, payload completeness or restoration validation."
+  ],
+  "catalog_helper": {
+    "path": "tools/query-stock-firmware.py",
+    "api": "https://oxygenupdater.com/api/v2.10/",
+    "source_repository": "oxygen-updater/os-updater",
+    "source_revision": "50327ea3fe9ffdcd4c4134b022793ad3f0d33cf2",
+    "tests_passed": 5,
+    "live_query_completed": false
+  }
+}

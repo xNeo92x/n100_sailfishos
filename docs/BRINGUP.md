@@ -193,6 +193,10 @@ done
 
 The property queries require neither root nor an unlocked bootloader and
 do not reboot the phone or change its settings. Blank properties are retained.
+The uploaded identity log now confirms `OnePlusN100Oxygen_14.E.35_GLO_0350_2310092319`,
+with display `BE2013_7_231009` and incremental `2310092135` unchanged.
+The OxygenOS version property is empty. See [STOCK_FIRMWARE.md](STOCK_FIRMWARE.md)
+for the exact evidence and the host-side EU full-update catalog query.
 No download has yet been independently matched to the installed EEA build.
 
 ### First kernel/debug-shell boot
