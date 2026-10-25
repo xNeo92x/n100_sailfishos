@@ -35,10 +35,17 @@
     "targeted_host_tests": 16,
     "shell_syntax": "passed",
     "python_syntax": "passed",
-    "real_rootfs_packaging_after_fix": false,
-    "rootfs_built": false,
+    "real_rootfs_packaging_after_fix": true,
+    "rootfs_built": true,
     "userdata_image_built": false,
     "boot_tested": false,
     "flashable_release": false
+  },
+  "subsequent_completion": {
+    "evidence_kind": "User-supplied MIC completion output",
+    "result": "Finished",
+    "archive": "sfe-billie2-5.1.0.11-rootfs-20261025T155521Z.tar.bz2",
+    "checksum_file": "sfe-billie2-5.1.0.11-rootfs-20261025T155521Z.tar.bz2.sha256",
+    "validation": "validation/rootfs-build-user-20261025.json"
   }
 }

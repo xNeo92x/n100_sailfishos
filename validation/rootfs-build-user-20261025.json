@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "device": "billie2",
+  "model": "BE2013",
+  "evidence_kind": "User-supplied MIC completion output and artifact paths",
+  "port_code_revision": "f577fdf92bcf16a31609694eee8044fbdfbc0eba",
+  "sailfish_release": "5.1.0.11",
+  "architecture": "aarch64",
+  "result": "completed",
+  "reported_completion_time_utc": "2026-10-25T15:58:53Z",
+  "output_directory": "android/SailfishOScommunity-release-5.1.0.11-billie2-rootfs-20261025T155521Z",
+  "artifacts": [
+    "sfe-billie2-5.1.0.11-rootfs-20261025T155521Z.tar.bz2",
+    "sfe-billie2-5.1.0.11-rootfs-20261025T155521Z.tar.bz2.sha256",
+    "hybris-boot.img",
+    "os-release",
+    "Jolla-5.1.0.11-billie2-aarch64.ks",
+    "Jolla-5.1.0.11-billie2-aarch64.packages",
+    "Jolla-5.1.0.11-billie2-aarch64.urls"
+  ],
+  "rootfs_sha256": null,
+  "artifacts_uploaded_or_independently_inspected": false,
+  "rootfs_built": true,
+  "userdata_image_built": false,
+  "boot_tested": false,
+  "flashable_release": false,
+  "next_stage": "Verify the archive checksum and create experimental ext4 userdata and boot image files on the CachyOS host."
+}

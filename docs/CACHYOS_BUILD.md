@@ -3,8 +3,8 @@
 Ziel sind ein passendes `hybris-boot.img` und ein `userdata.img` mit dem gebauten
 Sailfish-System. **Kernel und Android-HAL sind auf dem CachyOS-Buildhost erfolgreich
 gebaut; HAL-RPM, Gerätekonfiguration, fünf Middleware-Pakete und das Medien-RPM
-sowie das Versionspaket sind fertig. Der erste Rootfs-Lauf installierte alle
-756 Pakete; sein abschließender Verpackungsschritt wird noch korrigiert.** Der gemeldete HAL-Build vom
+sowie das Versionspaket und das Sailfish-Rootfs sind fertig. Die Erstellung
+der Image-Dateien und der Geräteboot stehen noch aus.** Der gemeldete HAL-Build vom
 25. Oktober 2026 erzeugte ein strukturell geprüftes `hybris-boot.img` mit
 45.064.192 Byte. [Buildnachweis](../validation/hal-build-user-20261025.json).
 Die Binärdatei wurde nicht hochgeladen; ihre Startfähigkeit ist noch ungetestet.
@@ -811,14 +811,39 @@ ein generisches Sailfish-Archiv genügt nicht.
 
 ## 5. Experimentelle Image-Dateien erzeugen
 
-Mit den echten Ausgabepfaden aus dem erfolgreichen Build, auf dem Host:
+Der neue MIC-Lauf meldete am 25. Oktober 2026 um 15:58:53 UTC `Finished`
+und listete das Rootfs-Archiv, seine `.sha256`-Datei, das angehängte Bootimage
+und die Paket-/URL-Liste. [Buildnachweis](../validation/rootfs-build-user-20261025.json).
+Die Archive und Hashwerte wurden noch nicht zur unabhängigen Prüfung übermittelt.
+
+Das **Platform SDK mit einmal `exit` verlassen**, sodass wieder die
+normale CachyOS-Shell aktiv ist. Anschließend auf dem **CachyOS-Host**:
 
 ```bash
-sudo python3 tools/make-userdata-image.py \
-  --rootfs /absoluter/pfad/zum/sfe-billie2-RELEASE.tar.bz2 \
-  --boot "$HOME/n100-build/android/out/target/product/billie2/hybris-boot.img" \
-  --output-dir "$HOME/n100-build/images/erster-build" --size-gib 8
+(
+set -eo pipefail
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+sudo pacman -S --needed e2fsprogs
+rootfs_dir="$ANDROID_ROOT/SailfishOScommunity-release-5.1.0.11-billie2-rootfs-20261025T155521Z"
+archive="sfe-billie2-5.1.0.11-rootfs-20261025T155521Z.tar.bz2"
+(cd "$rootfs_dir" && sha256sum -c "$archive.sha256")
+stamp=$(date -u +%Y%m%dT%H%M%SZ)
+image_dir="$HOME/n100-build/images/billie2-$stamp"
+sudo python3 "$N100_PORT/tools/make-userdata-image.py" \
+  --rootfs "$rootfs_dir/$archive" \
+  --boot "$rootfs_dir/hybris-boot.img" \
+  --output-dir "$image_dir" --size-gib 8 2>&1 \
+  | tee "$HOME/n100-build/image-build-$stamp.log"
+printf 'Image-Verzeichnis: %s\n' "$image_dir"
+)
 ```
+
+Die Prüfsumme wird im Archivordner geprüft. Das Bootimage stammt aus
+demselben MIC-Ausgabeordner wie das Rootfs. Ein neuer UTC-Zeitstempel sorgt
+für ein neues Image-Verzeichnis. Ausgabe und Fehler werden zusätzlich in
+`~/n100-build/image-build-ZEITSTEMPEL.log` gespeichert. Bei erfolgreichem
+Abschluss das erzeugte `image-manifest.json` für die nächste Prüfung verwenden.
 
 Das Werkzeug erzeugt reguläre Dateien, greift auf kein Telefon zu und verwendet
 keine Blockgeräte. Es prüft Archivpfade, Sailfish-/billie2-Identität und
