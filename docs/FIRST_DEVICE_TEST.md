@@ -2,8 +2,9 @@
 
 Stand: 25. Oktober 2026. Der Build ist abgeschlossen; ein Start auf dem N100
 wurde noch nicht versucht. Dieser Plan beschreibt die nächsten Gerätephasen.
-Der nächste Benutzerschritt ist die Bestätigung einer persönlichen Sicherung
-und des Datenverlusts beim Entsperren.
+Der Benutzer hat die abgeschlossene persönliche Sicherung und den Datenverlust
+beim Entsperren am 25. Oktober 2026 bestätigt. Nächster Schritt ist der Unlock
+am CachyOS-Host; seine Durchführung ist noch nicht gemeldet.
 
 ## Konkrete Testdateien
 
@@ -33,17 +34,61 @@ ist keine Sicherung persönlicher Daten.
 
 [AOSP beschreibt](https://source.android.com/docs/core/architecture/bootloader/locking_unlocking)
 das Entsperren mit Bestätigung am Telefon und anschließendem Factory Reset.
-Die Zustimmung zum Portieren oder Erstellen von Images ist noch keine
-Bestätigung, dass diese persönliche Sicherung fertig ist. Diese Bestätigung
-steht derzeit aus. Das Repository führt keine Unlock-Befehle automatisch aus.
+Der Benutzer hat die Sicherung und den Factory Reset ausdrücklich bestätigt.
+Der bisher gemessene Bootloaderzustand bleibt bis zum neuen Gerätebefund
+als gesperrt gespeichert.
 
-Nach Bestätigung folgt der Unlock als eigener Schritt am **CachyOS-Host**.
-Ubuntu-Build-Chroot und Platform SDK vorher verlassen; `/etc/os-release` muss
-den Host anzeigen. Nach dem Reset zunächst wieder Stock-Android starten und
-USB-Debugging/ADB-Autorisierung erneuern. Das prüft den Ausgangspunkt nach dem
-Entsperren, bevor ein DTBO verändert wird. Bei einer unerwarteten Ablehnung des
-Unlocks die genaue Meldung prüfen; keine Critical-Unlock- oder Erase-Befehle
-auf Verdacht ergänzen.
+[OnePlus nennt für das Nord N100](https://service.oneplus.com/in/search/search-detail?id=op588)
+`fastboot oem unlock`. Der dort beschriebene Token-Service betrifft
+T-Mobile-Versionen; Nicht-T-Mobile-Geräte können laut Hersteller ohne diesen
+Service entsperrt werden. Für das ausgelesene EEA-Gerät ist kein Token-Schritt
+vorgesehen. Bei einer unerwarteten Token-Anforderung zuerst die Meldung prüfen.
+
+1. Ein neues Terminal direkt unter **CachyOS** öffnen; der Unlock läuft
+   außerhalb von Ubuntu-Build-Chroot und Platform SDK.
+2. Am N100 unter **Einstellungen → System → Entwickleroptionen** die
+   **OEM-Entsperrung** und **USB-Debugging** aktivieren. Falls die
+   Entwickleroptionen fehlen, unter **Über das Telefon** siebenmal auf die
+   Buildnummer tippen. Nur dieses Telefon verbinden und die ADB-Abfrage zulassen.
+3. In den Bootloader wechseln und die Produktkennung prüfen:
+
+```bash
+adb get-state
+adb reboot bootloader
+fastboot getvar product
+```
+
+`adb get-state` muss vor dem Neustart `device` melden; die Produktkennung
+muss wie im bisherigen Befund `bengal` lauten. Bei Abweichungen oder
+Verbindungsfehlern nicht mit dem Unlock fortfahren.
+
+4. Danach den eigentlichen Unlock auslösen:
+
+```bash
+fastboot oem unlock
+```
+
+Am Telefon mit den Lautstärketasten **UNLOCK THE BOOTLOADER** auswählen und
+mit der Ein/Aus-Taste bestätigen. Anschließend folgen Datenlöschung und
+Neustart. Falls das Gerät nach Abschluss am Fastboot-Bildschirm stehen bleibt,
+`fastboot reboot` ausführen. Bei einem Fehler die genaue Meldung prüfen;
+keine Critical-Unlock- oder Erase-Befehle auf Verdacht ergänzen.
+
+5. Stock-Android minimal einrichten und USB-Debugging sowie ADB-Autorisierung
+   erneut aktivieren. Dann den neuen Zustand ablesen und Android wieder starten:
+
+```bash
+adb get-state
+adb reboot bootloader
+fastboot getvar unlocked
+fastboot getvar current-slot
+fastboot reboot
+```
+
+Diese Ausgabe im Gespräch bereitstellen. Erwartet wird `unlocked: yes`;
+der aktuelle Slot wird aus dem neuen Befund übernommen. Der erfolgreiche
+Stock-Start nach dem Reset prüft den Ausgangspunkt vor dem DTBO-Versuch.
+Dieser Schritt enthält noch keine Image-Flash-Befehle.
 
 ## Phase 2: DTBO und Rückweg festlegen
 

@@ -135,7 +135,11 @@
     "stock_dtbo_applies_to_built_dtb": false,
     "built_dtbo_applies_to_built_dtb": true,
     "debug_boot_rebuild_required": false,
-    "debug_boot_packaging_retry_required": false
+    "debug_boot_packaging_retry_required": false,
+    "personal_backup_confirmed_by_user": true,
+    "factory_reset_accepted_by_user": true,
+    "confirmation_date": "2026-10-25",
+    "unlock_completed": false
   },
   "firmware_identity_validation": "validation/firmware-identity-user-20261025.json",
   "stock_firmware_source_validation": "validation/stock-firmware-source-20261025.json",

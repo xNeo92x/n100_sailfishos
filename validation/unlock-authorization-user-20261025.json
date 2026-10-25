@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "source": "User replied Ja to confirmation of complete personal backup and acceptance of factory reset for N100 bootloader unlock.",
+  "personal_backup_confirmed_by_user": true,
+  "factory_reset_accepted_by_user": true,
+  "backup_independently_verified": false,
+  "unlock_performed_by_assistant": false,
+  "unlock_completed_on_device": false,
+  "observed_bootloader_locked": true,
+  "next": "User runs fastboot oem unlock on CachyOS and confirms on handset; stock Android reboot and fresh lock/slot observations follow.",
+  "manufacturer_command_source": "https://service.oneplus.com/in/search/search-detail?id=op588",
+  "boot_tested": false
+}
