@@ -97,6 +97,22 @@ The collector's [eight tests and original-image integration check](../validation
 passed. The real user-built hybris input is still needed. Do not interpret
 these host checks as a phone boot test.
 
+### Actual boot audit: rebuild required
+
+The uploaded boot bundle has now been analyzed. The supplied kernel config
+snapshot disables the decoder for its actual legacy LZ4 ramdisk. Stock DTBO
+application to the built base DTB fails with `FDT_ERR_NOTFOUND`; the matching
+built pair applies successfully. Seventeen missing Stock fixup labels explain
+the host failure. The original USB configfs path also requested unsupported
+`rndis_bam` alongside RNDIS.
+
+Source fixes and a boot-only build mode now prepare a RNDIS-only early debug
+branch before userdata mounting. The actual new kernel/debug image has not yet
+been built or booted. Follow [EARLY_USB_DEBUG.md](EARLY_USB_DEBUG.md) for the
+next build command and [the evidence](../validation/boot-audit-user-20261025.json)
+for exact hashes, test matrix and limitations. The previous bundle collection
+command above is retained for reference; it does not need repeating.
+
 ## 3. Dynamic partitions and Android userspace — unresolved
 
 The inspected Lineage fstab declares `system`, `system_ext`, `product`, `vendor`

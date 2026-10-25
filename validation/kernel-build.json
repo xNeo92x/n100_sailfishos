@@ -68,5 +68,7 @@
     "local_fragment_passed": true,
     "upstream_exit": 0,
     "upstream_optional_warnings": 47
-  }
+  },
+  "fragment_snapshot": "validation/kernel-fragment-before-lz4.config",
+  "scope_note": "Historical validation of the archived pre-LZ4 fragment; current kernel/sailfish.config requires a new build and config check."
 }

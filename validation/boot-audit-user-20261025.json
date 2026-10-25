@@ -1,0 +1,218 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "source": "uploaded boot-audit-20261025T181511Z.zip",
+  "source_sha256": "dc72eb56f441eae8a3f036b05105014ed817116776deed454343ed263265be58",
+  "original_audit_report": "validation/boot-audit-report-user-20261025.json",
+  "member_inventory_hashes_verified": true,
+  "hybris_boot_sha256": "82c44b8f8a04133b9d4e259b20f1dcfb0a07007938485c9f990beeb5fbc79fd5",
+  "ramdisk": {
+    "compression": "legacy LZ4",
+    "compressed_bytes": 1824474,
+    "unpacked_bytes": 3110124,
+    "unpacked_sha256": "9f476d083b5442c357da0a83dd195086a90376ab120c0ef9b11da18aed96890b",
+    "members": 13,
+    "init_executable": true,
+    "init_matches_pinned_template": true,
+    "upstream_init_git_blob": "79e39d9a02ce2205a71ec440faa012d63382aaa3",
+    "busybox_aarch64": true,
+    "busybox_has_elf_interpreter": false,
+    "required_applets_present_as_strings": [
+      "mdev",
+      "mount",
+      "switch_root",
+      "ifconfig",
+      "udhcpd",
+      "telnetd"
+    ]
+  },
+  "kernel_config_snapshot": {
+    "sha256": "b347d85722083a68b1f15181f63c85dd22261f8209e35f201b343e36270d1e41",
+    "CONFIG_BLK_DEV_INITRD": "y",
+    "CONFIG_RD_GZIP": "y",
+    "CONFIG_RD_LZ4": "n",
+    "CONFIG_USB_CONFIGFS": "y",
+    "CONFIG_USB_CONFIGFS_RNDIS": "y",
+    "CONFIG_USB_CONFIGFS_QCRNDIS": "n",
+    "provenance": "Current Android output snapshot, not extracted from the embedded kernel"
+  },
+  "device_trees": {
+    "stock/dtb.img": {
+      "bytes": 328855,
+      "sha256": "955c0a26678e4c7dcb4d48ac3f50f7138a095e9e71ec56346c380d1a0903caae",
+      "root_properties": {
+        "model": "\"Qualcomm Technologies, Inc. BENGAL\"",
+        "compatible": "\"qcom,bengal\"",
+        "qcom,msm-id": "<0x000001a1 0x00010000 0x000001bc 0x00010000>"
+      }
+    },
+    "hybris/dtb.img": {
+      "bytes": 279793,
+      "sha256": "42b757cab0dd02642ab000df0cf812a3ba0ba905fd1e7689863aac574e8f3fcd",
+      "root_properties": {
+        "model": "\"Qualcomm Technologies, Inc. BENGAL\"",
+        "compatible": "\"qcom,bengal\"",
+        "qcom,msm-id": "<0x000001a1 0x00010000 0x000001bc 0x00010000>"
+      }
+    },
+    "stock/overlay-0.dtbo": {
+      "bytes": 145971,
+      "sha256": "038e2f1df9b31f0ee12730c447ae44990b86304b35825d264d767d6683c9bb91",
+      "root_properties": {
+        "model": "\"Qualcomm Technologies, Inc. Bengal OEM QRD\"",
+        "compatible": "\"qcom,bengal-qrd\", \"qcom,bengal\", \"qcom,qrd\"",
+        "qcom,board-id": "<0x0001000b 0x00000000>"
+      }
+    },
+    "hybris/overlay-0.dtbo": {
+      "bytes": 186299,
+      "sha256": "5d945b2dd32aa89c774f673cd775e3444d2f2f12131ab50703094147d1113951",
+      "root_properties": {
+        "model": "\"Qualcomm Technologies, Inc. Bengal OEM QRD\"",
+        "compatible": "\"qcom,bengal-qrd\", \"qcom,bengal\", \"qcom,qrd\"",
+        "qcom,board-id": "<0x0001000b 0x00000000>"
+      }
+    },
+    "hybris-base-hybris-overlay.dtb": {
+      "bytes": 433050,
+      "sha256": "4446e0b22c0e71c6b5386618df573b765379b0d43590d51f801608c32814c005",
+      "root_properties": {
+        "model": "\"Qualcomm Technologies, Inc. BENGAL\"",
+        "compatible": "\"qcom,bengal\"",
+        "qcom,msm-id": "<0x000001a1 0x00010000 0x000001bc 0x00010000>"
+      }
+    }
+  },
+  "overlay_application": {
+    "tool_repository": "LineageOS/android_external_dtc",
+    "revision": "301cc869850c55304faa0315aea678ca9d643197",
+    "tools": "fdtoverlay / fdtdump",
+    "build_flags": "PKG_CONFIG=false NO_PYTHON=1 CFLAGS=-O2 -fPIC -DNO_YAML -DNO_VALGRIND",
+    "source_worktree_clean": true,
+    "results": [
+      {
+        "base": "stock",
+        "overlay": "stock",
+        "exit_code": 0,
+        "error": null,
+        "merged_sha256": "7824056d865bf72182350e6a49d8423cbb8c8475ca6cd64524580dcdb65a0676"
+      },
+      {
+        "base": "stock",
+        "overlay": "hybris",
+        "exit_code": 0,
+        "error": null,
+        "merged_sha256": "22e4ba3c461a32815f6ca47f11a5552c7429f8c0fd87ca39d909d65a5d5f15fe"
+      },
+      {
+        "base": "hybris",
+        "overlay": "stock",
+        "exit_code": 1,
+        "error": "FDT_ERR_NOTFOUND",
+        "merged_sha256": null
+      },
+      {
+        "base": "hybris",
+        "overlay": "hybris",
+        "exit_code": 0,
+        "error": null,
+        "merged_sha256": "4446e0b22c0e71c6b5386618df573b765379b0d43590d51f801608c32814c005"
+      }
+    ],
+    "scope": "Host libfdt overlay application only; no bootloader or hardware validation"
+  },
+  "stock_overlay_missing_targets": {
+    "stock_overlay_fixup_labels": 135,
+    "hybris_base_symbols": 841,
+    "missing_labels": [
+      "bcl_lvl0",
+      "bcl_lvl1",
+      "bcl_lvl2",
+      "lcdb_ldo_vreg",
+      "lcdb_ncp_vreg",
+      "pmi632_charger",
+      "pmi632_flash0",
+      "pmi632_flash1",
+      "pmi632_gpios",
+      "pmi632_low_soc",
+      "pmi632_qg",
+      "pmi632_switch0",
+      "pmi632_torch0",
+      "pmi632_torch1",
+      "pmi632_trip0",
+      "pmi632_trip1",
+      "pmi632_vadc"
+    ],
+    "missing_label_targets_in_stock_base": {
+      "bcl_lvl0": "/soc/thermal-zones/pmi632-bcl-lvl0/trips/bcl-lvl0",
+      "bcl_lvl1": "/soc/thermal-zones/pmi632-bcl-lvl1/trips/bcl-lvl1",
+      "bcl_lvl2": "/soc/thermal-zones/pmi632-bcl-lvl2/trips/bcl-lvl2",
+      "lcdb_ldo_vreg": "/soc/qcom,spmi@1c40000/qcom,pmi632@3/qpnp-lcdb@ec00/ldo",
+      "lcdb_ncp_vreg": "/soc/qcom,spmi@1c40000/qcom,pmi632@3/qpnp-lcdb@ec00/ncp",
+      "pmi632_charger": "/soc/qcom,spmi@1c40000/qcom,pmi632@2/qcom,qpnp-smb5",
+      "pmi632_flash0": "/soc/qcom,spmi@1c40000/qcom,pmi632@3/qcom,leds@d300/qcom,flash_0",
+      "pmi632_flash1": "/soc/qcom,spmi@1c40000/qcom,pmi632@3/qcom,leds@d300/qcom,flash_1",
+      "pmi632_gpios": "/soc/qcom,spmi@1c40000/qcom,pmi632@2/pinctrl@c000",
+      "pmi632_low_soc": "/soc/thermal-zones/soc/trips/low-soc",
+      "pmi632_qg": "/soc/qcom,spmi@1c40000/qcom,pmi632@2/qpnp,qg",
+      "pmi632_switch0": "/soc/qcom,spmi@1c40000/qcom,pmi632@3/qcom,leds@d300/qcom,led_switch_0",
+      "pmi632_torch0": "/soc/qcom,spmi@1c40000/qcom,pmi632@3/qcom,leds@d300/qcom,torch_0",
+      "pmi632_torch1": "/soc/qcom,spmi@1c40000/qcom,pmi632@3/qcom,leds@d300/qcom,torch_1",
+      "pmi632_trip0": "/soc/thermal-zones/pmi632-tz/trips/trip0",
+      "pmi632_trip1": "/soc/thermal-zones/pmi632-tz/trips/trip1",
+      "pmi632_vadc": "/soc/qcom,spmi@1c40000/qcom,pmi632@2/vadc@3100"
+    }
+  },
+  "blockers_found": [
+    "Legacy LZ4 external initramfs conflicts with CONFIG_RD_LZ4=n in the supplied kernel config snapshot.",
+    "Stock DTBO cannot apply to the built base DTB; matching built DTBO is required.",
+    "Original configfs setup attempts unsupported rndis_bam and unnecessary storage functions; debug entry followed userdata mount attempts."
+  ],
+  "fixes_prepared": [
+    "Require BLK_DEV_INITRD, RD_GZIP and RD_LZ4 in the Sailfish fragment.",
+    "Prepare a hash-guarded init template with configfs rndis.usb0 only.",
+    "Enter n100_debug=1 before mount_stowaways and never fall through to storage or switch_root.",
+    "Add boot-only build mode and verify actual ramdisk/config/DTB/DTBO before creating a separate debug-flagged image."
+  ],
+  "patched_actual_payload_check": {
+    "compression_config": "CONFIG_RD_LZ4",
+    "unpacked_bytes": 3110148,
+    "members": 13,
+    "init_sha256": "0eb6526fddb7ff07834601831a962587e97a84a90a2de9e88706f523ddb094b6",
+    "busybox_sha256": "340c0b59adbe23546c6e3fa243951a25bd0396bf8f12f9a3aa73d6112ba92f7e",
+    "early_debug_guard_verified": true,
+    "busybox_aarch64_without_interpreter": true,
+    "scope": "Patched actual initramfs payload verified using a simulated RD_LZ4=y config; kernel has not been rebuilt or booted."
+  },
+  "kernel_source_reference": {
+    "repository": "LineageOS/android_kernel_oneplus_sm4250",
+    "revision": "1eade87e4a56ffc797cb508bc7322f6783d90f67",
+    "paths": [
+      "usr/Kconfig",
+      "lib/decompress.c"
+    ]
+  },
+  "tests": {
+    "local_related_tests_passed": 22,
+    "new_debug_tests": 8,
+    "new_boot_orchestration_tests": 2,
+    "patched_init_shell_syntax_passed": true,
+    "python_3_8_grammar_passed": true,
+    "all_host_tests_passed": 156,
+    "fs_config_compatibility_tests_passed": 16,
+    "whole_repository_python_syntax_passed": true,
+    "shell_syntax_passed": true,
+    "whitespace_check_passed": true
+  },
+  "debug_kernel_rebuilt": false,
+  "debug_boot_built_on_user_pc": false,
+  "device_accessed": false,
+  "boot_tested": false,
+  "flashable_release": false,
+  "limitations": [
+    "The uploaded bundle contains the built DTB and ramdisk but not the full kernel, so the supplied .config was not independently tied to embedded IKCONFIG.",
+    "Patched ramdisk verification used a simulated corrected .config; a real kernel/debug image rebuild is still required.",
+    "Unlocked bootloader, matching DTBO handling and an established restore procedure are required before any boot experiment.",
+    "Dynamic Android HAL mapping and normal Sailfish/rootfs boot remain separate bring-up work."
+  ]
+}

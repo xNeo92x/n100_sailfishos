@@ -22,7 +22,7 @@ class MediaBuildFlowTest(unittest.TestCase):
         for name in ("build-hal.sh", "build-packages.sh", "check-droidmedia.py"):
             shutil.copy2(ROOT / "tools" / name, self.port / "tools" / name)
         (self.port / "config/port.env").write_text("")
-        for name in ("n100.py", "fix-webview-link.py"):
+        for name in ("n100.py", "fix-webview-link.py", "boot-debug.py"):
             (self.port / "tools" / name).write_text("# Fixture: upstream checks are outside this orchestration test.\n")
         files = (
             "rpm/droid-hal-billie2.spec",
@@ -72,6 +72,17 @@ class MediaBuildFlowTest(unittest.TestCase):
         result = self.run_build()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual((self.android / "requested-targets").read_text().strip(), "hybris-hal droidmedia")
+
+    def test_boot_only_build_selects_hybris_boot_and_keeps_its_own_log(self):
+        result = self.run_build("boot")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.android / "requested-targets").read_text().strip(), "hybris-boot")
+        self.assertIn("fixture-build", (self.android / "n100-build-logs/boot-debug.log").read_text())
+
+    def test_boot_build_refuses_the_platform_sdk(self):
+        result = self.run_build("boot", MERSDKUBU="")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((self.android / "requested-targets").exists())
 
     def test_compiler_failure_is_not_hidden_by_tee(self):
         result = self.run_build("media", FIXTURE_BUILD_EXIT="47")

@@ -81,5 +81,7 @@
     "LLVM_IAS=1",
     "CROSS_COMPILE=aarch64-linux-gnu-",
     "vendor/sailfish-billie2_defconfig"
-  ]
+  ],
+  "fragment_snapshot": "validation/kernel-fragment-before-lz4.config",
+  "scope_note": "Historical validation of the archived pre-LZ4 fragment; current kernel/sailfish.config requires a new build and config check."
 }

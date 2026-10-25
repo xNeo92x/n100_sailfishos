@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "images-built-pre-bringup",
+  "stage": "boot-audited-debug-rebuild-required",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -55,8 +55,8 @@
     "selinux_binary_policy_version": 30,
     "active_fstab_variant": null
   },
-  "kernel_config_resolved": true,
-  "kernel_upstream_config_check_passed": true,
+  "kernel_config_resolved": false,
+  "kernel_upstream_config_check_passed": false,
   "kernel_config_optional_warnings": 47,
   "kernel_built": true,
   "kernel_config_validation": "validation/kernel-config.json",
@@ -131,12 +131,29 @@
     "stock_package_integrity_verified": true,
     "stock_images_extracted_on_user_pc": true,
     "stock_restore_inputs_verified": true,
-    "restore_procedure_validated": false
+    "restore_procedure_validated": false,
+    "stock_dtbo_applies_to_built_dtb": false,
+    "built_dtbo_applies_to_built_dtb": true,
+    "debug_boot_rebuild_required": true
   },
   "firmware_identity_validation": "validation/firmware-identity-user-20261025.json",
   "stock_firmware_source_validation": "validation/stock-firmware-source-20261025.json",
   "stock_firmware_download_validation": "validation/stock-firmware-download-user-20261025.json",
   "stock_image_extractor_validation": "validation/stock-image-extractor-20261025.json",
   "stock_image_extraction_validation": "validation/stock-image-extraction-user-20261025.json",
-  "boot_audit_collector_validation": "validation/boot-audit-collector.json"
+  "boot_audit_collector_validation": "validation/boot-audit-collector.json",
+  "current_kernel_fragment_built": false,
+  "boot_audit_validation": "validation/boot-audit-user-20261025.json",
+  "debug_boot": {
+    "source_changes_prepared": true,
+    "kernel_rebuild_required": true,
+    "debug_image_built_on_user_pc": false,
+    "mode": "early RNDIS USB debug before userdata mount",
+    "cmdline": "n100_debug=1",
+    "stock_dtbo_applies_to_built_dtb": false,
+    "matching_built_dtbo_host_apply_passed": true,
+    "matching_built_dtbo_required": true,
+    "old_ramdisk_config_mismatch": "legacy LZ4 ramdisk with supplied CONFIG_RD_LZ4=n",
+    "phone_boot_tested": false
+  }
 }

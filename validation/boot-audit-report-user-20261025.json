@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "collected_at": "2026-10-25T18:15:11.495271+00:00",
+  "device": "OnePlus Nord N100 BE2013 EEA",
+  "stock_directory": "/home/eugen/n100-build/stock-BE2013-20261025T180040Z",
+  "hybris_boot_path": "/home/eugen/n100-build/images/billie2-20261025T160318Z/hybris-boot.img",
+  "hybris_boot_sha256": "82c44b8f8a04133b9d4e259b20f1dcfb0a07007938485c9f990beeb5fbc79fd5",
+  "stock_archive_sha256": "d890682b7b64d1b144ce7e69c539feaa43809b4c867004150eb137722a979e4d",
+  "stock_images": [
+    {
+      "name": "boot",
+      "file": "boot.img",
+      "bytes": 100663296,
+      "sha256": "28e3497eb8e77042ef983c0654758e54e97cf07d9fae4c9e2798535c58a535f1",
+      "operation_hashes_verified": true,
+      "partition_hash_verified": true
+    },
+    {
+      "name": "dtbo",
+      "file": "dtbo.img",
+      "bytes": 8388608,
+      "sha256": "5425e6e33ef63a06da926df47a42190ff263a3362bb8f1315a68fe92a443938e",
+      "operation_hashes_verified": true,
+      "partition_hash_verified": true
+    },
+    {
+      "name": "recovery",
+      "file": "recovery.img",
+      "bytes": 100663296,
+      "sha256": "7e52ee03c10fc8fadce91bf69ba567b3c6f15324b8abf11488b2d019c77cfbc4",
+      "operation_hashes_verified": true,
+      "partition_hash_verified": true
+    },
+    {
+      "name": "vbmeta",
+      "file": "vbmeta.img",
+      "bytes": 8192,
+      "sha256": "6ea6f938f7309ff65ab28596b27c6d885ca067165b9f67bf201d3fb7978dc180",
+      "operation_hashes_verified": true,
+      "partition_hash_verified": true
+    },
+    {
+      "name": "vbmeta_system",
+      "file": "vbmeta_system.img",
+      "bytes": 4096,
+      "sha256": "32a06dc50bab237fe3d7d311a69fdeec719a489b6bba3423a305d441e78d2a23",
+      "operation_hashes_verified": true,
+      "partition_hash_verified": true
+    }
+  ],
+  "stock_boot": {
+    "header_version": 2,
+    "page_size": 4096,
+    "bytes": 100663296,
+    "kernel_bytes": 15746308,
+    "ramdisk_bytes": 872482,
+    "dtb_bytes": 328855,
+    "cmdline": "androidboot.hardware=qcom androidboot.console=ttyMSM0 androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=2048 loop.max_part=7 buildvariant=user",
+    "ramdisk_compression": "gzip",
+    "dtb_has_fdt_magic": true,
+    "scope": "section extraction and structural inspection only"
+  },
+  "hybris_boot": {
+    "header_version": 2,
+    "page_size": 4096,
+    "bytes": 45064192,
+    "kernel_bytes": 42947072,
+    "ramdisk_bytes": 1824474,
+    "dtb_bytes": 279793,
+    "cmdline": "earlycon=msm_geni_serial,0x4a90000 androidboot.hardware=qcom androidboot.memcg=1 lpm_levels.sleep_disabled=1 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=2048 loop.max_part=7 selinux=1 androidboot.selinux=permissive",
+    "ramdisk_compression": "lz4",
+    "dtb_has_fdt_magic": true,
+    "scope": "section extraction and structural inspection only"
+  },
+  "members": [
+    {
+      "file": "hybris/dtb.img",
+      "bytes": 279793,
+      "sha256": "42b757cab0dd02642ab000df0cf812a3ba0ba905fd1e7689863aac574e8f3fcd"
+    },
+    {
+      "file": "hybris/dtbo.img",
+      "bytes": 25165824,
+      "sha256": "0dba332178bcf5f3c56e76ac7b65e26e6a2e9cee6c79fda31bfbf3ca3520aca6"
+    },
+    {
+      "file": "hybris/kernel-header.bin",
+      "bytes": 64,
+      "sha256": "f2d98af1668ee413306676c4f86dd7a4ade32c06fde119a4a864b4cdb9fc0d2d"
+    },
+    {
+      "file": "hybris/ramdisk.bin",
+      "bytes": 1824474,
+      "sha256": "21f0a764ed11f6d4f4a946d786c7b0faef8fb2beeeee04ba75f86a61b7e90aff"
+    },
+    {
+      "file": "kernel.config",
+      "bytes": 153409,
+      "sha256": "b347d85722083a68b1f15181f63c85dd22261f8209e35f201b343e36270d1e41"
+    },
+    {
+      "file": "stock/dtb.img",
+      "bytes": 328855,
+      "sha256": "955c0a26678e4c7dcb4d48ac3f50f7138a095e9e71ec56346c380d1a0903caae"
+    },
+    {
+      "file": "stock/dtbo.img",
+      "bytes": 8388608,
+      "sha256": "5425e6e33ef63a06da926df47a42190ff263a3362bb8f1315a68fe92a443938e"
+    }
+  ],
+  "built_dtbo_available": true,
+  "kernel_config_provenance": "Current Android output .config; not proven to be embedded in this kernel",
+  "device_accessed": false,
+  "boot_tested": false,
+  "restore_procedure_validated": false,
+  "dtbo_application_tested": false,
+  "ramdisk_contents_reviewed": false
+}

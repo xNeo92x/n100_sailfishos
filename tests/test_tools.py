@@ -359,7 +359,7 @@ class ManifestTests(unittest.TestCase):
                          if p["path"]=="kernel/oneplus/sm4250"))
         self.assertEqual(pins["dtc"]["revision"],next(p["revision"] for p in lock["extensions"]
                          if p["path"]=="external/dtc"))
-        self.assertEqual(build["fragment_sha256"],hashlib.sha256((ROOT/"kernel/sailfish.config").read_bytes()).hexdigest())
+        self.assertEqual(build["fragment_sha256"],hashlib.sha256((ROOT/build["fragment_snapshot"]).read_bytes()).hexdigest())
         self.assertFalse(build["boot_tested"])
         self.assertFalse(build["flashable_sailfish_image"])
 
@@ -385,7 +385,7 @@ class ManifestTests(unittest.TestCase):
         checker=next(p for p in lock["extensions"] if p["path"]=="hybris/mer-kernel-check")
         self.assertEqual(audit["kernel_revision"],kernel["revision"])
         self.assertEqual(audit["checker_revision"],checker["revision"])
-        self.assertEqual(audit["fragment_sha256"],hashlib.sha256((ROOT/"kernel/sailfish.config").read_bytes()).hexdigest())
+        self.assertEqual(audit["fragment_sha256"],hashlib.sha256((ROOT/audit["fragment_snapshot"]).read_bytes()).hexdigest())
 
 
 class SnapshotTests(unittest.TestCase):

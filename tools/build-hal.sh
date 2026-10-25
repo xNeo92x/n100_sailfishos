@@ -4,17 +4,20 @@ set -eo pipefail
 port_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 source "$port_dir/config/port.env"
 mode=${1:-all}
-if [[ $# -gt 1 || ( "$mode" != all && "$mode" != media ) ]]; then
-    echo 'Usage: build-hal.sh [all|media]' >&2
+if [[ $# -gt 1 || ( "$mode" != all && "$mode" != media && "$mode" != boot ) ]]; then
+    echo 'Usage: build-hal.sh [all|media|boot]' >&2
     exit 2
 fi
-if [[ "$mode" == media && "${MERSDKUBU:-}" != 1 ]]; then
-    echo 'Enter the Ubuntu HABUILD_SDK with ubu-chroot before building droidmedia.' >&2
+if [[ ( "$mode" == media || "$mode" == boot ) && "${MERSDKUBU:-}" != 1 ]]; then
+    echo 'Enter the Ubuntu HABUILD_SDK with ubu-chroot before building Android outputs.' >&2
     exit 1
 fi
 : "${ANDROID_ROOT:?Set ANDROID_ROOT to the prepared Android tree}"
 cd "$ANDROID_ROOT"
 python3 "$port_dir/tools/n100.py" verify-tree --android-root "$ANDROID_ROOT"
+if [[ "$mode" != media ]]; then
+    python3 "$port_dir/tools/boot-debug.py" prepare --android-root "$ANDROID_ROOT"
+fi
 test -f rpm/droid-hal-billie2.spec
 test -f kernel/oneplus/sm4250/arch/arm64/configs/vendor/sailfish-billie2_defconfig
 test -s vendor/oneplus/billie2/billie2-vendor.mk || {
@@ -47,18 +50,29 @@ fi
 breakfast billie2
 if [[ "$mode" == media ]]; then
     mka droidmedia 2>&1 | tee n100-build-logs/droidmedia.log
+elif [[ "$mode" == boot ]]; then
+    mka hybris-boot 2>&1 | tee n100-build-logs/boot-debug.log
 else
     mka hybris-hal droidmedia 2>&1 | tee n100-build-logs/hybris-hal.log
 fi
-python3 "$port_dir/tools/check-droidmedia.py" --android-root "$ANDROID_ROOT"
-if [[ "$mode" == all ]]; then
+if [[ "$mode" != boot ]]; then
+    python3 "$port_dir/tools/check-droidmedia.py" --android-root "$ANDROID_ROOT"
+fi
+if [[ "$mode" != media ]]; then
     python3 "$port_dir/tools/n100.py" check-kernel out/target/product/billie2/obj/KERNEL_OBJ/.config
     perl hybris/mer-kernel-check/mer_verify_kernel_config out/target/product/billie2/obj/KERNEL_OBJ/.config 2>&1 | tee n100-build-logs/kernel-config-check.log
     python3 "$port_dir/tools/n100.py" inspect-boot out/target/product/billie2/hybris-boot.img
+    python3 "$port_dir/tools/boot-debug.py" pack \
+        --image out/target/product/billie2/hybris-boot.img \
+        --kernel-config out/target/product/billie2/obj/KERNEL_OBJ/.config \
+        --dtbo out/target/product/billie2/dtbo.img \
+        --output "out/target/product/billie2/n100-debug-boot-$(date -u +%Y%m%dT%H%M%SZ).img"
 fi
 repo manifest -r > n100-build-logs/resolved-manifest.xml
 if [[ "$mode" == media ]]; then
     echo 'Android droidmedia build finished. Return to Platform SDK and run build-packages.sh media.'
+elif [[ "$mode" == boot ]]; then
+    echo 'Early USB debug image built. Share the printed .img.json report. RPM/rootfs were not rebuilt.'
 else
     echo 'HAL and Android droidmedia builds finished. RPM, middleware, rootfs and hardware bring-up remain separate stages.'
 fi

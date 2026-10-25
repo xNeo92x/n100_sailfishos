@@ -5,6 +5,12 @@ Sailfish-OS-5.1.0.11-Rootfs sind gebaut. `userdata.img` (8 GiB) und
 `hybris-boot.img` wurden erzeugt; ext4-Prüfung erfolgreich. Der Geräteboot
 steht noch aus.**
 
+Die anschließende Boot-Prüfung fand eine LZ4-Ramdisk bei deaktiviertem
+`CONFIG_RD_LZ4` und eine Inkompatibilität des Stock-DTBO mit dem gebauten
+Basis-DTB. Die Korrekturen und ein separater früher USB-Debug-Boot sind
+vorbereitet; der neue Kernel muss noch gebaut werden.
+[Nächster Buildschritt](docs/EARLY_USB_DEBUG.md).
+
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,
 LineageOS 20) und **Stock-Android-11-Firmware als Kandidat**.

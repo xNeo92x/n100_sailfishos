@@ -885,9 +885,9 @@ Die Image-Binärdateien wurden nicht hochgeladen oder unabhängig nachgehasht.
 | `userdata.img` | 8589934592 Byte | `3c7bc615c566ccd3634dd829bdea41a2df32aa9419f360f7969a189aff6e3e3d` |
 | `hybris-boot.img` | 45064192 Byte | `82c44b8f8a04133b9d4e259b20f1dcfb0a07007938485c9f990beeb5fbc79fd5` |
 
-Die Größen und Header sind im Manifest konsistent. Der nächste Schritt
-ist die gezielte Bootloader-Abfrage in
-[BRINGUP.md](BRINGUP.md#read-bootloader-variables-before-any-boot-experiment).
+Die Größen und Header sind im Manifest konsistent. Die Bootloader-Abfrage und
+die spätere Boot-Prüfung sind inzwischen abgeschlossen; der nächste lokale
+Schritt ist der [korrigierte frühe Debug-Build](EARLY_USB_DEBUG.md).
 Ein erfolgreicher Dateisystembau bestätigt noch keinen Geräteboot oder
 die Bereitstellung der Android-HAL-Partitionen.
 
@@ -898,8 +898,10 @@ Die [Fastboot-Abfrage](../validation/fastboot-preflight-user-20261025.json)
 bestätigt inzwischen 96 MiB pro Boot-Slot, 24 MiB pro DTBO-Slot,
 48.062.869.504 Byte für userdata sowie den beobachteten aktiven Slot B.
 Bootimage und Userdata-Image passen hinsichtlich ihrer Dateigröße.
-Vor Flash-Befehlen müssen weiterhin Stock-Bootheader und DTBO, AVB,
-Wiederherstellung, eine passende Übertragungsstrategie sowie die Bereitstellung
+Die Stock-Bootheader wurden verglichen; der Stock-DTBO-Test auf dem gebauten
+Basis-DTB schlägt fehl. Vor Flash-Befehlen müssen der korrigierte Debug-Boot,
+das passende gebaute DTBO, AVB, Wiederherstellung, eine passende
+Übertragungsstrategie sowie die Bereitstellung
 der Android-HAL-Partitionen geklärt sein. Der Bootloader ist laut bisherigem
 Bericht gesperrt; sein Entsperren löscht Nutzerdaten. Ein geprüftes Backup und
 ein passender Wiederherstellungsweg werden dafür benötigt.
@@ -909,3 +911,12 @@ aufgeführt. `userdata.img` löst ausschließlich die Bereitstellung des Linux-
 Rootfs. Es stellt keine System-, Vendor- oder ODM-Partitionen bereit. Deshalb
 bleibt `flashable_release` auch bei erfolgreicher Dateierstellung `false`, bis
 die vollständige Kette auf dem Gerät validiert ist.
+
+## 7. Boot-Prüfung: korrigierten frühen Debug-Boot bauen
+
+Das echte Boot-Paket hat die LZ4-Konfigurationslücke und die DTBO-Inkompatibilität
+sichtbar gemacht. Der nächste Schritt ist in [EARLY_USB_DEBUG.md](EARLY_USB_DEBUG.md)
+mit den konkreten Befehlen für CachyOS, Platform SDK und Ubuntu beschrieben.
+Der Modus `build-hal.sh boot` aktualisiert Kernel und Hybris-Boot, prüft die
+Ramdisk und erstellt ein separates Debug-Image mit `.img.json`-Bericht. RPMs und
+Rootfs werden dabei nicht neu gebaut; ein Geräteboot ist noch nicht bestätigt.
