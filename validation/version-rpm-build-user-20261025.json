@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "device": "billie2",
+  "model": "BE2013",
+  "evidence_kind": "User-supplied terminal output from the build host",
+  "port_code_revision": "a41e973941c49e3197c0813b84b8a99e13f4db0f",
+  "sailfish_release": "5.1.0.11",
+  "target": "oneplus-billie2-aarch64",
+  "build_command": "bash \"$N100_PORT/tools/build-packages.sh\" version",
+  "result": "completed",
+  "reported_success_line": "* Building of droid-hal-version-billie2 finished successfully",
+  "dependency_repair": {
+    "additional_packages_installed": 14,
+    "file_conflict_check": "passed",
+    "missing_capabilities_satisfied": true
+  },
+  "nonfatal_messages": [
+    "RPM signature NOKEY warnings",
+    "sensorfw service actions could not run because systemd was not PID 1 in the build environment"
+  ],
+  "artifacts_uploaded_or_independently_inspected": false,
+  "raw_version_build_log_uploaded": false,
+  "rpm_built": true,
+  "rootfs_built": false,
+  "boot_tested": false,
+  "flashable_release": false,
+  "next_stage": "Build the device-specific Sailfish rootfs using build-packages.sh rootfs in Platform SDK."
+}

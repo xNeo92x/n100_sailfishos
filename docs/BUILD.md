@@ -1,7 +1,7 @@
 # Build workflow — Android 13 HAL / Android 11 firmware / aarch64
 
 Status: **Android HAL, HAL/config RPMs and five middleware packages built on the user's host;
-Android droidmedia and its media RPM also built successfully; the version RPM and Sailfish rootfs remain unfinished**.
+Android droidmedia, media and version RPMs also built successfully; Sailfish rootfs remains unbuilt**.
 See [the user-reported HAL build evidence](../validation/hal-build-user-20261025.json).
 The boot image passed structural checks; it has not been boot-tested.
 No Sailfish release has been certified for this device. The locked upstream

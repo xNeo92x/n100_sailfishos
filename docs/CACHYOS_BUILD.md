@@ -3,7 +3,7 @@
 Ziel sind ein passendes `hybris-boot.img` und ein `userdata.img` mit dem gebauten
 Sailfish-System. **Kernel und Android-HAL sind auf dem CachyOS-Buildhost erfolgreich
 gebaut; HAL-RPM, Gerätekonfiguration, fünf Middleware-Pakete und das Medien-RPM
-sind fertig. Versionspaket und Sailfish-Rootfs fehlen noch.** Der gemeldete HAL-Build vom
+sowie das Versionspaket sind fertig. Der Sailfish-Rootfs-Build steht noch aus.** Der gemeldete HAL-Build vom
 25. Oktober 2026 erzeugte ein strukturell geprüftes `hybris-boot.img` mit
 45.064.192 Byte. [Buildnachweis](../validation/hal-build-user-20261025.json).
 Die Binärdatei wurde nicht hochgeladen; ihre Startfähigkeit ist noch ungetestet.
@@ -708,8 +708,43 @@ Installation erfolgreich abgeschlossen wurde.
 Das lokale Verzeichnis wird nur für diese Transaktion als zusätzliche Quelle
 verwendet. Die acht Namen sind die fehlenden RPM-Fähigkeiten des gepinnten
 Versions-Includes; etwa `hybris-libsensorfw-qt5` kann durch
-`hybris-libsensorfw-qt5-binder` erfüllt werden. Die tatsächliche komplette
-Installation und der Versionsabschluss bleiben bis zum neuen Log offen.
+`hybris-libsensorfw-qt5-binder` erfüllt werden. Die anschließende vollständige Installation und der erfolgreiche Versionsabschluss
+sind im nächsten Abschnitt dokumentiert.
+
+### Alle RPM-Stufen abgeschlossen: Sailfish-Rootfs bauen
+
+Die gezielte Target-Installation spielte 14 Pakete ohne Dateikonflikt ein.
+Anschließend meldete `droid-hal-version-billie2` einen erfolgreichen Build.
+HAL-, Config-, Middleware-, Media- und Versionsstufe sind damit abgeschlossen;
+`rpm_built` steht jetzt auf `true`.
+[Gemeldeter Buildnachweis](../validation/version-rpm-build-user-20261025.json).
+Die Signaturhinweise und die nicht ausführbaren systemd-Serviceaktionen
+haben diese SDK-Installation und den Versionsbuild nicht verhindert.
+
+Im gleichen **Platform SDK** jetzt das gerätespezifische Rootfs bauen:
+
+```bash
+(
+set -eo pipefail
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+source "$HOME/n100-build/build.env"
+export RELEASE=5.1.0.11
+mkdir -p "$ANDROID_ROOT/n100-build-logs"
+bash "$N100_PORT/tools/build-packages.sh" rootfs 2>&1 \
+  | tee "$ANDROID_ROOT/n100-build-logs/rootfs.log"
+)
+```
+
+Der Wrapper verlangt `mic` und `createrepo_c`. Der gepinnte Upstream-Helfer
+erstellt das lokale RPM-Repository und ruft `sudo mic` mit dem vorbereiteten
+billie2-Kickstart und `RELEASE=5.1.0.11` auf.
+Ausgabe und Fehlermeldungen landen zusätzlich in
+`$ANDROID_ROOT/n100-build-logs/rootfs.log`; `pipefail` erhält den Build-Fehlercode.
+Bei einem Abbruch dieses Log prüfen und die Paketauflösung beheben.
+Der erste echte Rootfs-Build und die Vollständigkeit seiner Paketauflösung
+sind noch nicht bestätigt. Ein erfolgreicher RPM-Satz allein ist kein
+Nachweis, dass das komplette Rootfs bereits gebaut werden kann.
 
 Das Ergebnis des Rootfs-Schritts ist ein `sfe-billie2-*.tar.bz2`. Die
 Paketauflösung und weitere Middleware-Anpassungen sind noch nicht erprobt.

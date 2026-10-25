@@ -37,7 +37,7 @@
     "shell_syntax": "passed",
     "updated_config_rpm_built": true,
     "target_replacement_transaction_verified": true,
-    "version_rpm_built": false,
+    "version_rpm_built": true,
     "rootfs_built": false,
     "boot_tested": false
   },
@@ -63,6 +63,12 @@
       "qtscenegraph-adaptation"
     ],
     "next_action": "Explicitly install these capabilities in oneplus-billie2-aarch64 using the local RPM directory and a transaction-scoped --allow-vendor-change; then retry version.",
-    "complete_dependency_installation_verified": false
+    "complete_dependency_installation_verified": true
+  },
+  "subsequent_completion": {
+    "evidence_kind": "User-supplied terminal output",
+    "additional_packages_installed": 14,
+    "version_build": "completed",
+    "validation": "validation/version-rpm-build-user-20261025.json"
   }
 }
