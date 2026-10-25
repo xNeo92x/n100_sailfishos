@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!-- Additions required by the current lineage-20 product configuration.
+       Separate from billie2.xml so an already patched tree can add only these projects. -->
+  <remote name="n100-build-deps" fetch="https://github.com" />
+  <project path="packages/apps/SimpleSettingsConfig" name="LineageOS/android_packages_apps_SimpleSettingsConfig" remote="n100-build-deps" revision="f5620aa22a44ac3a9794d0fda5c146efd7e0a11e" />
+  <!-- Last APN tree before the merge-upstream generator required newer AOSP inputs. -->
+  <project path="vendor/apn" name="LineageOS/android_vendor_apn" remote="n100-build-deps" revision="cfcbd9d61d6c22e5b60b2f10274d6cd1ff460f5e" />
+</manifest>

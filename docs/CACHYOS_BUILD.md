@@ -107,6 +107,7 @@ Firmware-Sammlung gespeicherten Gerätebericht. Es ist kein erneuter Upload nöt
 source "$HOME/n100-build/build.env"
 python3 "$N100_PORT/tools/n100.py" init --android-root "$ANDROID_ROOT" \
   --device-report "$N100_DEVICE_REPORT" --sync --jobs 4
+python3 "$N100_PORT/tools/n100.py" sync-build-deps --android-root "$ANDROID_ROOT"
 python3 "$N100_PORT/tools/n100.py" prepare --android-root "$ANDROID_ROOT"
 python3 "$N100_PORT/tools/firmware.py" --work-dir "$N100_FIRMWARE_WORK" \
   vendor-source --android-root "$ANDROID_ROOT"
@@ -183,6 +184,50 @@ Zum Fortsetzen die Port-Werkzeuge wie im Fortsetzungsblock oben mit
 erzeugen; die Prüfung vor jedem Build behandelt auch diesen Fall.
 Die Änderung repariert die Eingabestruktur; ein vollständiger HAL-Build und
 ein Geräteboot sind damit noch nicht bestätigt.
+
+### Fehlende Produktmodule SimpleSettingsConfig und apns-conf.xml
+
+Der bewegliche `lineage-20.0`-Stand von `vendor/lineage` verlangt inzwischen
+`SimpleSettingsConfig` und `apns-conf.xml`. Die beiden Quellen fehlen im
+älteren, gepinnten Hybris-Basemanifest. Die Paketprüfung bleibt aktiviert;
+die Abhängigkeiten werden ergänzt.
+
+`manifests/build-dependencies.xml` bindet separat diese geprüften Quellen ein:
+
+| Pfad | Repository | Commit |
+| --- | --- | --- |
+| `packages/apps/SimpleSettingsConfig` | `LineageOS/android_packages_apps_SimpleSettingsConfig` | `f5620aa22a44ac3a9794d0fda5c146efd7e0a11e` |
+| `vendor/apn` | `LineageOS/android_vendor_apn` | `cfcbd9d61d6c22e5b60b2f10274d6cd1ff460f5e` |
+
+Der APN-Stand liegt direkt vor der Umstellung des Generators auf zusätzliche
+Upstream-Eingaben am 20. Oktober 2026. Er enthält die vollständigen XML-Quellen
+und den bisherigen Shell-/xmllint-Generator für die Android-13-Buildumgebung.
+
+Für einen bereits vorbereiteten und gepatchten Baum im Ubuntu-Chroot:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+source "$HOME/n100-build/build.env"
+export PATH="$HOME/.local/bin:$PATH"
+python3 "$N100_PORT/tools/n100.py" sync-build-deps --android-root "$ANDROID_ROOT"
+bash "$N100_PORT/tools/build-hal.sh"
+)
+```
+
+`sync-build-deps` ergänzt ein eigenes lokales Manifest, synchronisiert
+ausschließlich die zwei genannten Projekte mit einem Job und prüft die
+Commit-Stände. Andere Projekte und angewendete Hybris-Patches werden dabei
+nicht synchronisiert. Vorhandene fremde Commit-Stände, lokale Änderungen,
+Verzeichnissymlinks oder Änderungen am Zusatzmanifest stoppen den Vorgang.
+Ein erneuter vollständiger Sync oder eine erneute Patch-Anwendung ist unnötig.
+
+Neue Quellinitialisierungen nehmen dieses Zusatzmanifest bereits vor dem ersten
+Sync auf. Der HAL-Build prüft, dass Manifest und beide Commit-Stände vorliegen.
+Das behebt die nachgewiesenen fehlenden Produktmodule; vollständiger HAL-Build,
+Mobilfunkfunktion und Geräteboot müssen weiterhin validiert werden.
 
 ## 4. RPMs und Rootfs bauen — PLATFORM_SDK
 

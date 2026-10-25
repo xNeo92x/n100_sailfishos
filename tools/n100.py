@@ -421,6 +421,58 @@ def android_path(value):
     return path
 
 
+def build_dependency_manifest():
+    content = (ROOT / "manifests/build-dependencies.xml").read_text()
+    root = ET.fromstring(content)
+    projects = [element.attrib for element in root.findall("project")]
+    expected_paths = {"packages/apps/SimpleSettingsConfig", "vendor/apn"}
+    if (root.tag != "manifest" or len(projects) != 2
+            or {p.get("path") for p in projects} != expected_paths
+            or any(not re.fullmatch(r"[0-9a-f]{40}", p.get("revision", "")) for p in projects)):
+        raise PortError("Invalid pinned build-dependency manifest")
+    return content, projects
+
+
+def install_build_dependency_manifest(android):
+    content, projects = build_dependency_manifest()
+    write_new(android / ".repo/local_manifests/n100-build-dependencies.xml", content)
+    return projects
+
+
+def verify_build_dependencies(android):
+    content, projects = build_dependency_manifest()
+    installed = android / ".repo/local_manifests/n100-build-dependencies.xml"
+    if installed.is_symlink() or not installed.is_file() or installed.read_text() != content:
+        raise PortError("Build dependencies missing or changed; run n100.py sync-build-deps first")
+    for project in projects:
+        require_checkout(android / project["path"], project["revision"])
+
+
+def sync_build_dependencies(args):
+    android = android_path(args.android_root)
+    require_profile(android)
+    projects = install_build_dependency_manifest(android)
+    # Do not rebase local edits, replace unrelated directories or sync patched HAL projects.
+    for project in projects:
+        path = android / project["path"]
+        if path.is_symlink():
+            raise PortError(f"Refusing build-dependency directory symlink: {path}")
+        if path.exists():
+            require_checkout(path, project["revision"])
+            if run(["git", "status", "--porcelain", "--untracked-files=all"], cwd=path, capture=True):
+                raise PortError(f"Build dependency has local changes: {path}")
+    run(["repo", "sync", "-c", "-j1", "--no-clone-bundle", "--fail-fast"]
+        + [p["path"] for p in projects], cwd=android)
+    verify_build_dependencies(android)
+    print("Pinned SimpleSettingsConfig and APN build dependencies are ready.")
+
+
+def verify_tree(args):
+    android = android_path(args.android_root)
+    require_profile(android)
+    verify_build_dependencies(android)
+
+
 def init_sources(args):
     assessment = analyze_report(json.loads(Path(args.device_report).read_text()))
     if assessment["source_compatibility"] != "candidate-generation-match":
@@ -445,6 +497,7 @@ def init_sources(args):
               (ROOT / "manifests/billie2.xml").read_text())
     write_new(android / ".n100-source-profile.json", json.dumps({
         "profile": lock["profile"], "lock_sha256": lock_digest()}, indent=2) + "\n")
+    install_build_dependency_manifest(android)
     if args.sync:
         run(["repo", "sync", "-c", f"-j{args.jobs}", "--fail-fast"], cwd=android)
         resolved = run(["repo", "manifest", "-r"], cwd=android, capture=True)
@@ -720,9 +773,12 @@ def main():
     p = commands.add_parser("prepare", help="Install device changes and locked RPM source snapshots")
     p.add_argument("--android-root", required=True)
     p.set_defaults(func=prepare)
-    p = commands.add_parser("verify-tree", help="Reject stale source profiles before a HAL build")
+    p = commands.add_parser("sync-build-deps", help="Add only the pinned missing Lineage build dependencies")
     p.add_argument("--android-root", required=True)
-    p.set_defaults(func=lambda args: require_profile(android_path(args.android_root)))
+    p.set_defaults(func=sync_build_dependencies)
+    p = commands.add_parser("verify-tree", help="Reject stale source profiles and missing build dependencies")
+    p.add_argument("--android-root", required=True)
+    p.set_defaults(func=verify_tree)
     p = commands.add_parser("analyze-report", help="Assess a saved report offline; no ADB or device writes")
     p.add_argument("report")
     p.add_argument("--output")
