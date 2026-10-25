@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "rootfs-built-pre-image",
+  "stage": "images-built-pre-bringup",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -71,7 +71,7 @@
     "user_firmware_dump_collected": true,
     "userdata_image_builder_implemented": true,
     "ext4_fixture_build_verified": true,
-    "real_sailfish_userdata_image_built": false,
+    "real_sailfish_userdata_image_built": true,
     "deployment_strategy": "fresh unencrypted ext4 userdata with stowaway Sailfish rootfs; unvalidated on hardware",
     "user_firmware_dump_complete": false,
     "user_firmware_dump_files": 487,
@@ -108,5 +108,7 @@
   "rootfs_attempt_validation": "validation/rootfs-packaging.json",
   "rootfs_packages_installed": true,
   "rootfs_packaging_completed": true,
-  "rootfs_build_validation": "validation/rootfs-build-user-20261025.json"
+  "rootfs_build_validation": "validation/rootfs-build-user-20261025.json",
+  "image_build_validation": "validation/image-build-user-20261025.json",
+  "image_manifest": "validation/image-manifest-user-20261025.json"
 }

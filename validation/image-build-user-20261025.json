@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "device": "billie2",
+  "model": "BE2013",
+  "evidence_kind": "Uploaded image-manifest.json and user-supplied image builder/e2fsck output",
+  "port_code_revision": "b85b3f4c03bf2110af32a0bb7420f999ab162812",
+  "output_directory": "images/billie2-20261025T160318Z",
+  "result": "completed",
+  "manifest": "validation/image-manifest-user-20261025.json",
+  "uploaded_manifest_sha256": "0e76053ddfe1741bf4d0db9cb81c88e86bcdd9d91679194154e13edab49c138b",
+  "rootfs_sha256": "d2a8c16975194f2ff76409d93e64523c8ae0c8166a17159b13d8a3a8028a109d",
+  "files": [
+    {
+      "name": "userdata.img",
+      "bytes": 8589934592,
+      "sha256": "3c7bc615c566ccd3634dd829bdea41a2df32aa9419f360f7969a189aff6e3e3d"
+    },
+    {
+      "name": "hybris-boot.img",
+      "bytes": 45064192,
+      "sha256": "82c44b8f8a04133b9d4e259b20f1dcfb0a07007938485c9f990beeb5fbc79fd5"
+    }
+  ],
+  "validation": {
+    "rootfs_checksum_check_user_reported": "OK",
+    "rootfs_identity_and_binary_headers_user_reported": "passed",
+    "ext4_e2fsck_user_reported": "all five passes completed; builder subsequently reported success",
+    "manifest_internal_consistency": "device, model, exact sizes, SHA-256 syntax and matching boot inspection size verified",
+    "image_binaries_uploaded_or_independently_inspected": false,
+    "image_hashes_independently_recomputed": false
+  },
+  "userdata_image_built": true,
+  "first_boot_debug": true,
+  "boot_tested": false,
+  "flashable_release": false,
+  "open_work": [
+    "Read the bootloader state, slot and physical partition sizes without flashing",
+    "Compare stock boot/DTBO and establish a device-specific restore path",
+    "Implement the dynamic Android HAL mounts, A/B firmware selection and remaining bring-up integration",
+    "Perform first boot and collect hardware logs"
+  ],
+  "next_action": "Collect the bounded fastboot getvar list documented in docs/BRINGUP.md; no unlock, flash, erase, format or slot change."
+}

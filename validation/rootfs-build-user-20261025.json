@@ -19,11 +19,12 @@
     "Jolla-5.1.0.11-billie2-aarch64.packages",
     "Jolla-5.1.0.11-billie2-aarch64.urls"
   ],
-  "rootfs_sha256": null,
+  "rootfs_sha256": "d2a8c16975194f2ff76409d93e64523c8ae0c8166a17159b13d8a3a8028a109d",
   "artifacts_uploaded_or_independently_inspected": false,
   "rootfs_built": true,
-  "userdata_image_built": false,
+  "userdata_image_built": true,
   "boot_tested": false,
   "flashable_release": false,
-  "next_stage": "Verify the archive checksum and create experimental ext4 userdata and boot image files on the CachyOS host."
+  "next_stage": "Read-only device preflight and unresolved boot/HAL bring-up; image files have been created.",
+  "sha256_evidence": "Reported by uploaded image manifest; rootfs archive not independently received or hashed."
 }

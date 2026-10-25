@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "device": "billie2",
+  "model": "BE2013",
+  "kind": "experimental-userdata-ext4",
+  "root_path": "/data/.stowaways/sailfishos",
+  "rootfs_input_sha256": "d2a8c16975194f2ff76409d93e64523c8ae0c8166a17159b13d8a3a8028a109d",
+  "rootfs_inspection": {
+    "unpacked_file_bytes": 1415389082,
+    "members": 34722,
+    "runtime_binaries": [
+      "usr/lib/systemd/systemd",
+      "sbin/droid-hal-init"
+    ],
+    "scope": "identity, archive paths and binary headers; not a runtime validation"
+  },
+  "boot_inspection": {
+    "header_version": 2,
+    "page_size": 4096,
+    "bytes": 45064192,
+    "kernel_bytes": 42947072,
+    "ramdisk_bytes": 1824474,
+    "dtb_bytes": 279793,
+    "cmdline": "earlycon=msm_geni_serial,0x4a90000 androidboot.hardware=qcom androidboot.memcg=1 lpm_levels.sleep_disabled=1 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=2048 loop.max_part=7 selinux=1 androidboot.selinux=permissive",
+    "assessment": "structural-check-only-not-boot-validation"
+  },
+  "first_boot_debug": true,
+  "boot_tested": false,
+  "flashable_release": false,
+  "replaces_android_userdata": true,
+  "deployment_blockers": [
+    "Confirm actual userdata partition capacity and stock boot/DTBO compatibility",
+    "Validate Android HAL payload, dynamic partitions, AVB and recovery/restore procedure",
+    "Complete first boot and hardware validation on the handset"
+  ],
+  "files": [
+    {
+      "name": "userdata.img",
+      "bytes": 8589934592,
+      "sha256": "3c7bc615c566ccd3634dd829bdea41a2df32aa9419f360f7969a189aff6e3e3d"
+    },
+    {
+      "name": "hybris-boot.img",
+      "bytes": 45064192,
+      "sha256": "82c44b8f8a04133b9d4e259b20f1dcfb0a07007938485c9f990beeb5fbc79fd5"
+    }
+  ]
+}

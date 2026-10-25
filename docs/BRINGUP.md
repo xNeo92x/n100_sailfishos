@@ -1,7 +1,7 @@
 # Hardware bring-up and current blockers
 
 This is a development checklist, not an installation guide. No command here
-authorizes or automates partition writes. There is currently no tested image.
+authorizes or automates partition writes. The generated image has passed a host ext4 check; no on-device boot has been tested.
 
 ## 1. Establish the device baseline
 
@@ -94,8 +94,10 @@ can unlock the existing Android filesystem.
 The new **development image path** creates a fresh unencrypted ext4 file with the
 built Sailfish rootfs in `.stowaways/sailfishos`, matching the pinned hybris init
 script without a `data_subdir` override. `tools/make-userdata-image.py` populates
-it with `mke2fs -d` and checks it with `e2fsck`. This file layout has been tested
-with fixture data; no real Sailfish userdata image or device boot has been tested.
+it with `mke2fs -d` and checks it with `e2fsck`. The first real 8 GiB Sailfish userdata image has now been generated on the user's
+CachyOS host and passed e2fsck. The uploaded manifest and reported checks are
+recorded in [the image build evidence](../validation/image-build-user-20261025.json).
+The binary images were not uploaded for independent inspection; device boot remains untested.
 
 A future deployment to userdata replaces Android user data, rather than decrypting
 or migrating it. The tool performs no device writes. Actual partition capacity,
@@ -104,6 +106,50 @@ validation before installation. The dynamic Android HAL mounts in section 3
 remain unresolved: a userdata rootfs image alone does not supply them.
 
 ## 5. First nonpersistent boot experiment
+
+### Read bootloader variables before any boot experiment
+
+Connect only the N100 with authorized USB debugging while Android is running.
+The following host-side diagnostic restarts it into the bootloader, queries
+a fixed list of variables, and requests a normal reboot afterwards.
+It does not issue unlock, flash, erase, format or set-active commands.
+`getvar is-userspace` distinguishes the bootloader from fastbootd; unsupported
+variables may return errors and are retained in the log.
+[AOSP command reference](https://source.android.com/docs/core/architecture/bootloader/fastbootd).
+
+```bash
+(
+set -o pipefail
+log="$HOME/n100-build/fastboot-preflight-$(date -u +%Y%m%dT%H%M%SZ).log"
+adb get-state || exit 1
+adb reboot bootloader || exit 1
+for key in product current-slot unlocked secure is-userspace \
+  partition-size:boot_a partition-size:boot_b \
+  partition-size:dtbo_a partition-size:dtbo_b \
+  partition-size:userdata partition-type:userdata max-download-size; do
+    printf '\n--- %s ---\n' "$key"
+    timeout 15s fastboot getvar "$key"
+done 2>&1 | tee "$log"
+if ! timeout 20s fastboot reboot; then
+    echo 'Normal reboot could not be confirmed; share this terminal output.' >&2
+    exit 1
+fi
+printf 'Diagnoselog: %s\n' "$log"
+)
+```
+
+Each query has a timeout so an absent USB connection does not wait indefinitely.
+If the final reboot times out, the diagnostic has not confirmed a working
+fastboot connection; report that output. Share only this targeted log, which
+does not request serial numbers or IMEIs. The log filename has a UTC timestamp.
+
+Compare the physical userdata capacity with 8,589,934,592 bytes and each boot
+slot capacity with 45,064,192 bytes. These checks alone do not establish
+stock DTBO compatibility, support for temporary boot, a restore procedure
+or working dynamic HAL mounts. The previous Android report observed a locked
+bootloader; its current state must be read before planning a boot test.
+
+### First kernel/debug-shell boot
 
 Only after validating the boot header, storage access and recovery path should
 an experienced porter attempt a temporary boot of the generated debugging image,

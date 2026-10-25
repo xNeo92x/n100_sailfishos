@@ -5,7 +5,9 @@ Android droidmedia, media and version RPMs and the device-specific Sailfish root
 See [the user-reported HAL build evidence](../validation/hal-build-user-20261025.json).
 The boot image passed structural checks; it has not been boot-tested.
 [Rootfs completion evidence](../validation/rootfs-build-user-20261025.json) records
-the archive and checksum paths; userdata image creation is the next step.
+the archive and checksum paths. The first real userdata image was subsequently
+created and passed a host ext4 check; see [image build evidence](../validation/image-build-user-20261025.json).
+Device boot and dynamic Android HAL mounting remain unresolved.
 No Sailfish release has been certified for this device. The locked upstream
 packaging revisions are a starting point, not a tested release combination.
 Keep logs of the first real build and fix failures before proceeding to hardware.

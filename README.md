@@ -1,8 +1,9 @@
 # Sailfish OS für das OnePlus Nord N100 (`billie2`)
 
 **Experimenteller Port / pre-bringup. Android-HAL, alle fünf RPM-Stufen und ein
-Sailfish-OS-5.1.0.11-Rootfs sind gebaut. Image-Erstellung und Geräteboot stehen
-noch aus.**
+Sailfish-OS-5.1.0.11-Rootfs sind gebaut. `userdata.img` (8 GiB) und
+`hybris-boot.img` wurden erzeugt; ext4-Prüfung erfolgreich. Der Geräteboot
+steht noch aus.**
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,
@@ -83,6 +84,9 @@ Details stehen in [docs/DEVICE_BE2013.md](docs/DEVICE_BE2013.md).
   [gemeldeter Abschluss aller RPM-Stufen](validation/version-rpm-build-user-20261025.json).
 - Erfolgreicher Sailfish-Rootfs-Build mit Archiv, SHA-256-Datei und Paketliste;
   [gemeldeter Rootfs-Buildnachweis](validation/rootfs-build-user-20261025.json).
+- Echte Entwicklungsimages auf dem CachyOS-Host erstellt, Rootfs-Prüfsumme
+  bestätigt und ext4-Prüfung abgeschlossen;
+  [Buildnachweis mit Manifest und Hashes](validation/image-build-user-20261025.json).
 - Auslesen der Gerätebasis über ADB, Kernel-Konfigurationsprüfung und Prüfung
   von Android-Bootimages mit Header v2.
 - Host-Tests und GitHub-Actions-Validierung.
@@ -172,7 +176,7 @@ Build-Kapazität**, besser 250–300 GiB, sowie 16 GiB RAM sind eine sinnvolle
 Planungsgröße. CachyOS kann der Host sein; Android und RPM werden in den
 getrennten HADK-Umgebungen gebaut.
 
-**Noch offene Arbeit:** Image-Erstellung, verifizierte Firmwarebasis,
+**Noch offene Arbeit:** verifizierte Firmwarebasis,
 Vergleich des gebauten Bootimages mit dem Stock-Image, Einrichtung der dynamischen Partitionen für den frühen
 Boot, funktionierender Zugriff auf `/data`, Rootfs-Integration sowie Tests auf
 dem echten Gerät. Es gibt deshalb kein Flash-Skript und keine Download-Datei,
@@ -197,7 +201,8 @@ locked bootloader, dynamic partitions and encrypted F2FS userdata.
 image, followed by successful HAL and device configuration RPM builds for
 Sailfish OS 5.1.0.11. Five middleware packages and the media RPM also built successfully.
 The version RPM and the device-specific Sailfish rootfs also built successfully.
-Userdata image creation and hardware boot remain unvalidated. This is not an
+The 8 GiB userdata image was created and passed e2fsck on the build host.
+Hardware boot remains unvalidated. This is not an
 installable release.** The repository provides
 pinned sources, initial device/kernel/RPM integration, build helpers and read-only
 device diagnostics. Dynamic-partition mounting and access to Android-encrypted

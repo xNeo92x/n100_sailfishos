@@ -4,7 +4,7 @@ Ziel sind ein passendes `hybris-boot.img` und ein `userdata.img` mit dem gebaute
 Sailfish-System. **Kernel und Android-HAL sind auf dem CachyOS-Buildhost erfolgreich
 gebaut; HAL-RPM, Gerätekonfiguration, fünf Middleware-Pakete und das Medien-RPM
 sowie das Versionspaket und das Sailfish-Rootfs sind fertig. Die Erstellung
-der Image-Dateien und der Geräteboot stehen noch aus.** Der gemeldete HAL-Build vom
+der Image-Dateien ist abgeschlossen; der Geräteboot steht noch aus.** Der gemeldete HAL-Build vom
 25. Oktober 2026 erzeugte ein strukturell geprüftes `hybris-boot.img` mit
 45.064.192 Byte. [Buildnachweis](../validation/hal-build-user-20261025.json).
 Die Binärdatei wurde nicht hochgeladen; ihre Startfähigkeit ist noch ungetestet.
@@ -867,8 +867,29 @@ Flashen auf `userdata` ersetzt die Android-Nutzerdaten; bestehende Android-
 Verschlüsselung wird damit nicht entschlüsselt. Kein Verkleinern oder Umbauen
 des vorhandenen Dateisystems findet statt. Ein Debug-Marker hält den ersten
 Start im Hybris-Debugmodus. Eine GUI oder funktionierende Hardware wird nicht
-behauptet. Der ext4-Dateisystembau wurde mit Testdaten geprüft; ein echtes
-Sailfish-Userdata-Image wurde noch nicht erzeugt.
+behauptet. Das erste echte Sailfish-Userdata-Image wurde auf dem Buildhost erstellt und
+mit `e2fsck` geprüft. Der Image-Build wurde erfolgreich abgeschlossen;
+[Manifest und Nachweis](../validation/image-build-user-20261025.json).
+
+### Erster echter Image-Build abgeschlossen
+
+Der Host meldete den erfolgreichen Abschluss unter
+`~/n100-build/images/billie2-20261025T160318Z`.
+Die Rootfs-Prüfsumme war `OK`, und e2fsck lief durch alle fünf Prüfdurchgänge.
+Das hochgeladene Manifest ist
+[unverändert gespeichert](../validation/image-manifest-user-20261025.json).
+Die Image-Binärdateien wurden nicht hochgeladen oder unabhängig nachgehasht.
+
+| Datei | Größe | SHA-256 |
+| --- | ---: | --- |
+| `userdata.img` | 8589934592 Byte | `3c7bc615c566ccd3634dd829bdea41a2df32aa9419f360f7969a189aff6e3e3d` |
+| `hybris-boot.img` | 45064192 Byte | `82c44b8f8a04133b9d4e259b20f1dcfb0a07007938485c9f990beeb5fbc79fd5` |
+
+Die Größen und Header sind im Manifest konsistent. Der nächste Schritt
+ist die gezielte Bootloader-Abfrage in
+[BRINGUP.md](BRINGUP.md#read-bootloader-variables-before-any-boot-experiment).
+Ein erfolgreicher Dateisystembau bestätigt noch keinen Geräteboot oder
+die Bereitstellung der Android-HAL-Partitionen.
 
 ## 6. Vor dem ersten Aufspielen noch erforderlich
 
