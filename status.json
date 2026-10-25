@@ -110,5 +110,14 @@
   "rootfs_packaging_completed": true,
   "rootfs_build_validation": "validation/rootfs-build-user-20261025.json",
   "image_build_validation": "validation/image-build-user-20261025.json",
-  "image_manifest": "validation/image-manifest-user-20261025.json"
+  "image_manifest": "validation/image-manifest-user-20261025.json",
+  "bootloader_preflight_validation": "validation/fastboot-preflight-user-20261025.json",
+  "deployment_preflight": {
+    "physical_partition_sizes_verified": true,
+    "images_fit_physical_partitions": true,
+    "bootloader_locked": true,
+    "active_slot_at_preflight": "b",
+    "stock_boot_dtbo_compatibility_verified": false,
+    "sparse_userdata_transfer_verified": false
+  }
 }

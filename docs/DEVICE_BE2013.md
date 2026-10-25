@@ -58,8 +58,10 @@ firmware merely to match the global fingerprint embedded in that source file.
 The new kernel source identifies itself as 4.19.325, versus stock 4.19.152. A
 compatible set of kernel/modules/DTB/DTBO must be built and tested together.
 The source tree's expected boot header v2 / 4096-byte pages and partition sizes
-still require comparison against real stock image headers; the report contains
-block names but no actual partition sizes or image dumps.
+still require comparison against real stock image headers. The later
+[bootloader preflight](../validation/fastboot-preflight-user-20261025.json)
+confirmed 96 MiB for each boot slot and 24 MiB for each DTBO slot; physical
+userdata has 48,062,869,504 bytes. Stock boot/DTBO image dumps remain unavailable.
 
 The updated RPM sparse selection uses `android_version_major 13`, referring to
 the **HAL build**, not the installed stock firmware's version. Logical

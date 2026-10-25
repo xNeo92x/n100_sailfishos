@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "evidence_kind": "Uploaded fixed-variable fastboot log",
+  "log": "validation/fastboot-preflight-20261025T163232Z.log",
+  "log_sha256": "7bf3de9d748f685239831dc832353b7951111627bb2e34ae1a1006e20d897047",
+  "device": "billie2",
+  "model_context": "BE2013 from previous Android report; fastboot product is a platform name, not independent model confirmation",
+  "variables": {
+    "product": "bengal",
+    "current-slot": "b",
+    "unlocked": "no",
+    "secure": "yes",
+    "is-userspace": "no",
+    "partition-size:boot_a": 100663296,
+    "partition-size:boot_b": 100663296,
+    "partition-size:dtbo_a": 25165824,
+    "partition-size:dtbo_b": 25165824,
+    "partition-size:userdata": 48062869504,
+    "partition-type:userdata": "f2fs",
+    "max-download-size": 804280320
+  },
+  "size_checks": [
+    {
+      "image": "userdata.img",
+      "image_bytes": 8589934592,
+      "partitions": [
+        "userdata"
+      ],
+      "partition_bytes": {
+        "userdata": 48062869504
+      },
+      "fits_all_listed_partitions": true
+    },
+    {
+      "image": "hybris-boot.img",
+      "image_bytes": 45064192,
+      "partitions": [
+        "boot_a",
+        "boot_b"
+      ],
+      "partition_bytes": {
+        "boot_a": 100663296,
+        "boot_b": 100663296
+      },
+      "fits_all_listed_partitions": true
+    }
+  ],
+  "transfer": {
+    "boot_image_fits_reported_max_download": true,
+    "raw_userdata_image_exceeds_reported_max_download": true,
+    "sparse_or_chunked_userdata_transfer_verified": false
+  },
+  "assessment": {
+    "fastboot_connection_verified": true,
+    "bootloader_locked": true,
+    "active_slot": "b",
+    "bootloader_mode_not_fastbootd": true,
+    "physical_partition_capacity_checks_passed": true,
+    "stock_boot_header_dtb_dtbo_compatibility_verified": false,
+    "restore_procedure_verified": false,
+    "userdata_current_filesystem": "f2fs",
+    "userdata_image_filesystem": "ext4",
+    "userdata_deployment_replaces_android_data": true,
+    "temporary_boot_support_verified": false,
+    "boot_tested": false,
+    "flashable_release": false
+  },
+  "next_action": "Read exact OxygenOS/OTA version properties while Android runs, identify matching stock boot/DTBO and restore inputs, and continue unresolved early-mount integration before any destructive device step."
+}

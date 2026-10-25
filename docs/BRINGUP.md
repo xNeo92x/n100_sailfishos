@@ -149,6 +149,52 @@ stock DTBO compatibility, support for temporary boot, a restore procedure
 or working dynamic HAL mounts. The previous Android report observed a locked
 bootloader; its current state must be read before planning a boot test.
 
+### Observed BE2013 preflight — 25 October 2026
+
+The uploaded [fastboot log](../validation/fastboot-preflight-20261025T163232Z.log)
+confirmed a working connection to bootloader fastboot (`is-userspace: no`),
+`product: bengal`, active slot `b`, `unlocked: no` and `secure: yes`.
+The Android report establishes model BE2013; `bengal` alone does not identify
+the exact model or firmware. [Machine-readable assessment](../validation/fastboot-preflight-user-20261025.json).
+
+| Physical partition | Capacity | Built image | Size fits |
+| --- | ---: | ---: | --- |
+| boot_a / boot_b | 100,663,296 bytes each (96 MiB) | 45,064,192 bytes | Yes |
+| dtbo_a / dtbo_b | 25,165,824 bytes each (24 MiB) | No stock DTBO comparison yet | Not evaluated |
+| userdata | 48,062,869,504 bytes (44.76 GiB) | 8,589,934,592 bytes | Yes |
+
+The current userdata type is `f2fs`; the new image is fresh unencrypted ext4.
+Replacing userdata would discard the Android data; it is not a filesystem
+conversion that preserves those data. The reported maximum download is
+804,280,320 bytes. The boot image is below it; transferring the raw 8 GiB
+userdata file needs a separately verified sparse/chunked transfer path.
+No userdata flash command has been validated.
+
+The remaining blockers are the locked bootloader, stock boot/DTB/DTBO
+compatibility, an established restore path, A/B firmware selection and the
+dynamic Android HAL mounts described above. Unlocking causes a factory reset
+according to [AOSP](https://source.android.com/docs/core/architecture/bootloader/locking_unlocking).
+A size match alone does not justify unlocking or writing these development images.
+
+Before selecting a firmware download, read the exact OxygenOS/OTA identity
+while stock Android is running. The existing `BE2013_7_231009` display value
+and fingerprint remain the baseline; do not infer an exact OTA ZIP solely
+from the security patch date or use the global BE2011 firmware as EEA proof.
+
+```bash
+(
+adb get-state || exit 1
+for key in ro.oxygen.version ro.build.version.ota ro.build.display.id ro.build.version.incremental; do
+  printf '\n--- %s ---\n' "$key"
+  adb shell getprop "$key"
+done
+) 2>&1 | tee "$HOME/n100-build/firmware-identity.log"
+```
+
+The property queries require neither root nor an unlocked bootloader and
+do not reboot the phone or change its settings. Blank properties are retained.
+No download has yet been independently matched to the installed EEA build.
+
 ### First kernel/debug-shell boot
 
 Only after validating the boot header, storage access and recovery path should

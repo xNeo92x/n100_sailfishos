@@ -894,8 +894,12 @@ die Bereitstellung der Android-HAL-Partitionen.
 ## 6. Vor dem ersten Aufspielen noch erforderlich
 
 Das Erzeugen der Dateien ist kein Nachweis ihrer Gerätekompatibilität.
-Vor Flash-Befehlen müssen insbesondere Stock-Bootheader und DTBO, tatsächliche
-Partitionskapazität, A/B-Slot, AVB, Wiederherstellung sowie die Bereitstellung
+Die [Fastboot-Abfrage](../validation/fastboot-preflight-user-20261025.json)
+bestätigt inzwischen 96 MiB pro Boot-Slot, 24 MiB pro DTBO-Slot,
+48.062.869.504 Byte für userdata sowie den beobachteten aktiven Slot B.
+Bootimage und Userdata-Image passen hinsichtlich ihrer Dateigröße.
+Vor Flash-Befehlen müssen weiterhin Stock-Bootheader und DTBO, AVB,
+Wiederherstellung, eine passende Übertragungsstrategie sowie die Bereitstellung
 der Android-HAL-Partitionen geklärt sein. Der Bootloader ist laut bisherigem
 Bericht gesperrt; sein Entsperren löscht Nutzerdaten. Ein geprüftes Backup und
 ein passender Wiederherstellungsweg werden dafür benötigt.

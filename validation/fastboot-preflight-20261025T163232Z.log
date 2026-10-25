@@ -1,0 +1,49 @@
+
+--- product ---
+< waiting for any device >
+product: bengal
+Finished. Total time: 0.002s
+
+--- current-slot ---
+current-slot: b
+Finished. Total time: 0.002s
+
+--- unlocked ---
+unlocked: no
+Finished. Total time: 0.001s
+
+--- secure ---
+secure: yes
+Finished. Total time: 0.002s
+
+--- is-userspace ---
+is-userspace: no
+Finished. Total time: 0.002s
+
+--- partition-size:boot_a ---
+partition-size:boot_a:  0x6000000
+Finished. Total time: 0.003s
+
+--- partition-size:boot_b ---
+partition-size:boot_b:  0x6000000
+Finished. Total time: 0.002s
+
+--- partition-size:dtbo_a ---
+partition-size:dtbo_a:  0x1800000
+Finished. Total time: 0.003s
+
+--- partition-size:dtbo_b ---
+partition-size:dtbo_b:  0x1800000
+Finished. Total time: 0.002s
+
+--- partition-size:userdata ---
+partition-size:userdata:  0xB30C53000
+Finished. Total time: 0.003s
+
+--- partition-type:userdata ---
+partition-type:userdata: f2fs
+Finished. Total time: 0.003s
+
+--- max-download-size ---
+max-download-size: 804280320
+Finished. Total time: 0.002s
