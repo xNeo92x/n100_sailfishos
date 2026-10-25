@@ -160,6 +160,30 @@ Kein erneutes Patchen oder `repo sync` ist dafür nötig. Die Korrektur behebt
 den nachgewiesenen Konfigurationsabbruch; ein vollständiger HAL-Build wurde
 damit noch nicht nachgewiesen.
 
+### Chromium-WebView-Link nach Upstream-Umbenennung
+
+Das gepinnte Basemanifest verlinkt `external/chromium-webview/Android.mk`
+auf `patches/Android.mk`. Der dort verwendete bewegliche `main`-Branch hat
+diese Datei im Commit
+[`091983e4`](https://github.com/LineageOS/android_external_chromium-webview_patches/commit/091983e4d4a41a61eebd3ca3c01d0bcc128ffb6b)
+ohne Inhaltsänderung in `os_pickup.mk` umbenannt. Damit kann der alte Link
+ins Leere zeigen und ckati mit `No such file or directory` abbrechen.
+
+`build-hal.sh` prüft diesen Link nun vor dem Android-Build. Der Helfer
+`tools/fix-webview-link.py` korrigiert ausschließlich den erwarteten kaputten
+Manifest-Link auf `patches/os_pickup.mk`, wenn dessen Git-Blob-ID dem
+geprüften Makefile `26ca6b19efe40f19362473d217596156075032b2` entspricht.
+Ein funktionierendes altes Layout bleibt erhalten. Reguläre lokale Dateien,
+abweichende Linkziele und ungeprüfte neue Makefile-Inhalte führen zum Abbruch.
+
+Zum Fortsetzen die Port-Werkzeuge wie im Fortsetzungsblock oben mit
+`git -C "$N100_PORT" pull --ff-only` aktualisieren und ausschließlich
+`build-hal.sh` erneut ausführen. Kein erneutes Patchen oder vollständiger
+`repo sync` ist nötig. Ein späterer Sync kann den alten Manifest-Link erneut
+erzeugen; die Prüfung vor jedem Build behandelt auch diesen Fall.
+Die Änderung repariert die Eingabestruktur; ein vollständiger HAL-Build und
+ein Geräteboot sind damit noch nicht bestätigt.
+
 ## 4. RPMs und Rootfs bauen — PLATFORM_SDK
 
 `RELEASE` muss der wirklich installierten Target-Version entsprechen:

@@ -22,6 +22,7 @@ test -f .n100-hybris-patches-applied || {
 }
 mkdir -p n100-build-logs
 # Android envsetup is not compatible with set -u.
+python3 "$port_dir/tools/fix-webview-link.py" --android-root "$ANDROID_ROOT"
 source build/envsetup.sh
 breakfast billie2
 mka hybris-hal 2>&1 | tee n100-build-logs/hybris-hal.log
