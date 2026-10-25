@@ -575,6 +575,71 @@ def prepare(args):
     print("Adaptation snapshots prepared. Apply hybris patches before building.")
 
 
+def boot_mount_mapping(report):
+    assessment = analyze_report(report)
+    if assessment["source_compatibility"] != "candidate-generation-match":
+        raise PortError("Boot mapping requires the intended stock Android 11 N100 report")
+    physical, _ = block_aliases(diagnostic_text(report.get("diagnostics", {}).get("partitions", "")))
+    mapping = {}
+    for name, target in physical.items():
+        if re.fullmatch(r"[A-Za-z0-9_.-]+", name) and re.fullmatch(
+                r"/dev/block/(?:sd[a-z]+[1-9][0-9]*|mmcblk[0-9]+p[1-9][0-9]*)", target):
+            mapping[name] = "/dev/" + target.rsplit("/", 1)[1]
+    if "userdata" not in mapping:
+        raise PortError("Report has no physical userdata mapping; dm-* nodes are not boot inputs")
+    return dict(sorted(mapping.items()))
+
+
+def mount_fixup_script(mapping):
+    # Only physical aliases are rewritten. Logical super partitions need separate runtime setup.
+    lines = [
+        "#!/bin/sh", "# Generated from the intended phone's physical by-name evidence.",
+        "# No device writes, slot selection, decryption or logical-partition mapping.",
+        "set -eu",
+        'if [ "$#" -lt 2 ] || [ "$1" != billie2 ]; then',
+        '    echo "Usage: fixup-mountpoints billie2 FILE..." >&2', "    exit 1", "fi", "shift",
+        'for file in "$@"; do',
+        '    if [ ! -f "$file" ] || [ -L "$file" ]; then',
+        '        echo "Expected a regular generated mountpoint input: $file" >&2',
+        "        exit 1", "    fi", "done",
+        'echo "Fixing physical mount-point aliases for billie2"',
+        "sed -i \\",
+    ]
+    for name in sorted(mapping, key=lambda value: (-len(value), value)):
+        escaped = name.replace(".", r"\.")
+        for prefix in ("/dev/block/bootdevice/by-name/", "/dev/block/by-name/"):
+            expression = "s#" + prefix + escaped + r"\([^[:alnum:]_.-]\|$\)#" + mapping[name] + r"\1#g"
+            lines.append("    -e " + shlex.quote(expression) + " \\")
+    lines.append('    "$@"')
+    return "\n".join(lines) + "\n"
+
+
+def prepare_boot_inputs(args):
+    android = android_path(args.android_root)
+    require_profile(android)
+    lock = read_lock()
+    boot = next(project for project in lock["extensions"] if project["path"] == "hybris/hybris-boot")
+    require_checkout(android / boot["path"], boot["revision"])
+    report_data = Path(args.device_report).read_bytes()
+    mapping = boot_mount_mapping(json.loads(report_data))
+    content = mount_fixup_script(mapping)
+    path = android / "hybris/fixup-mountpoints"
+    # The pinned hybris-boot Android.mk prefers this sibling override over its own script.
+    write_new(path, content)
+    path.chmod(0o755)
+    write_new(android / ".n100-boot-inputs.json", json.dumps({
+        "schema": 1, "lock_sha256": lock_digest(),
+        "report_sha256": hashlib.sha256(report_data).hexdigest(),
+        "physical_mount_mapping": mapping,
+        "fixup_sha256": hashlib.sha256(content.encode()).hexdigest(),
+        "logical_partitions_implemented": False,
+        "android_data_decryption_implemented": False,
+        "boot_tested": False,
+    }, indent=2) + "\n")
+    print(f"Boot mount fixup ready: physical userdata -> {mapping['userdata']}")
+    print("Existing Android encryption and logical HAL mounts remain separate bring-up work.")
+
+
 def modified_board(original, lock):
     return (original + "\n# Sailfish bring-up; preserve the inspected upstream board configuration.\n"
             "BOARD_KERNEL_CMDLINE += selinux=1 androidboot.selinux=permissive\n"
@@ -776,6 +841,10 @@ def main():
     p = commands.add_parser("sync-build-deps", help="Add only the pinned missing Lineage build dependencies")
     p.add_argument("--android-root", required=True)
     p.set_defaults(func=sync_build_dependencies)
+    p = commands.add_parser("prepare-boot", help="Generate physical mount fixups from the saved device report")
+    p.add_argument("--android-root", required=True)
+    p.add_argument("--device-report", required=True)
+    p.set_defaults(func=prepare_boot_inputs)
     p = commands.add_parser("verify-tree", help="Reject stale source profiles and missing build dependencies")
     p.add_argument("--android-root", required=True)
     p.set_defaults(func=verify_tree)

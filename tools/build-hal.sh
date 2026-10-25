@@ -20,10 +20,21 @@ test -f .n100-hybris-patches-applied || {
     echo 'Apply hybris-patches/apply-patches.sh --mb and record the marker as in docs/BUILD.md.' >&2
     exit 1
 }
+: "${N100_DEVICE_REPORT:?Source build.env or set N100_DEVICE_REPORT to the saved stock report}"
+python3 "$port_dir/tools/n100.py" prepare-boot --android-root "$ANDROID_ROOT" \
+    --device-report "$N100_DEVICE_REPORT"
 mkdir -p n100-build-logs
 # Android envsetup is not compatible with set -u.
 python3 "$port_dir/tools/fix-webview-link.py" --android-root "$ANDROID_ROOT"
 source build/envsetup.sh
+# Match build/make/core/ccache.mk: ccache is used only with both variables set.
+if [[ -n "${CCACHE_EXEC:-}" && -n "${USE_CCACHE:-}" && "${USE_CCACHE:-}" != false ]]; then
+    if ! command -v -- "$CCACHE_EXEC" >/dev/null 2>&1; then
+        echo "Configured ccache executable is missing: $CCACHE_EXEC" >&2
+        echo "Inside Ubuntu HABUILD_SDK run: sudo apt-get install ccache" >&2
+        exit 1
+    fi
+fi
 breakfast billie2
 mka hybris-hal 2>&1 | tee n100-build-logs/hybris-hal.log
 python3 "$port_dir/tools/n100.py" check-kernel out/target/product/billie2/obj/KERNEL_OBJ/.config

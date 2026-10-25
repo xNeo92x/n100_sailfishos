@@ -229,6 +229,46 @@ Sync auf. Der HAL-Build prüft, dass Manifest und beide Commit-Stände vorliegen
 Das behebt die nachgewiesenen fehlenden Produktmodule; vollständiger HAL-Build,
 Mobilfunkfunktion und Geräteboot müssen weiterhin validiert werden.
 
+### Fehlendes ccache und billie2-Mountpoint-Fixup
+
+Das erste Ninja-Log erreichte 28.446 geplante Schritte. Es scheiterte an zwei
+unabhängigen Eingaben: dem fehlenden `/usr/bin/ccache` sowie der noch fehlenden
+`billie2`-Zuordnung in Hybris. Die Kconfig-Fehler traten zusammen mit den
+fehlgeschlagenen Compiler-Aufrufen auf; sie sind noch kein Nachweis eines
+fehlerhaften Kernel-Konfigurationsfragments.
+
+Installiere `ccache` innerhalb des Ubuntu-Chroots:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y ccache
+```
+
+`build-hal.sh` prüft den konfigurierten Cache-Aufruf vor dem Build und führt
+`n100.py prepare-boot` mit `N100_DEVICE_REPORT` aus. Der Befehl liest den
+vorhandenen Stock-Bericht, prüft Gerätegeneration und Hybris-Quellstand und
+erzeugt `$ANDROID_ROOT/hybris/fixup-mountpoints`. Das gepinnte Hybris-Makefile
+bevorzugt diesen lokalen Geschwisterpfad gegenüber dem eingebauten Fixup.
+
+Der generierte Helfer ersetzt ausschließlich die im Bericht belegten
+physischen By-name-Aliase, etwa `/dev/block/bootdevice/by-name/userdata` durch
+`/dev/sda16` beim vorhandenen BE2013-Bericht. Im initramfs liefert devtmpfs die
+kurzen Gerätenamen. Es werden keine `dm-*`-Nummern oder unsuffigierten
+Boot-Aliase aus dem aktiven Slot abgeleitet. Ein lokales Audit unter
+`.n100-boot-inputs.json` hält Berichtshash, Zuordnungen und Skripthash fest.
+Abweichende vorhandene Fixup-Dateien werden nicht überschrieben.
+
+Nach Aktualisierung der Port-Werkzeuge genügt ein erneuter Aufruf von
+`build-hal.sh`; kein neuer ADB-Bericht, vollständiger Sync oder erneutes
+Patchen ist erforderlich. Dies repariert die Build-Eingaben für die
+experimentelle unverschlüsselte Rootfs-Variante. Es entschlüsselt bestehende
+Android-Nutzerdaten nicht und implementiert keine dynamischen HAL-Mounts.
+
+Die ebenfalls protokollierten doppelten Installationsregeln für Fingerabdruck,
+Display und weitere Vendor-Dateien sind noch zu prüfen. Sie werden nicht als
+behoben oder als Laufzeitkompatibilitätsnachweis gewertet. Der vollständige
+HAL-Build und ein Geräteboot sind weiter offen.
+
 ## 4. RPMs und Rootfs bauen — PLATFORM_SDK
 
 `RELEASE` muss der wirklich installierten Target-Version entsprechen:

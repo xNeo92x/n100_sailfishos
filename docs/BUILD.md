@@ -141,7 +141,10 @@ this variable is true. Keep the normal Android PATH restrictions enabled.
 bash "$N100_PORT/tools/build-hal.sh"
 ```
 
-This sources the Android environment, selects `billie2`, runs `mka hybris-hal` and checks
+This uses the saved `N100_DEVICE_REPORT` to generate a reviewed local physical
+mountpoint override with `n100.py prepare-boot`. Existing custom overrides are
+not overwritten. It checks the configured ccache executable, sources the Android
+environment, selects `billie2`, runs `mka hybris-hal` and checks
 the final `.config` and `hybris-boot.img`. If the kernel build uses a different
 object directory, supply its final `.config` explicitly:
 
