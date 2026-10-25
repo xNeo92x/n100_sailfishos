@@ -2,7 +2,8 @@
 
 Ziel sind ein passendes `hybris-boot.img` und ein `userdata.img` mit dem gebauten
 Sailfish-System. **Kernel und Android-HAL sind auf dem CachyOS-Buildhost erfolgreich
-gebaut; RPM-Pakete und Sailfish-Rootfs fehlen noch.** Der gemeldete HAL-Build vom
+gebaut; auch der HAL-RPM-Build ist abgeschlossen. Config-, Middleware-, Media-
+und Versionspakete sowie Sailfish-Rootfs fehlen noch.** Der gemeldete HAL-Build vom
 25. Oktober 2026 erzeugte ein strukturell geprüftes `hybris-boot.img` mit
 45.064.192 Byte. [Buildnachweis](../validation/hal-build-user-20261025.json).
 Die Binärdatei wurde nicht hochgeladen; ihre Startfähigkeit ist noch ungetestet.
@@ -376,8 +377,8 @@ bash "$N100_PORT/tools/build-packages.sh" hal
 )
 ```
 
-Tooling und Target nicht erneut anlegen. Der RPM-Build bleibt bis zum
-tatsächlichen erfolgreichen Abschluss als ungebaut markiert.
+Tooling und Target nicht erneut anlegen. Der später gemeldete erfolgreiche
+HAL-RPM-Abschluss ist im folgenden Fortsetzungsabschnitt dokumentiert.
 
 ### RPM-Mountpoint-Aufruf auf den Geräte-Override umstellen
 
@@ -443,7 +444,37 @@ als Warnungen gemeldet; sie bleiben erhalten. Ihre Laufzeitfunktion ist
 weiter Teil der Boot-/APEX-Integration. Mit dem üblichen Aktualisierungsblock
 und `build-packages.sh hal` fortsetzen; die Snapshot-Anpassung läuft automatisch.
 
-Das Ergebnis des letzten Schritts ist ein `sfe-billie2-*.tar.bz2`. Die
+### Nach erfolgreichem HAL-RPM: Gerätekonfiguration bauen
+
+Der Buildhost meldete am 25. Oktober 2026 mit Port-Commit `2ced030` den
+erfolgreichen Abschluss von `droid-hal-billie2`. Der
+[Nachweis](../validation/hal-rpm-build-user-20261025.json) beruht auf der
+Terminalausgabe; RPM-Dateien und ihre Prüfsummen wurden nicht hochgeladen.
+`hal_rpm_built` ist deshalb jetzt `true`. `rpm_built` bezeichnet den gesamten
+Adaptationspaketsatz und bleibt bis zum Abschluss der weiteren Stufen `false`.
+
+Im vorhandenen **Platform SDK** als Nächstes nur die Gerätekonfiguration bauen:
+
+```bash
+(
+set -e
+source "$HOME/n100-build/build.env"
+git -C "$N100_PORT" pull --ff-only
+source "$HOME/n100-build/build.env"
+export RELEASE=5.1.0.11
+bash "$N100_PORT/tools/build-packages.sh" configs
+)
+```
+
+Dieser Schritt baut die Community-Anpassung, sofern im Target benötigt, sowie
+die `droid-config-billie2`-Pakete und bereitet die Kickstarts vor.
+Die Pakete liegen unter `$ANDROID_ROOT/droid-local-repo/billie2`; das
+Konfigurationslog liegt unter `$ANDROID_ROOT/hybris/droid-configs.log`.
+Danach folgen `middleware`, `media`, `version` und zuletzt `rootfs`.
+Ein erneuter Android-HAL- oder HAL-RPM-Build ist für diesen Übergang nicht nötig.
+Geräteboot und Image-Kompatibilität sind weiterhin ungeprüft.
+
+Das Ergebnis des Rootfs-Schritts ist ein `sfe-billie2-*.tar.bz2`. Die
 Paketauflösung und weitere Middleware-Anpassungen sind noch nicht erprobt.
 Das Rootfs muss bereits die billie2-Anpassung und die AArch64-Laufzeit enthalten;
 ein generisches Sailfish-Archiv genügt nicht.
