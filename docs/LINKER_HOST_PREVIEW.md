@@ -100,15 +100,19 @@ Die vorhandenen Android-Build-Ausgaben und das RPM-Bundle werden nicht veränder
 Zusätzlich läuft der gleiche Generator in einem eigenen Verzeichnis mit
 `--strict`. **`passed=true` im Bericht bedeutet nur, dass die normale
 Host-Vorschau erzeugt und strukturell geprüft wurde.** Das Ergebnis der strengen
-Prüfung steht separat unter `strict_diagnostic.passed`.
+Prüfung steht separat unter `strict_diagnostic.passed`. Seit der Korrektur nach dem
+ersten Nutzerlauf zählen dabei auch Fehlerzeilen trotz Exitcode 0; das alte
+`true` im Rohbericht ist falsch und in der Auswertung ausdrücklich korrigiert.
 
 AOSP fordert auch aus optionalen Namespaces Bibliotheken an, die im kleinen
 HAL-Build fehlen können; beispielsweise fordert der VNDK-Namespace explizit
 `libneuralnetworks.so`. Ein solcher Fehler darf nicht als laufender Dienst oder
 vollständige Vendor-Kompatibilität gewertet werden. Ein identifizierter
 `not found: ... is required by ...`-Fehler bleibt mitsamt Exitcode und erster
-fehlender Anforderung sichtbar. Die Diagnose ist nicht vollständig, weil der
-strenge Generator beim ersten Fehler abbrechen kann. Andere Generatorfehler
+fehlender Anforderung sichtbar. Die Diagnose ist nicht vollständig, weil jede
+Sektion beim ersten Auflösungsfehler aufhören kann. Der Gesamtprozess muss dabei
+keinen Fehlerstatus zurückgeben. Protokollierte Fehler verhindern dennoch ein
+positives Ergebnis der strengen Diagnose. Andere Generatorfehler
 führen zu `passed=false` und einem Fehlerstatus des Helfers. Core-Dumps der
 Diagnose sind deaktiviert.
 
@@ -125,3 +129,9 @@ Bibliothekspfad ist noch kein Gerätetest dieser Namespaces.
 - [AOSP: strenge Auflösung der Anforderungen](https://android.googlesource.com/platform/system/linkerconfig/+/45d040fd8ba22330c0ca61d2b803bd4f6cea6b7b/modules/section.cc)
 - [AOSP: zusätzliche VNDK-Anforderung](https://android.googlesource.com/platform/system/linkerconfig/+/45d040fd8ba22330c0ca61d2b803bd4f6cea6b7b/contents/namespace/vndk.cc)
 - [AOSP: proto/print/systemprovide](https://android.googlesource.com/platform/build/soong/+/android-13.0.0_r75/scripts/conv_linker_config.py)
+
+## Ergebnis des ersten Nutzerlaufs
+
+Die normale Erzeugung ist bestätigt. Die strenge Auflösung hat trotz Exitcode 0
+fünf Fehler zu zwei Bibliotheken protokolliert. Weiter mit dem
+[Bau der nativen Provider und automatischer neuer Vorschau](LINKER_PROVIDERS.md).

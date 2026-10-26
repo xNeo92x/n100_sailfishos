@@ -320,3 +320,11 @@ und beide Linux-Host-Werkzeuge sind im [Buildbericht](../validation/linker-input
 bestätigt. Die Konfiguration selbst wurde dabei noch nicht erzeugt. Nächster
 Schritt ist die [isolierte HAL-Konfigurationsvorschau auf dem PC](LINKER_HOST_PREVIEW.md),
 mit separater strenger Diagnose und weiterhin ohne Telefoninstallation.
+
+## Host-Linker-Konfiguration erzeugt (26.10.2026)
+
+Der [Nutzerlauf](../validation/linker-host-preview-user-20261026.json) erzeugt die
+normale Konfiguration. `--strict` meldet fünf Fehler zu `libneuralnetworks.so` und
+`libdexfile.so`, obwohl der Prozess 0 zurückgibt. Die Logauswertung ist korrigiert;
+die strenge Prüfung gilt als fehlgeschlagen. Nächster Schritt ist der
+[Bau der nativen Provider samt automatischer neuer Vorschau](LINKER_PROVIDERS.md).

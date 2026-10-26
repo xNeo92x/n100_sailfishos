@@ -152,7 +152,27 @@ def run_tool(command, log, must_succeed=True):
     if must_succeed:
         require(result.returncode == 0, 'Host tool failed; see ' + str(log) + '\n' + text[-8000:])
     return {'command': [str(v) for v in command], 'exit': result.returncode,
-            'log': str(log), 'output': text[:65536]}
+            'log': str(log), 'output': text[:65536], 'output_truncated': len(text) > 65536}
+
+
+def error_lines(text):
+    """AOSP may log resolution errors and still return zero; inspect both channels."""
+    pattern = r'(?i)(?:^\S+\s+[EF]\s+\d\d-\d\d\b|\bERROR\b|\bFATAL\b|not found:|duplicate:|Failed to|Unable to|undefined var|^error:)'
+    return [line for line in text.splitlines() if re.search(pattern, line)]
+
+
+def strict_diagnostic(result):
+    diagnostic = dict(result)
+    missing = re.findall(r'not found: (\S+) is required by (\S+) in \[([^]]+)\]', result['output'])
+    errors = error_lines(result['output'])
+    require(not result.get('output_truncated'), 'Strict diagnostic output was truncated')
+    require(result['exit'] == 0 or missing, 'Strict generator failed for an unclassified reason; see logs/strict-generator.txt')
+    require(not any('not found:' not in line for line in errors), 'Strict generator logged an unclassified error; see logs/strict-generator.txt')
+    diagnostic['passed'] = result['exit'] == 0 and not missing and not errors
+    diagnostic['error_lines'] = errors
+    diagnostic['first_missing_requirements'] = [dict(library=a, namespace=b, section=c) for a, b, c in missing]
+    diagnostic['exhaustive_missing_inventory'] = False
+    return diagnostic
 
 
 def read_config(text):
@@ -209,7 +229,27 @@ def inspect_generated(folder, root):
             'host_path_leak': False, 'vndk_version': '30'}
 
 
-def generate(android, bundle_dir, input_report, output):
+def add_provider_inputs(report, provider_report, root, payloads, debugfs):
+    payloads.mkdir(parents=True, exist_ok=True)
+    providers = json.loads(provider_report.read_text())
+    expected = {'com.android.art': 'libdexfile.so', 'com.android.neuralnetworks': 'libneuralnetworks.so',
+                'com.android.i18n': 'libandroidicu.so', 'com.android.os.statsd': 'libstatssocket.so'}
+    require(providers.get('kind') == 'native-linker-provider-inputs' and providers.get('passed') is True and
+            set(providers.get('apexes', {})) == set(expected), 'Invalid or incomplete provider input report')
+    for name, library in expected.items():
+        entry = providers['apexes'][name]
+        require(library in entry['manifest']['provide_native_libs'], 'Provider native export missing: ' + library)
+        package = provider_report.parent / 'packages' / (name + '.apex')
+        report['apexes'][name] = stage_apex(package, entry['package'], entry['payload'], name, root, payloads, debugfs)
+        require(report['apexes'][name]['provide_native_libs'] == entry['manifest']['provide_native_libs'] and
+                report['apexes'][name]['require_native_libs'] == entry['manifest']['require_native_libs'],
+                'Provider native manifest differs from inspected input')
+    report['provider_inputs'] = providers
+    report['provider_report'] = inputs.file_info(provider_report)
+    report['scope'] = 'AArch64 HAL RPM with Runtime/VNDK and ART/NNAPI/ICU/StatsD provider metadata; no stock vendor/product metadata'
+
+
+def generate(android, bundle_dir, input_report, output, provider_report=None):
     require(not output.exists() and not output.is_symlink(), 'Output exists; choose a new preview directory')
     reviewed = json.loads((ROOT / 'validation/linker-inputs-user-20261026.json').read_text())
     checked_file(input_report, inputs.file_info(ROOT / 'validation/linker-inputs-user-20261026.json'))
@@ -250,21 +290,23 @@ def generate(android, bundle_dir, input_report, output):
         report['apexes']['com.android.vndk.v30'] = stage_apex(
             vndk, reviewed['vndk_apex'], reviewed['vndk_apex']['payload'],
             'com.android.vndk.v30', root, payloads, debugfs, reviewed['vndk_apex']['library_lists'])
+        if provider_report is not None:
+            add_provider_inputs(report, provider_report, root, payloads, debugfs)
         info_list = ET.Element('apex-info-list')
         for name, info in report['apexes'].items():
-            module = ('/system/apex/' if name == 'com.android.runtime' else '/system_ext/apex/') + name + '.apex'
+            module = ('/system_ext/apex/' if name == 'com.android.vndk.v30' else '/system/apex/') + name + '.apex'
             ET.SubElement(info_list, 'apex-info', moduleName=name, modulePath=module,
                           preinstalledModulePath=module, versionCode=str(info['version']), versionName='',
                           isFactory='true', isActive='true', lastUpdateMillis='0', provideSharedApexLibs='false')
         ET.ElementTree(info_list).write(root / 'apex/apex-info-list.xml', encoding='utf-8', xml_declaration=True)
-        # An explicit empty app-public list is appropriate only for this no-ART HAL preview.
+        # This native HAL model does not expose application-public library APIs.
         public = root / 'system/etc/public.libraries.txt'
         require(not public.exists() and not public.is_symlink(), 'Unexpected RPM public library list; review it first')
         public.write_text('')
         report['synthetic_inputs'] = {
-            'apex_info_list': 'host model for exactly two reviewed payloads; not an apexd activation record',
+            'apex_info_list': 'host model of the recorded payloads; not an apexd activation record',
             'empty_partitions': ['vendor', 'odm', 'product', 'system_ext'],
-            'public_library_list': 'empty no-ART application list; no stock list was substituted'}
+            'public_library_list': 'empty application-public list for native HAL preview; no stock list was substituted'}
         converter = tools['conv_linker_config']
         report['upstream_base'] = run_tool([converter, 'print', '--source', base], logs / 'upstream-system-config.txt')
         profile = ROOT / 'adaptation/linkerconfig/system.json'
@@ -272,10 +314,12 @@ def generate(android, bundle_dir, input_report, output):
         profile_base = output / 'hal-base.pb'
         commands = [run_tool([converter, 'proto', '--source', profile, '--output', profile_base], logs / 'proto.txt')]
         runtime_provides = set(report['apexes']['com.android.runtime']['provide_native_libs'])
+        apex_provides = set().union(*(set(a['provide_native_libs']) for a in report['apexes'].values()))
         libs = sorted(p.name for p in (root / 'system/lib64').iterdir()
                       if p.name.endswith('.so') and p.is_file() and not p.is_symlink()
-                      and p.name not in runtime_provides)
+                      and p.name not in apex_provides)
         report['runtime_providers_excluded_from_system_provides'] = sorted(runtime_provides)
+        report['apex_providers_excluded_from_system_provides'] = sorted(apex_provides)
         require(libs, 'No regular AArch64 system libraries')
         config_pb = root / 'system/etc/linker.config.pb'
         require(not config_pb.exists() and not config_pb.is_symlink(), 'RPM already has linker config; review before replacing')
@@ -292,17 +336,15 @@ def generate(android, bundle_dir, input_report, output):
         target = output / 'generated'; target.mkdir()
         command = [tools['linkerconfig'], '--root', root, '--vndk', '30', '--target', target]
         report['generator'] = run_tool(command, logs / 'generator.txt')
-        require(not re.search(r'\bERROR\b|Failed to|Unable to|undefined var|duplicate:', report['generator']['output']),
+        require(not report['generator'].get('output_truncated') and not error_lines(report['generator']['output']),
                 'Generator logged an input error; see logs/generator.txt')
         report['generated'] = inspect_generated(target, root)
         strict_target = output / 'strict-generated'; strict_target.mkdir()
         strict = run_tool([tools['linkerconfig'], '--strict', '--root', root, '--vndk', '30', '--target', strict_target],
                           logs / 'strict-generator.txt', must_succeed=False)
-        missing = re.findall(r'not found: (\S+) is required by (\S+) in \[([^]]+)\]', strict['output'])
-        require(strict['exit'] == 0 or missing, 'Strict generator failed for an unclassified reason; see logs/strict-generator.txt')
-        strict['passed'] = strict['exit'] == 0
-        strict['first_missing_requirements'] = [dict(library=a, namespace=b, section=c) for a, b, c in missing]
-        strict['exhaustive_missing_inventory'] = False
+        strict = strict_diagnostic(strict)
+        if strict['passed']:
+            strict['generated'] = inspect_generated(strict_target, root)
         report['strict_diagnostic'] = strict
         report['input_report'] = inputs.file_info(input_report)
         report['source_rpm'] = bundle['source_rpm']
@@ -334,9 +376,11 @@ def main():
     parser.add_argument('--hal-bundle', type=Path, required=True)
     parser.add_argument('--input-report', type=Path, required=True)
     parser.add_argument('--output-dir', type=Path, required=True)
+    parser.add_argument('--provider-report', type=Path)
     args = parser.parse_args()
     try:
-        report = generate(args.android_root.resolve(), args.hal_bundle.resolve(), args.input_report.resolve(), args.output_dir.absolute())
+        report = generate(args.android_root.resolve(), args.hal_bundle.resolve(), args.input_report.resolve(), args.output_dir.absolute(),
+                          args.provider_report.resolve() if args.provider_report else None)
         print('Host linker preview generated; strict_passed={}. No installation performed.'.format(report['strict_diagnostic']['passed']))
         print('Share ' + str(args.output_dir.absolute() / 'report.json'))
     except (OSError, ValueError, KeyError, subprocess.SubprocessError, tarfile.TarError, zipfile.BadZipFile) as exc:

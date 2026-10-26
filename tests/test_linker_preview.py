@@ -229,6 +229,20 @@ class LinkerPreviewTests(unittest.TestCase):
                 self.assertEqual(base.read_bytes(), b'original base')
                 self.assertFalse((product / 'system/etc/linker.config.pb').exists())
 
+    def test_strict_zero_exit_with_real_error_log_is_not_success(self):
+        raw = json.loads((ROOT / 'validation/linker-host-preview-report-user-20261026.json').read_text())
+        result = preview.strict_diagnostic(raw['strict_diagnostic'])
+        self.assertEqual(result['exit'], 0)
+        self.assertFalse(result['passed'])
+        self.assertEqual(len(result['error_lines']), 5)
+        self.assertEqual({x['library'] for x in result['first_missing_requirements']}, {'libdexfile.so', 'libneuralnetworks.so'})
+        for text in ('linkerconfig E 10-26 19:05:50 1 1 source.cc:60] unexpected error',
+                     'ERROR invalid input', 'Failed to parse metadata'):
+            with self.assertRaisesRegex(ValueError, 'unclassified'):
+                preview.strict_diagnostic({'exit': 0, 'output': text})
+        self.assertTrue(preview.strict_diagnostic({'exit': 0, 'output': ''})['passed'])
+        self.assertTrue(preview.error_lines('linkerconfig F 10-26 19:05:50 fatal'))
+
     def test_reviewed_upload_lists_and_immutable_input_pins(self):
         report = json.loads((ROOT / 'validation/linker-inputs-user-20261026.json').read_text())
         self.assertTrue(report['passed']); self.assertEqual(report['vndk_version'], '30')

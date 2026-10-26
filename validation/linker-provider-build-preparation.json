@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "strict log fix and native provider APEX build preparation",
+  "reason": "Five strict resolution LOG(ERROR) lines despite exit zero; missing libdexfile.so and libneuralnetworks.so.",
+  "user_evidence": "validation/linker-host-preview-user-20261026.json",
+  "targets": [
+    "com.android.art",
+    "com.android.neuralnetworks",
+    "com.android.i18n",
+    "com.android.os.statsd"
+  ],
+  "source_sha256_checks": {
+    "art-apex-bp": "e8144492b58eec61dfb097dbd3e5059b5dc5ffa8d07facf3c4fd6e545580596b",
+    "nn-apex-bp": "d07f4501cc3ea2f1f3510c926a7e11d7ebad34f0bb3cb47d7fae3d235b46b538",
+    "nn-runtime-bp": "78d568db65ec985af73093f103cc361c653b89320d33e10a1ea239228085a822",
+    "art-dex-bp": "a9653698d4205604f67f832dac2ae0a6f54dbb531f3c2533fcd2e237043ac00f",
+    "sectionbuilder": "fb588091de30ad94c00f231d238aebf8666194cc9f9b7f42dd293e3cda090fac",
+    "i18n-bp": "090dec509801246512f8b3ddcb4799a42d1c86a2ef97c93611f66eec2d155776",
+    "stats-bp": "c5eb7ba14b988b20c63c1d50dafe0911d9a7916c34f7c08a332a19f451a2df93"
+  },
+  "tests": {
+    "host_passed": 232,
+    "compat_passed": 16,
+    "new_tests": 4,
+    "regression_uses_actual_zero_exit_error_log": true,
+    "real_ext4_apex_and_capex_inspection": true,
+    "real_aarch64_compilation_executed_here": false,
+    "real_provider_generator_execution_here": false
+  },
+  "provider_build_completed": false,
+  "provider_namespace_generated": false,
+  "phone_modified": false,
+  "device_namespace_tested": false,
+  "ready_for_installation": false,
+  "full_os_boot_verified": false
+}

@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "user host linker preview reviewed with corrected strict result",
+  "raw_report": "validation/linker-host-preview-report-user-20261026.json",
+  "raw_report_sha256": "4b73c88e0eff8409d808c075169ebd667585cac4bb1f403687ff765227e41230",
+  "normal_generation_passed": true,
+  "normal_generator_exit": 0,
+  "generated_file_hashes_and_sizes_rechecked": true,
+  "hal_provider_inventory_matched_rpm": true,
+  "generated_sections": [
+    "isolated",
+    "postinstall",
+    "system",
+    "unrestricted",
+    "vendor"
+  ],
+  "reported_strict_passed": true,
+  "effective_strict_passed": false,
+  "strict_exit": 0,
+  "strict_error_count": 5,
+  "missing_libraries": [
+    "libdexfile.so",
+    "libneuralnetworks.so"
+  ],
+  "missing_requirements": [
+    {
+      "library": "libneuralnetworks.so",
+      "namespace": "sphal",
+      "section": "system"
+    },
+    {
+      "library": "libneuralnetworks.so",
+      "namespace": "default",
+      "section": "vendor"
+    },
+    {
+      "library": "libneuralnetworks.so",
+      "namespace": "sphal",
+      "section": "unrestricted"
+    },
+    {
+      "library": "libdexfile.so",
+      "namespace": "com_android_runtime",
+      "section": "isolated"
+    },
+    {
+      "library": "libdexfile.so",
+      "namespace": "default",
+      "section": "com.android.runtime"
+    }
+  ],
+  "correction": "Exit zero does not override linkerconfig LOG(ERROR) resolution failures.",
+  "namespace_preview_generated": true,
+  "device_namespace_tested": false,
+  "phone_modified": false,
+  "ready_for_installation": false,
+  "full_os_boot_verified": false
+}
