@@ -1,5 +1,14 @@
 # N100: Linker-Konfiguration mit dem neuen nativen RPM erzeugen
 
+## Ergebnis des neuen Nutzerlaufs
+
+Die [Vorschau](../validation/native-linker-preview-user-20261026.json) ist erzeugt.
+Alle 245 untersuchten HAL-ELFs sind ohne direkte DEX-/NNAPI-Abhängigkeit; alle
+drei flachen Dienst-Abhängigkeitsketten sind vollständig. Die strenge Diagnose
+meldet weiterhin drei fehlende NNAPI-Anforderungen. Weiter mit der ausdrücklich
+begrenzten [RAM-Probe der generierten Konfiguration](NAMESPACE_DEVICE_PROBE.md).
+Die folgenden Schritte dokumentieren den abgeschlossenen Host-Lauf.
+
 Die [neue Geräteprobe](../validation/native-runtime-device-user-20261026.json)
 ist erfolgreich: neues Runtime-Payload und alle fünf Kerndateien geprüft,
 alle 260 regulären HAL-Dateien verifiziert, Hilfe und Abhängigkeitslisten von

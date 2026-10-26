@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "native-runtime-device-dependencies-verified-native-namespace-preview-prepared",
+  "stage": "native-namespace-preview-generated-limited-device-probe-prepared",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -219,7 +219,7 @@
   "android_runtime_apex_installed": false,
   "runtime_blockers": [
     "New no-DEX Runtime and libc now passed the exact HAL RPM RAM dependency probe; generated linker configuration is still absent on device",
-    "Runtime no longer requires libdexfile.so; NNAPI and regular linker namespaces remain unverified on device",
+    "Runtime no longer requires libdexfile.so; native strict preview still has three NNAPI requirements; generated config system-service device probe is pending",
     "Persistent early mapping/mounts, full switch_root and peripherals remain unvalidated",
     "Native no-DEX Runtime/RPM and three service dependency lists are verified; service main functions and systemd have not been started"
   ],
@@ -253,13 +253,12 @@
   "linker_namespace_preview_prepared": true,
   "linker_namespace_preview_generated": true,
   "linker_namespace_device_tested": false,
-  "next_step": "Generate the explicit --native-rpm host linker preview and actual HAL DT_NEEDED inventory inside Ubuntu; share report.json",
+  "next_step": "Prepare and run the limited generated-config RAM dependency probe for three AArch64 system services without LD_LIBRARY_PATH; share namespace-result JSON",
   "linker_namespace_preview_documentation": "docs/LINKER_HOST_PREVIEW.md",
   "linker_namespace_preview_preparation_validation": "validation/linker-host-preview-preparation.json",
   "linker_namespace_preview_validation": "validation/linker-host-preview-user-20261026.json",
   "linker_namespace_strict_resolution_passed": false,
   "missing_linker_provider_libraries": [
-    "libdexfile.so",
     "libneuralnetworks.so"
   ],
   "linker_provider_build_prepared": false,
@@ -286,8 +285,14 @@
   "native_runtime_device_validation": "validation/native-runtime-device-user-20261026.json",
   "native_runtime_device_dependency_probe_passed": true,
   "native_linker_preview_prepared": true,
-  "native_linker_preview_generated": false,
+  "native_linker_preview_generated": true,
   "native_linker_preview_documentation": "docs/NATIVE_LINKER_PREVIEW.md",
-  "missing_linker_provider_libraries_scope": "Historical host preview before no-DEX Runtime; a fresh native profile preview is pending",
-  "native_linker_preview_preparation_validation": "validation/native-linker-preview-preparation.json"
+  "missing_linker_provider_libraries_scope": "Current native host strict preview: NNAPI required by sphal/system, default/vendor and sphal/unrestricted; no direct consumer in 245 selected HAL ELFs; vendor and dlopen uninspected",
+  "native_linker_preview_preparation_validation": "validation/native-linker-preview-preparation.json",
+  "native_linker_preview_validation": "validation/native-linker-preview-user-20261026.json",
+  "native_hal_elf_files_audited": 245,
+  "native_hal_service_flat_closures_complete": true,
+  "namespace_device_probe_prepared": true,
+  "namespace_device_probe_documentation": "docs/NAMESPACE_DEVICE_PROBE.md",
+  "namespace_device_probe_preparation_validation": "validation/namespace-device-probe-preparation.json"
 }

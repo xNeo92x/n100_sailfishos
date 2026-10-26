@@ -361,3 +361,13 @@ beide Hilfsaufrufe und die Abhängigkeitslisten aller drei Dienste mit Status 0.
 Cleanup erfolgreich. Die Warnung über die fehlende generierte Linker-Konfiguration
 bleibt. Weiter mit der [neuen nativen Namespace-Vorschau](NATIVE_LINKER_PREVIEW.md)
 einschließlich tatsächlicher ELF-Abhängigkeitsinventur. Kein Dienst-/systemd-Start.
+
+## Native Namespace-Vorschau erzeugt (26.10.2026)
+
+Der [neue Host-Bericht](../validation/native-linker-preview-user-20261026.json)
+enthält 245 reguläre HAL-ELFs und vollständige flache Abhängigkeitsketten für
+alle drei Basisdienste. DEX fehlt nicht mehr; NNAPI bleibt als strenger
+Generatorfehler in drei Sektionen offen. Keines der 245 ELFs nennt DEX oder
+NNAPI direkt in DT_NEEDED. Weiter mit dem begrenzten
+[Systemdienst-Test der unveränderten generierten Konfiguration](NAMESPACE_DEVICE_PROBE.md)
+ohne LD_LIBRARY_PATH. Noch kein Vendor-/systemd- oder vollständiger HAL-Start.

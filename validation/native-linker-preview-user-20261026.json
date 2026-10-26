@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "kind": "native-linker-host-preview-user",
+  "source_report": "validation/native-linker-preview-report-user-20261026.json",
+  "source_report_sha256": "ef75ded3e79478d00f0196c89e548c20f57ff5e73ea524b7337cbcac7fe62820",
+  "native_preview_generated": true,
+  "normal_generator_exit": 0,
+  "normal_generator_errors": [],
+  "strict_resolution_passed": false,
+  "strict_generator_exit": 0,
+  "strict_missing_requirements": [
+    {
+      "library": "libneuralnetworks.so",
+      "namespace": "sphal",
+      "section": "system"
+    },
+    {
+      "library": "libneuralnetworks.so",
+      "namespace": "default",
+      "section": "vendor"
+    },
+    {
+      "library": "libneuralnetworks.so",
+      "namespace": "sphal",
+      "section": "unrestricted"
+    }
+  ],
+  "hal_elf_files": 245,
+  "direct_consumers_of_missing_providers": {
+    "libdexfile.so": [],
+    "libneuralnetworks.so": []
+  },
+  "service_flat_closures_complete": true,
+  "system_provide_libraries": 221,
+  "generated_config_files": {
+    "apex.libraries.config.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "com.android.runtime/ld.config.txt": {
+      "bytes": 7820,
+      "sha256": "a1251cc9a3f0515501c61d2d95df7142fe113b2709897648515e9ee46450a13e"
+    },
+    "ld.config.txt": {
+      "bytes": 58537,
+      "sha256": "85786c0ce02700fc751d3f6fccab66b7a1fa83ec26ed65e958f40d5ca7e2bcc8"
+    }
+  },
+  "native_runtime_manifest": {
+    "name": "com.android.runtime",
+    "version": 1,
+    "provide_native_libs": [],
+    "require_native_libs": [
+      "liblog.so"
+    ]
+  },
+  "stock_vendor_included": false,
+  "dlopen_analyzed": false,
+  "device_namespace_tested": false,
+  "flashable_release": false
+}
