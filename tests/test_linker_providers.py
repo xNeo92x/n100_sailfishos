@@ -90,19 +90,20 @@ class LinkerProviderTests(unittest.TestCase):
             providers.normalize_package(capex, self.root / 'wrong.apex', name)
 
     def test_build_guard_and_failed_mka_stop_before_inspection(self):
-        actual = ROOT / 'tools/build-linker-providers.sh'
+        actual = ROOT / 'tools/build-native-runtime.sh'
         result = subprocess.run(['bash', str(actual)], env=dict(os.environ, MERSDKUBU=''), capture_output=True, text=True)
         self.assertNotEqual(result.returncode, 0); self.assertIn('Ubuntu', result.stderr)
         if not shutil.which('debugfs'): return
         repo = self.root / 'port'; (repo / 'tools').mkdir(parents=True); (repo / 'config').mkdir()
-        shutil.copyfile(actual, repo / 'tools/build-linker-providers.sh')
+        shutil.copyfile(actual, repo / 'tools/build-native-runtime.sh')
         (repo / 'config/port.env').write_text('')
         (repo / 'tools/n100.py').write_text('print("verified fixture")\n')
+        (repo / 'tools/prepare-native-unwind.py').write_text('print("prepared fixture")\n')
         android = self.root / 'android'; (android / 'build').mkdir(parents=True)
         (android / 'build/envsetup.sh').write_text('breakfast() { return 0; }\nmka() { echo build-failure >&2; return 37; }\n')
         work = self.root / 'work'
-        result = subprocess.run(['bash', str(repo / 'tools/build-linker-providers.sh')],
-            env=dict(os.environ, MERSDKUBU='1', ANDROID_ROOT=str(android), N100_LINKER_PROVIDER_WORK=str(work)), capture_output=True, text=True)
+        result = subprocess.run(['bash', str(repo / 'tools/build-native-runtime.sh')],
+            env=dict(os.environ, MERSDKUBU='1', ANDROID_ROOT=str(android), N100_NATIVE_RUNTIME_WORK=str(work)), capture_output=True, text=True)
         self.assertEqual(result.returncode, 37)
         self.assertIn('build-failure', (work / 'build.log').read_text())
         self.assertFalse((work / 'provider-inputs').exists())

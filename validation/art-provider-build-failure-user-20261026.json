@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "user full ART provider build failure",
+  "raw_log": "validation/art-provider-build-failure-user-20261026.log",
+  "raw_log_bytes": 464589,
+  "raw_log_sha256": "4140148bbbbcc42e2d54f13ad567964dc2fea6bec589da78e0e40eac2d5b186b",
+  "terminal_attachment_sha256": "03a7c8cd9e9c0b35e57de35cd628857c0b81bb2bf6e09620d6267e5e79c867df",
+  "failed_stage": "ART asm_defines.s, Android ARM64 and ARM apex31 variants",
+  "source": "art/runtime/thread-current-inl.h:37",
+  "error": "expected expression at __get_tls()[TLS_SLOT_ART_THREAD_SELF]",
+  "ninja_exit": 1,
+  "provider_build_completed": false,
+  "phone_modified": false,
+  "recovery": "Native Android no-DEX unwinding; no global TLS change and no full ART package target",
+  "recovery_documentation": "docs/NATIVE_RUNTIME.md"
+}

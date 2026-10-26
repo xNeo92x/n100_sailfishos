@@ -1,5 +1,10 @@
 # N100: fehlende native Linker-Provider bauen
 
+**Dieser Voll-ART-Bau ist nach dem TLS-Fehler gestoppt.** Aktueller nächster
+Schritt: [native Runtime ohne DEX-Unwinding](NATIVE_RUNTIME.md). Die folgende
+Schrittfolge dokumentiert den fehlgeschlagenen Ansatz und soll nicht erneut
+ausgeführt werden.
+
 Die erste [Host-Vorschau](../validation/linker-host-preview-user-20261026.json)
 hat eine reguläre Konfiguration mit fünf Sektionen erzeugt. Die Hashes und Größen
 der drei gespeicherten Ausgabedateien sind nachgerechnet. Der normale Generator

@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "native Android Runtime without DEX unwinding preparation",
+  "failure_evidence": "validation/art-provider-build-failure-user-20261026.json",
+  "source_changes": [
+    "system/unwinding/libunwindstack/Android.bp: libunwindstack target.android excludes DEX support",
+    "system/core/debuggerd/Android.bp: libdebuggerd target.android excludes libdexfile support/runtime dependency"
+  ],
+  "targets": [
+    "libunwindstack",
+    "crash_dump",
+    "libc_malloc_debug",
+    "com.android.runtime",
+    "hwservicemanager",
+    "logd",
+    "linkerconfig"
+  ],
+  "no_full_art_package_target": true,
+  "tls_header_modified": false,
+  "manifest_dependencies_manually_deleted": false,
+  "source_sha256_checks": {
+    "unwind-bp": "5784a767c7a1e14e027a176464a80634be69daf1ad55545dd169fca92f5819f8",
+    "crash-bp": "48f76505fa0ca846f97855fe6dcf3070e08509f3a266503cdd0f0bac2d0a0465",
+    "runtime-bp": "c56e8a27a9802dcb885b2c602a20253b10ffc11a025e6bdabc62f81c4df632a2",
+    "malloc-bp": "6e4dbdd286e7df63bbb59910b20f059c9897d058fac7627e92ecf7a99c95e4b5"
+  },
+  "exact_android13_source_context_smoke_test_passed": true,
+  "tests": {
+    "host_passed": 237,
+    "compat_passed": 16,
+    "new_tests": 5,
+    "native_apex_ext4_fixture": true,
+    "idempotence_unknown_edits_and_interrupted_update_tested": true,
+    "real_android_recompile_executed_here": false
+  },
+  "native_runtime_rebuilt": false,
+  "nnapi_requirement_resolved": false,
+  "rpm_rebuilt": false,
+  "phone_modified": false,
+  "device_tested": false,
+  "ready_for_installation": false
+}

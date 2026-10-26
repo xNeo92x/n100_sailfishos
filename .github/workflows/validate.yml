@@ -15,7 +15,7 @@ jobs:
       - name: Upstream fs_config Python 3 tests
         run: python3 -m unittest discover -s compat/fs_config_generator -p 'test_*.py' -v
       - name: Shell syntax
-        run: bash -n tools/build-hal.sh tools/build-packages.sh tools/build-linker-inputs.sh tools/build-linker-providers.sh tools/probe-android-mounts.sh tools/runtime-probe.sh.in tools/runtime-rpm-probe.sh.in adaptation/rpm/helpers/install-android-runtime.sh adaptation/droid-configs/kickstart/pack_package-droid-updater adaptation/initramfs/usb-configfs.sh adaptation/initramfs/early-debug.sh
+        run: bash -n tools/build-hal.sh tools/build-packages.sh tools/build-linker-inputs.sh tools/build-linker-providers.sh tools/build-native-runtime.sh tools/probe-android-mounts.sh tools/runtime-probe.sh.in tools/runtime-rpm-probe.sh.in adaptation/rpm/helpers/install-android-runtime.sh adaptation/droid-configs/kickstart/pack_package-droid-updater adaptation/initramfs/usb-configfs.sh adaptation/initramfs/early-debug.sh
       - name: Python syntax
         run: python3 -m py_compile tools/*.py
       - name: Whitespace

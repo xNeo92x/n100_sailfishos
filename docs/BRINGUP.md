@@ -328,3 +328,11 @@ normale Konfiguration. `--strict` meldet fünf Fehler zu `libneuralnetworks.so` 
 `libdexfile.so`, obwohl der Prozess 0 zurückgibt. Die Logauswertung ist korrigiert;
 die strenge Prüfung gilt als fehlgeschlagen. Nächster Schritt ist der
 [Bau der nativen Provider samt automatischer neuer Vorschau](LINKER_PROVIDERS.md).
+
+## ART/TLS-Buildblocker (26.10.2026)
+
+Der Voll-ART-Bau bricht für beide ARM-Varianten am direkten ART-TLS-Zugriff ab.
+Der [Logbericht](../validation/art-provider-build-failure-user-20261026.json) ist
+archiviert. Der nächste [native Runtime-Neubau](NATIVE_RUNTIME.md) entfernt die
+DEX-Unwind-Abhängigkeiten im Android-HAL-Build, ohne Bionic-TLS-Slots umzudefinieren.
+Dieser Neubau ist noch nicht als erfolgreich oder auf dem Gerät geprüft markiert.
