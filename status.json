@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "updated-hal-rpm-built-ram-device-probe-prepared",
+  "stage": "hal-rpm-dependencies-verified-linker-inputs-build-prepared",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -218,10 +218,9 @@
   "android_mount_probe_plan": "docs/ANDROID_MOUNT_PROBE.md",
   "android_runtime_apex_installed": false,
   "runtime_blockers": [
-    "Updated HAL service RPM build reported successful; exact RPM payload and on-device dependencies still need the prepared RAM probe",
-    "Runtime APEX and static linkerconfig execute in RAM view; permanent activation and generated linker configuration remain unimplemented",
-    "Stock Android-11 mappings must be integrated without obscuring built Android-13 HAL files",
-    "Full switch_root/systemd/HAL startup and device peripherals remain unvalidated"
+    "Exact updated HAL RPM files and all three AArch64 service dependency lists passed in temporary RAM view; no Android service main functions or systemd started",
+    "Regular generated linker namespaces and VNDK-30 support for stock vendor remain to be integrated; dedicated input build prepared",
+    "Persistent early mapping/mounts, full switch_root and peripherals remain unvalidated"
   ],
   "android_mount_probe_preparation_validation": "validation/android-mount-probe-preparation.json",
   "android_readonly_mapping_probe_passed": true,
@@ -242,5 +241,10 @@
   "runtime_service_rpm_attempt_validation": "validation/runtime-service-rpm-build-user-20261026.json",
   "runtime_service_rpm_build_validation": "validation/runtime-service-rpm-build-user-20261026.json",
   "runtime_rpm_device_probe_plan": "docs/HAL_RPM_DEVICE_PROBE.md",
-  "runtime_rpm_device_probe_preparation_validation": "validation/hal-rpm-device-probe-preparation.json"
+  "runtime_rpm_device_probe_preparation_validation": "validation/hal-rpm-device-probe-preparation.json",
+  "hal_service_dependency_probe_passed": true,
+  "runtime_rpm_payload_verified_on_device": true,
+  "runtime_rpm_device_validation": "validation/hal-rpm-device-user-20261026.json",
+  "linker_namespace_input_build_plan": "docs/LINKER_NAMESPACE_INPUTS.md",
+  "linker_namespace_input_preparation_validation": "validation/linker-inputs-build-preparation.json"
 }

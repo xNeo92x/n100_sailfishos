@@ -305,3 +305,10 @@ feature working merely because a matching package was installed.
 The explicit service build and corrected HAL RPM build are now reported successful.
 Use the [RAM device probe from the exact HAL RPM](HAL_RPM_DEVICE_PROBE.md) to check
 the packaged AArch64 dependencies. Full rootfs/systemd/HAL startup remains pending.
+
+## Packaged HAL dependencies verified on hardware
+
+The exact rebuilt HAL RPM passed its RAM device probe: 260 regular files,
+servicemanager/hwservicemanager/logd dependency exit status 0, and clean teardown.
+This used explicit library paths and did not start the service main functions.
+Continue with [VNDK-30 and host linker namespace inputs](LINKER_NAMESPACE_INPUTS.md).

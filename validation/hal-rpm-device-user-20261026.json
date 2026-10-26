@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "source": "validation/hal-rpm-device-report-user-20261026.json",
+  "source_sha256": "02c37595951c7bb1861f5016a9997b2bdbb536e09889a286d2d8cc40e2787d90",
+  "source_rpm": {
+    "name": "droid-hal-billie2",
+    "arch": "aarch64",
+    "version_release": "0.0.6-202610261749",
+    "bytes": 23086870,
+    "sha256": "9adc738afcff325c80eaa8d71e6a188c396bbc4bf75dd671ba2e4b9e47fbb040",
+    "path": "/home/eugen/n100-build/android/droid-local-repo/billie2/droid-hal-billie2-0.0.6-202610261749.aarch64.rpm"
+  },
+  "source_script_reproduced_from_repository": true,
+  "required_packaged_hashes_match_build_report": true,
+  "verified_regular_files": 260,
+  "unpacked_regular_bytes": 64438497,
+  "dependency_exit_status": {
+    "servicemanager": 0,
+    "hwservicemanager": 0,
+    "logd": 0
+  },
+  "runtime_and_static_linker_help_exit": 0,
+  "cleanup_failed": false,
+  "generated_linker_config_used": false,
+  "warning": "Generated /linkerconfig/ld.config.txt still unavailable; the tests used explicit LD_LIBRARY_PATH.",
+  "persistent_installation_performed": false,
+  "android_service_main_functions_started": false,
+  "full_os_boot_verified": false,
+  "next_step": "Build and inspect VNDK-30 APEX plus native host namespace-generator tools for the stock vendor ABI."
+}

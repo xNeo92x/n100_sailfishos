@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "VNDK-30 and native host linker generator build inputs",
+  "device_evidence": "validation/hal-rpm-device-user-20261026.json",
+  "vendor_version_evidence": "tests/fixtures/be2013-stock11-v2.json: ro.vndk.version=30 and ro.treble.enabled=true",
+  "build_targets": [
+    "com.android.vndk.v30",
+    "system_linker_config",
+    "HOST_OUT_EXECUTABLES/linkerconfig",
+    "HOST_OUT_EXECUTABLES/conv_linker_config"
+  ],
+  "host_inspection": [
+    "APEX protobuf name/version",
+    "ZIP CRC and ext4 payload hash",
+    "four actual VNDK-30 library lists extracted read-only with debugfs",
+    "one actual AArch64 shared-library header sample",
+    "Linux x86_64 linkerconfig and host tool --help protocols",
+    "base configuration protobuf and source project revisions"
+  ],
+  "tests": {
+    "host_passed": 221,
+    "compat_passed": 16,
+    "new_tests": 5,
+    "real_ext4_zip_debugfs_fixture": true,
+    "real_android_host_tool_compile_executed_here": false
+  },
+  "namespace_configuration_generated": false,
+  "rpm_rebuilt": false,
+  "phone_modified": false,
+  "full_os_boot_verified": false,
+  "primary_source_checks": {
+    "generator-variableloader.cc": {
+      "url": "https://android.googlesource.com/platform/system/linkerconfig/+/android-13.0.0_r75/generator/variableloader.cc",
+      "sha256": "51d456d5110c27efe467fc1a78e5776b935d384742bc7cc9f78cc5df93eee649"
+    },
+    "vndk-modules-bp": {
+      "url": "https://android.googlesource.com/platform/packages/modules/vndk/+/android-13.0.0_r75/apex/Android.bp",
+      "sha256": "3f875739fc46a87d447eeaee027f29b955610880144ac58984610e2ae57f70b8"
+    },
+    "main.cc": {
+      "url": "https://android.googlesource.com/platform/system/linkerconfig/+/android-13.0.0_r75/main.cc",
+      "sha256": "78cc9d8f12141ae6fdb4321a93699aba8dd1fe2271ef8f324c27fbb29c1d9a67"
+    }
+  }
+}

@@ -21,8 +21,9 @@ deren Cleanup sind am Gerät bestätigt. Auch der Android-Linker und die
 Abhängigkeitsauflösung von `servicemanager` funktionieren in einer temporären
 RAM-Ansicht; auch `linkerconfig --help` und Cleanup sind bestätigt. Die fehlenden
 Dienste `hwservicemanager` und `logd` sind inzwischen nachgebaut und strukturell
-geprüft. Auch der korrigierte HAL-RPM-Neubau ist bestätigt. Weiter mit dem
-[Gerätetest der aktualisierten RPM-Dateien im RAM](docs/HAL_RPM_DEVICE_PROBE.md).
+geprüft. Auch der korrigierte HAL-RPM-Neubau und die Bibliotheksauflösung aller drei
+Dienste aus diesem RPM sind am Gerät bestätigt; Cleanup erfolgreich. Weiter mit
+den [VNDK-30- und Linker-Konfigurationseingaben](docs/LINKER_NAMESPACE_INPUTS.md).
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,

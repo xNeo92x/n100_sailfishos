@@ -10,6 +10,18 @@ Sailfish-Rootfs nicht. `hwservicemanager`, `logd`, ihre RC-Dateien, die beiden
 Bibliothekslisten, statisches linkerconfig und Runtime-APEX müssen exakt mit
 dem zuvor gemeldeten Buildbericht übereinstimmen.
 
+## Ergebnis auf dem N100
+
+Der [Gerätebericht](../validation/hal-rpm-device-report-user-20261026.json)
+bestätigt 260 reguläre Dateien (64.438.497 Bytes) aus dem Haupt-RPM
+`droid-hal-billie2-0.0.6-202610261749.aarch64.rpm`. Beide Linker-Hilfsaufrufe
+und alle drei Abhängigkeitslisten beenden sich mit 0; Cleanup ist erfolgreich.
+Die Dienste wurden dadurch noch nicht gestartet. Die erzeugte Konfiguration
+unter `/linkerconfig/ld.config.txt` fehlt im Test weiterhin.
+
+Dieser Versuch ist abgeschlossen. Weiter mit dem
+[VNDK-/Namespace-Eingabebuild](LINKER_NAMESPACE_INPUTS.md).
+
 ## Vorbereitung und Grenzen
 
 Der Helfer sucht genau ein Hauptpaket `droid-hal-billie2-[0-9]*.aarch64.rpm` im
