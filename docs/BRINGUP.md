@@ -380,3 +380,14 @@ LD_LIBRARY_PATH und ohne Loader-Warnungen. Beide APEX-Loops und die Mounts
 wurden erfolgreich aufgeräumt. Weiter mit der
 [schreibgeschützten Stock-Vendor-Abhängigkeitsprobe](VENDOR_DEPENDENCY_PROBE.md)
 einschließlich Binder-/UID-Inventar. Kein Dienst-Hauptprozess oder systemd gestartet.
+
+## Vendor-Probe durch BusyBox-Optionen blockiert (26.10.2026)
+
+Der [erste Lauf](../validation/vendor-device-user-20261026.json) bestätigt
+read-only Stock-Vendor, Fingerprint, drei erfolgreiche Systemlisten und Cleanup 0.
+Die fünf Vendor-Dateien wurden wegen nicht unterstützter od-Optionen falsch
+als andere ABI übersprungen. Damit ist noch keine Vendor-Abhängigkeit geprüft.
+Die [V2-Probe](VENDOR_DEPENDENCY_PROBE.md) nutzt portable Oktalbytes und einen
+Reader-Selbsttest; Werkzeugfehler werden nicht mehr als andere ABI behandelt.
+Fehlende Binder-Geräteknoten und Property-Initialisierung sind vor einem späteren
+Dienststart zu klären. Es wurden keine Dienste gestartet.

@@ -62,6 +62,7 @@ def render(report, manifest):
 def bundle_manifest(report, manifest):
     bundle = ns.bundle_manifest(report, manifest)
     bundle.update(kind='temporary-stock-vendor-dependency-probe',
+                  probe_version=2,
                   source_namespace_device_report_sha256=REFERENCE_SHA, source_system_namespace_probe_passed=True,
                   script_sha256=sha(render(report, manifest).encode()), logical_vendor_snapshot=VENDOR_B,
                   scope='Selected regular AArch64 stock composer/allocator/audio/sensors service dependency lists; no daemon main')
@@ -110,6 +111,7 @@ def classify(log, report, manifest):
     lines = log.splitlines()
     markers = ['N100_VENDOR_PROFILE ' + REFERENCE_SHA,
                'N100_VENDOR_MODE generated-config-stock-vendor-no-ld-library-path',
+               'N100_VENDOR_PROBE_VERSION 2', 'N100_VENDOR_ELF_READER_READY',
                'N100_VENDOR_METADATA_SHA256 ' + META_SHA,
                'N100_VENDOR_FINGERPRINT_VERIFIED', 'N100_VENDOR_VIEW_READY', 'N100_VENDOR_PREFLIGHT_RECORDED',
                'N100_VENDOR_PROBE_RESULT exit=0 cleanup_failed=0']
@@ -141,14 +143,26 @@ def classify(log, report, manifest):
     if BANNER in normalized:
         core += '\n' + '\n'.join(line for line in normalized.splitlines() if line.startswith('N100_NAMESPACE_PROBE_RESULT '))
     base = ns.classify(core, report, manifest)
+    # A later vendor failure can set the overall exit to 1 after all system lists passed.
+    # Evaluate their markers and real cleanup independently, preserving the raw overall status.
+    result_lines = [line for line in lines if line.startswith('N100_VENDOR_PROBE_RESULT ')]
+    cleanup_ok = len(result_lines) == 1 and re.fullmatch(
+        r'N100_VENDOR_PROBE_RESULT exit=[0-9]{1,3} cleanup_failed=0', result_lines[0]) is not None
+    system_missing = [line for line in base['missing_or_duplicate_markers']
+                      if not line.startswith('N100_NAMESPACE_PROBE_RESULT ')]
+    system_unexpected = [line for line in base['unexpected_status_markers']
+                         if not line.startswith('N100_NAMESPACE_PROBE_RESULT ')]
+    system_passed = cleanup_ok and not system_missing and not system_unexpected and not base['loader_error_or_warning_lines']
     warnings = ns.classify(normalized, report, manifest)['loader_error_or_warning_lines']
-    passed = (base['generated_config_dependency_probe_passed'] and not missing and not malformed and
-              inventory_ok and all(code == 0 for code in exits.values()) and not warnings)
+    tool_errors = [line for line in lines if re.search(r'^(?:od:|dd:|N100_VENDOR_TOOL_ERROR )', line)]
+    passed = (system_passed and not missing and not malformed and inventory_ok and
+              all(code == 0 for code in exits.values()) and not warnings and not tool_errors)
     return {'selected_vendor_dependency_probe_passed': passed,
-            'system_service_dependency_probe_passed': base['generated_config_dependency_probe_passed'],
+            'system_service_dependency_probe_passed': system_passed,
             'selected_program_sha256': selected, 'vendor_dependency_exit_codes': exits, 'skipped_programs': skipped,
             'inventory_consistent': inventory_ok, 'missing_or_duplicate_markers': missing,
             'malformed_or_unexpected_markers': malformed, 'loader_error_or_warning_lines': warnings,
+            'elf_reader_tool_error_lines': tool_errors,
             'scope': 'Selected AArch64 vendor dependency lists only; 32-bit services, daemon main, NNAPI and full vendor compatibility unvalidated.'}
 
 

@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "system-namespaces-device-dependencies-verified-vendor-probe-prepared",
+  "stage": "vendor-probe-tooling-blocker-fixed-v2-prepared",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -218,7 +218,7 @@
   "android_mount_probe_plan": "docs/ANDROID_MOUNT_PROBE.md",
   "android_runtime_apex_installed": false,
   "runtime_blockers": [
-    "Generated linker configuration now passes all three AArch64 system-service dependency lists without LD_LIBRARY_PATH; selected stock vendor dependency probe remains pending",
+    "Three system-service dependency lists still pass with stock vendor mounted; V1 vendor selection was blocked by unsupported BusyBox od options, now fixed in a versioned V2 probe",
     "Runtime no longer requires libdexfile.so; strict host NNAPI requirements remain unresolved; limited system namespace device probe passed",
     "Persistent early mapping/mounts, full switch_root and peripherals remain unvalidated",
     "Native no-DEX Runtime/RPM and three service dependency lists are verified; service main functions and systemd have not been started"
@@ -253,7 +253,7 @@
   "linker_namespace_preview_prepared": true,
   "linker_namespace_preview_generated": true,
   "linker_namespace_device_tested": true,
-  "next_step": "Prepare and run the selected stock AArch64 vendor dependency probe with read-only vendor_b/odm in the tested RAM namespace view; share vendor-result JSON",
+  "next_step": "Prepare a new vendor-probe-v2-20261026 bundle from the unchanged namespace bundle and repeat the RAM probe; V1 failed only in the BusyBox od header reader and tested no vendor programs",
   "linker_namespace_preview_documentation": "docs/LINKER_HOST_PREVIEW.md",
   "linker_namespace_preview_preparation_validation": "validation/linker-host-preview-preparation.json",
   "linker_namespace_preview_validation": "validation/linker-host-preview-user-20261026.json",
@@ -299,7 +299,14 @@
   "namespace_device_probe_passed": true,
   "namespace_device_validation": "validation/namespace-device-user-20261026.json",
   "vendor_dependency_probe_prepared": true,
-  "vendor_dependency_probe_executed": false,
+  "vendor_dependency_probe_executed": true,
   "vendor_dependency_probe_documentation": "docs/VENDOR_DEPENDENCY_PROBE.md",
-  "vendor_dependency_probe_preparation_validation": "validation/vendor-dependency-probe-preparation.json"
+  "vendor_dependency_probe_preparation_validation": "validation/vendor-dependency-probe-v2-preparation.json",
+  "vendor_dependency_probe_validation": "validation/vendor-device-user-20261026.json",
+  "vendor_dependency_programs_executed": 0,
+  "vendor_dependency_probe_passed": false,
+  "vendor_dependency_probe_version": 2,
+  "vendor_dependency_probe_v2_executed": false,
+  "binder_device_nodes_observed_present": false,
+  "android_property_directory_observed_present": false
 }

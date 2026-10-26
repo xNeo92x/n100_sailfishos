@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "kind": "stock-vendor-dependency-device-probe-report",
+  "bundle": {
+    "schema": 1,
+    "kind": "temporary-stock-vendor-dependency-probe",
+    "source_preview_sha256": "ef75ded3e79478d00f0196c89e548c20f57ff5e73ea524b7337cbcac7fe62820",
+    "source_rpm": {
+      "name": "droid-hal-billie2",
+      "arch": "aarch64",
+      "version_release": "0.0.6-202610262022",
+      "bytes": 23065994,
+      "sha256": "b6714b06b16f38e25d0298e4efe4e39b63b1b92128678e49c00b49b7fd5a3bc6",
+      "path": "/home/eugen/n100-build/android/droid-local-repo/billie2/droid-hal-billie2-0.0.6-202610262022.aarch64.rpm"
+    },
+    "payload": {
+      "bytes": 8110080,
+      "sha256": "2077c05b09aa83f466336c9fc6a7340f16bf335c570f10b27ee1b57623c78da0"
+    },
+    "vndk_payload": {
+      "bytes": 114651136,
+      "sha256": "4a2f197f68f1f042b5dbff01768d060535bb1058696cf53ecd6a8e2bb736fd4d"
+    },
+    "hal_archive_bytes": 24106184,
+    "hal_archive_sha256": "44606fa539bf90a084d764ad0ab926c91393b4cfa1daac824efcda54f7a0a576",
+    "configuration_files": {
+      "apex.libraries.config.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "com.android.runtime/ld.config.txt": {
+        "bytes": 7820,
+        "sha256": "a1251cc9a3f0515501c61d2d95df7142fe113b2709897648515e9ee46450a13e"
+      },
+      "ld.config.txt": {
+        "bytes": 58537,
+        "sha256": "85786c0ce02700fc751d3f6fccab66b7a1fa83ec26ed65e958f40d5ca7e2bcc8"
+      }
+    },
+    "script_sha256": "7acbcbe673709c2ff0480e565f25d679ab8d4b2c1d0f4fe536e73f7f16fb9193",
+    "source_strict_diagnostic_passed": false,
+    "nnapi_requirement_resolved": false,
+    "device_tested": false,
+    "persistent_installation_performed": false,
+    "systemd_started": false,
+    "android_hal_started": false,
+    "flashable_release": false,
+    "source_namespace_device_report_sha256": "b32b453845a33ce80cac0ba3fe97e889de9ee1f52ee314b13e6e27058836be27",
+    "source_system_namespace_probe_passed": true,
+    "logical_vendor_snapshot": {
+      "name": "vendor_b",
+      "sectors": 1856272,
+      "physical_sector": 18888896,
+      "source_device": "8:10",
+      "metadata_bytes": 405504,
+      "metadata_sha256": "bb42777e434f73ae5e4a9871af64f792a61a832be3852adf7c3d2f8b7012dcc7"
+    },
+    "scope": "Selected regular AArch64 stock composer/allocator/audio/sensors service dependency lists; no daemon main"
+  },
+  "bundle_integrity_rechecked": true,
+  "device_probe_log": "N100_VENDOR_PROFILE b32b453845a33ce80cac0ba3fe97e889de9ee1f52ee314b13e6e27058836be27\nN100_VENDOR_MODE generated-config-stock-vendor-no-ld-library-path\nKernel: 4.19.325-perf+\nConnecting to 192.168.2.14:8081 (192.168.2.14:8081)\nsaving to '/tmp/n100-vendor-probe.kBfYGP/payload.img'\npayload.img           49% |***************                 | 3932k  0:00:01 ETA\npayload.img          100% |********************************| 7920k  0:00:00 ETA\n'/tmp/n100-vendor-probe.kBfYGP/payload.img' saved\nVerified payload SHA-256: 2077c05b09aa83f466336c9fc6a7340f16bf335c570f10b27ee1b57623c78da0\nVerified runtime core: bin/linker\nVerified runtime core: bin/linker64\nVerified runtime core: lib64/bionic/libc.so\nVerified runtime core: lib64/bionic/libdl.so\nVerified runtime core: lib64/bionic/libm.so\n=== Read-only VNDK-30 payload ===\nConnecting to 192.168.2.14:8081 (192.168.2.14:8081)\nsaving to '/tmp/n100-vendor-probe.kBfYGP/vndk.img'\nvndk.img               5% |*                               | 6544k  0:00:16 ETA\nvndk.img              24% |*******                         | 26.4M  0:00:06 ETA\nvndk.img              45% |**************                  | 49.3M  0:00:03 ETA\nvndk.img              63% |********************            | 69.5M  0:00:02 ETA\nvndk.img              82% |**************************      | 89.6M  0:00:01 ETA\nvndk.img             100% |********************************|  109M  0:00:00 ETA\n'/tmp/n100-vendor-probe.kBfYGP/vndk.img' saved\nVerified VNDK payload SHA-256: 4a2f197f68f1f042b5dbff01768d060535bb1058696cf53ecd6a8e2bb736fd4d\n=== Reviewed generated linker files ===\nConnecting to 192.168.2.14:8081 (192.168.2.14:8081)\nsaving to '/tmp/n100-vendor-probe.kBfYGP/config/apex.libraries.config.txt'\n'/tmp/n100-vendor-probe.kBfYGP/config/apex.libraries.config.txt' saved\nVerified linker config: apex.libraries.config.txt\nConnecting to 192.168.2.14:8081 (192.168.2.14:8081)\nsaving to '/tmp/n100-vendor-probe.kBfYGP/config/com.android.runtime/ld.config.txt'\nld.config.txt        100% |********************************|  7820  0:00:00 ETA\n'/tmp/n100-vendor-probe.kBfYGP/config/com.android.runtime/ld.config.txt' saved\nVerified linker config: com.android.runtime/ld.config.txt\nConnecting to 192.168.2.14:8081 (192.168.2.14:8081)\nsaving to '/tmp/n100-vendor-probe.kBfYGP/config/ld.config.txt'\nld.config.txt        100% |********************************| 58537  0:00:00 ETA\n'/tmp/n100-vendor-probe.kBfYGP/config/ld.config.txt' saved\nVerified linker config: ld.config.txt\n=== Download and verify updated HAL RPM files ===\nConnecting to 192.168.2.14:8081 (192.168.2.14:8081)\nsaving to '/tmp/n100-vendor-probe.kBfYGP/hal-system.tar.gz'\nhal-system.tar.gz     49% |***************                 | 11.2M  0:00:01 ETA\nhal-system.tar.gz    100% |********************************| 22.9M  0:00:00 ETA\n'/tmp/n100-vendor-probe.kBfYGP/hal-system.tar.gz' saved\nVerified every regular file in the selected HAL RPM system tree.\nN100_NAMESPACE_CONFIG_READY\n=== Stock vendor: verify live super snapshot before creating a read-only mapping ===\n792+0 records in\n792+0 records out\n405504 bytes (396.0KB) copied, 0.006081 seconds, 63.6MB/s\nN100_VENDOR_METADATA_SHA256 bb42777e434f73ae5e4a9871af64f792a61a832be3852adf7c3d2f8b7012dcc7\nN100_VENDOR_MAPPING_READONLY /dev/dm-0\nN100_VENDOR_FINGERPRINT_VERIFIED\nN100_VENDOR_VIEW_READY\n=== Binder, SELinux and Android UID preflight (read-only inventory) ===\nls: /dev/binder: No such file or directory\nls: /dev/hwbinder: No such file or directory\nls: /dev/vndbinder: No such file or directory\nls: /dev/binderfs: No such file or directory\nls: /dev/__properties__: No such file or directory\n--- /sys/module/binder/parameters/devices ---\nbinder,hwbinder,vndbinder\nroot:x:0:0:root:/root:/bin/bash\nsystem:x:1000:1000::/:/sbin/nologin\nradio:x:1001:1001::/:/sbin/nologin\ngraphics:x:1003:1003::/:/sbin/nologin\naudio:x:1005:1005::/:/sbin/nologin\ncamera:x:1006:1006::/:/sbin/nologin\nlog:x:1007:1007::/:/sbin/nologin\nmedia:x:1013:1013::/:/sbin/nologin\nshell:x:2000:2000::/:/sbin/nologin\naudio:x:1005:pulse\nsystem:x:1000:\nradio:x:1001:\ngraphics:x:1003:\ncamera:x:1006:\nlog:x:1007:\nmedia:x:1013:\nshell:x:2000:\nN100_VENDOR_PREFLIGHT_RECORDED\n=== Temporary mount view ===\noverlay /tmp/n100-vendor-probe.kBfYGP/root overlay rw,relatime,lowerdir=/data/.stowaways/sailfishos,upperdir=/tmp/n100-vendor-probe.kBfYGP/ram/upper,workdir=/tmp/n100-vendor-probe.kBfYGP/ram/overlay-work 0 0\ndevtmpfs /tmp/n100-vendor-probe.kBfYGP/root/dev devtmpfs rw,relatime,size=1749840k,nr_inodes=437460,mode=755 0 0\nproc /tmp/n100-vendor-probe.kBfYGP/root/proc proc rw,relatime 0 0\nsysfs /tmp/n100-vendor-probe.kBfYGP/root/sys sysfs rw,relatime 0 0\nrootfs /tmp/n100-vendor-probe.kBfYGP/root/system rootfs rw,size=1749840k,nr_inodes=437460 0 0\nrootfs /tmp/n100-vendor-probe.kBfYGP/root/usr/libexec/droid-hybris/system rootfs rw,size=1749840k,nr_inodes=437460 0 0\n/dev/loop0 /tmp/n100-vendor-probe.kBfYGP/root/apex/com.android.runtime ext4 ro,relatime,norecovery 0 0\n/dev/loop1 /tmp/n100-vendor-probe.kBfYGP/root/apex/com.android.vndk.v30 ext4 ro,relatime,norecovery 0 0\nrootfs /tmp/n100-vendor-probe.kBfYGP/root/linkerconfig rootfs rw,size=1749840k,nr_inodes=437460 0 0\n/dev/dm-0 /tmp/n100-vendor-probe.kBfYGP/root/vendor ext4 ro,relatime,norecovery 0 0\n/dev/dm-0 /tmp/n100-vendor-probe.kBfYGP/root/odm ext4 ro,relatime,norecovery 0 0\n=== Android linker64 --help ===\nUsage: /apex/com.android.runtime/bin/linker64 [--list] PROGRAM [ARGS-FOR-PROGRAM...]\n       /apex/com.android.runtime/bin/linker64 [--list] path.zip!/PROGRAM [ARGS-FOR-PROGRAM...]\n\nA helper program for linking dynamic executables. Typically, the kernel loads\nthis program because it's the PT_INTERP of a dynamic executable.\n\nThis program can also be run directly to load and run a dynamic executable. The\nexecutable can be inside a zip file if it's stored uncompressed and at a\npage-aligned offset.\n\nThe --list option gives behavior equivalent to ldd(1) on other systems.\nN100_LINKER_HELP_EXIT=0\n=== Static Android linkerconfig --help (direct execution) ===\nUsage : linkerconfig [--target <target_directory>] [--strict] [--help]\nN100_LINKERCONFIG_HELP_EXIT=0\n=== Dependency listing: /system/bin/servicemanager ===\n\tlinux-vdso.so.1 => [vdso] (0x7fa14f1000)\n\tlibbase.so => /system/lib64/libbase.so (0x7fa0040000)\n\tlibbinder.so => /system/lib64/libbinder.so (0x7f9cd44000)\n\tlibvintf.so => /system/lib64/libvintf.so (0x7f994a4000)\n\tlibcutils.so => /system/lib64/libcutils.so (0x7fa0091000)\n\tliblog.so => /system/lib64/liblog.so (0x7fa00c8000)\n\tlibutils.so => /system/lib64/libutils.so (0x7f991ce000)\n\tlibselinux.so => /system/lib64/libselinux.so (0x7f9944f000)\n\tlibc++.so => /system/lib64/libc++.so (0x7f990c8000)\n\tlibc.so => /system/lib64/libc.so (0x7f9c640000)\n\tlibm.so => /system/lib64/libm.so (0x7fa0182000)\n\tlibdl.so => /system/lib64/libdl.so (0x7fa0171000)\n\tlibhidl-gen-utils.so => /system/lib64/libhidl-gen-utils.so (0x7f995c7000)\n\tlibtinyxml2.so => /system/lib64/libtinyxml2.so (0x7fa0109000)\n\tlibz.so => /system/lib64/libz.so (0x7f9cd04000)\n\tlibvndksupport.so => /system/lib64/libvndksupport.so (0x7f9ccc3000)\n\tlibpcre2.so => /system/lib64/libpcre2.so (0x7f9904b000)\n\tlibpackagelistparser.so => /system/lib64/libpackagelistparser.so (0x7f9959f000)\n\tlibdl_android.so => /system/lib64/libdl_android.so (0x7f99016000)\nN100_NAMESPACE_DEPENDENCY_EXIT /system/bin/servicemanager 0\n=== Dependency listing: /system/bin/hwservicemanager ===\n\tlinux-vdso.so.1 => [vdso] (0x7f8098c000)\n\tandroid.hidl.token@1.0.so => /system/lib64/android.hidl.token@1.0.so (0x7f7e786000)\n\tlibcrypto.so => /system/lib64/libcrypto.so (0x7f7e605000)\n\tlibbase.so => /system/lib64/libbase.so (0x7f7ac00000)\n\tlibhidl-gen-utils.so => /system/lib64/libhidl-gen-utils.so (0x7f7aba1000)\n\tlibselinux.so => /system/lib64/libselinux.so (0x7f7cd9d000)\n\tlibutils.so => /system/lib64/libutils.so (0x7f7c645000)\n\tlibvintf.so => /system/lib64/libvintf.so (0x7f7ac94000)\n\tlibhidlbase.so => /system/lib64/libhidlbase.so (0x7f7eb16000)\n\tliblog.so => /system/lib64/liblog.so (0x7f7ea45000)\n\tlibcutils.so => /system/lib64/libcutils.so (0x7f7c688000)\n\tlibc++.so => /system/lib64/libc++.so (0x7f7aac2000)\n\tlibc.so => /system/lib64/libc.so (0x7f7c6e6000)\n\tlibm.so => /system/lib64/libm.so (0x7f7e7c6000)\n\tlibdl.so => /system/lib64/libdl.so (0x7f7cd5a000)\n\tlibpcre2.so => /system/lib64/libpcre2.so (0x7f7ad8a000)\n\tlibpackagelistparser.so => /system/lib64/libpackagelistparser.so (0x7f7cded000)\n\tlibvndksupport.so => /system/lib64/libvndksupport.so (0x7f7ac76000)\n\tlibtinyxml2.so => /system/lib64/libtinyxml2.so (0x7f7ea8f000)\n\tlibz.so => /system/lib64/libz.so (0x7f7abcd000)\n\tlibdl_android.so => /system/lib64/libdl_android.so (0x7f7eade000)\nN100_NAMESPACE_DEPENDENCY_EXIT /system/bin/hwservicemanager 0\n=== Dependency listing: /system/bin/logd ===\n\tlinux-vdso.so.1 => [vdso] (0x7fa6882000)\n\tlibbase.so => /system/lib64/libbase.so (0x7fa5083000)\n\tlibz.so => /system/lib64/libz.so (0x7fa5050000)\n\tlibbinder.so => /system/lib64/libbinder.so (0x7fa5103000)\n\tlibsysutils.so => /system/lib64/libsysutils.so (0x7fa540a000)\n\tlibcutils.so => /system/lib64/libcutils.so (0x7fa51da000)\n\tlibpackagelistparser.so => /system/lib64/libpackagelistparser.so (0x7fa52ba000)\n\tlibprocessgroup.so => /system/lib64/libprocessgroup.so (0x7fa5224000)\n\tlibcap.so => /system/lib64/libcap.so (0x7fa5499000)\n\tlibutils.so => /system/lib64/libutils.so (0x7fa50dc000)\n\tlibc++.so => /system/lib64/libc++.so (0x7fa5307000)\n\tlibc.so => /system/lib64/libc.so (0x7fa0a8e000)\n\tlibm.so => /system/lib64/libm.so (0x7fa1188000)\n\tlibdl.so => /system/lib64/libdl.so (0x7fa53db000)\n\tliblog.so => /system/lib64/liblog.so (0x7fa52db000)\n\tlibcgrouprc.so => /system/lib64/libcgrouprc.so (0x7fa11dc000)\n\tlibvndksupport.so => /system/lib64/libvndksupport.so (0x7fa5457000)\n\tlibdl_android.so => /system/lib64/libdl_android.so (0x7fa54d5000)\nN100_NAMESPACE_DEPENDENCY_EXIT /system/bin/logd 0\n=== Selected stock AArch64 vendor service dependency lists ===\nod: invalid option -- 'A'\nBusyBox v1.36.1 (2026-03-02 00:00:00 UTC) multi-call binary.\n\nUsage: od [-aBbcDdeFfHhIiLlOovXx] [FILE]\n\nPrint FILE (or stdin) unambiguously, as octal bytes by default\nN100_VENDOR_SKIPPED other-ABI-or-format /vendor/bin/hw/vendor.qti.hardware.display.composer-service\nod: invalid option -- 'A'\nBusyBox v1.36.1 (2026-03-02 00:00:00 UTC) multi-call binary.\n\nUsage: od [-aBbcDdeFfHhIiLlOovXx] [FILE]\n\nPrint FILE (or stdin) unambiguously, as octal bytes by default\nN100_VENDOR_SKIPPED other-ABI-or-format /vendor/bin/hw/vendor.qti.hardware.display.allocator-service\nod: invalid option -- 'A'\nBusyBox v1.36.1 (2026-03-02 00:00:00 UTC) multi-call binary.\n\nUsage: od [-aBbcDdeFfHhIiLlOovXx] [FILE]\n\nPrint FILE (or stdin) unambiguously, as octal bytes by default\nN100_VENDOR_SKIPPED other-ABI-or-format /vendor/bin/hw/android.hardware.audio.service\nod: invalid option -- 'A'\nBusyBox v1.36.1 (2026-03-02 00:00:00 UTC) multi-call binary.\n\nUsage: od [-aBbcDdeFfHhIiLlOovXx] [FILE]\n\nPrint FILE (or stdin) unambiguously, as octal bytes by default\nN100_VENDOR_SKIPPED other-ABI-or-format /vendor/bin/hw/android.hardware.sensors@2.0-service.multihal\nod: invalid option -- 'A'\nBusyBox v1.36.1 (2026-03-02 00:00:00 UTC) multi-call binary.\n\nUsage: od [-aBbcDdeFfHhIiLlOovXx] [FILE]\n\nPrint FILE (or stdin) unambiguously, as octal bytes by default\nN100_VENDOR_SKIPPED other-ABI-or-format /vendor/bin/hw/vendor.qti.hardware.sensorscalibrate@1.0-service\nN100_VENDOR_PROGRAM_COUNT 0\nSTOP: No selected regular AArch64 vendor service found\nN100_VENDOR_PROBE_RESULT exit=1 cleanup_failed=0\nRAM work directory: /tmp/n100-vendor-probe.kBfYGP\n",
+  "assessment": {
+    "selected_vendor_dependency_probe_passed": false,
+    "system_service_dependency_probe_passed": false,
+    "selected_program_sha256": {},
+    "vendor_dependency_exit_codes": {},
+    "skipped_programs": [
+      "N100_VENDOR_SKIPPED other-ABI-or-format /vendor/bin/hw/vendor.qti.hardware.display.composer-service",
+      "N100_VENDOR_SKIPPED other-ABI-or-format /vendor/bin/hw/vendor.qti.hardware.display.allocator-service",
+      "N100_VENDOR_SKIPPED other-ABI-or-format /vendor/bin/hw/android.hardware.audio.service",
+      "N100_VENDOR_SKIPPED other-ABI-or-format /vendor/bin/hw/android.hardware.sensors@2.0-service.multihal",
+      "N100_VENDOR_SKIPPED other-ABI-or-format /vendor/bin/hw/vendor.qti.hardware.sensorscalibrate@1.0-service"
+    ],
+    "inventory_consistent": false,
+    "missing_or_duplicate_markers": [
+      "N100_VENDOR_PROBE_RESULT exit=0 cleanup_failed=0"
+    ],
+    "malformed_or_unexpected_markers": [
+      "N100_VENDOR_PROBE_RESULT exit=1 cleanup_failed=0"
+    ],
+    "loader_error_or_warning_lines": [
+      "STOP: No selected regular AArch64 vendor service found"
+    ],
+    "scope": "Selected AArch64 vendor dependency lists only; 32-bit services, daemon main, NNAPI and full vendor compatibility unvalidated."
+  },
+  "nnapi_requirement_resolved": false,
+  "rootfs_boot_tested": false,
+  "android_services_started": false,
+  "flashable_release": false
+}

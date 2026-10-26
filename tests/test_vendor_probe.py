@@ -1,6 +1,9 @@
 import importlib.util
 import json
+import os
 from pathlib import Path
+import shutil
+import struct
 import subprocess
 import unittest
 from unittest.mock import patch
@@ -30,6 +33,7 @@ class VendorProbeTests(unittest.TestCase):
             'N100_VENDOR_MODE generated-config-stock-vendor-no-ld-library-path').replace(
             'N100_NAMESPACE_PROBE_RESULT exit=0 cleanup_failed=0\n', '')
         core += '\n'.join(['N100_VENDOR_METADATA_SHA256 ' + probe.META_SHA,
+                          'N100_VENDOR_PROBE_VERSION 2', 'N100_VENDOR_ELF_READER_READY',
                           'N100_VENDOR_MAPPING_READONLY /dev/dm-0', 'N100_VENDOR_FINGERPRINT_VERIFIED',
                           'N100_VENDOR_VIEW_READY', 'N100_VENDOR_PREFLIGHT_RECORDED', probe.BANNER,
                           'N100_VENDOR_SELECTED /vendor/bin/hw/composer-service ' + 'a'*64,
@@ -96,6 +100,73 @@ class VendorProbeTests(unittest.TestCase):
         for log in bad:
             with self.subTest(log=log):
                 self.assertFalse(probe.classify(log, self.report, self.manifest)['selected_vendor_dependency_probe_passed'])
+
+    def test_real_v1_failure_is_a_reader_error_not_system_or_vendor_incompatibility(self):
+        path = ROOT / 'validation/vendor-device-report-user-20261026.json'
+        old = json.loads(path.read_text()); report, manifest = probe.reference()
+        result = probe.classify(old['device_probe_log'], report, manifest)
+        self.assertTrue(result['system_service_dependency_probe_passed'])
+        self.assertFalse(result['selected_vendor_dependency_probe_passed'])
+        self.assertEqual(len(result['elf_reader_tool_error_lines']), 5)
+        self.assertEqual(result['vendor_dependency_exit_codes'], {})
+        self.assertIn('N100_VENDOR_PROBE_VERSION 2', result['missing_or_duplicate_markers'])
+
+    def reader(self, content, stub=None):
+        program = self.root / 'candidate'; program.write_bytes(content)
+        template = (ROOT / 'tools/vendor-dependency-probe.sh.in').read_text()
+        function = template.split('# N100_ELF_READER_BEGIN\n', 1)[1].split('# N100_ELF_READER_END', 1)[0]
+        script = 'set -eu\n' + function + '''
+work=$1
+if identity=$(read_elf_identity "$2"); then
+    printf '%s\\n' "$identity"
+else
+    echo READER_TOOL_ERROR >&2
+    exit 2
+fi
+'''
+        env = dict(os.environ)
+        if stub is not None:
+            folder = self.root / 'stub-bin'; folder.mkdir(exist_ok=True)
+            target = folder / 'od'; target.write_text('#!/bin/sh\n' + stub + '\n'); target.chmod(0o755)
+            env['PATH'] = str(folder) + ':' + env['PATH']
+        return subprocess.run(['sh', '-c', script, 'reader', str(self.root), str(program)],
+                              capture_output=True, text=True, env=env)
+
+    def test_portable_elf_reader_with_actual_od_and_restricted_busybox_option_surface(self):
+        data = bytearray(64); data[:7] = b'\x7fELF\x02\x01\x01'; struct.pack_into('<H', data, 18, 183)
+        tool = shutil.which('od'); self.assertIsNotNone(tool)
+        # Emulate the observed BusyBox feature surface: accept -b, reject -A/-t/-N/-j.
+        stub = '[ "$#" = 2 ] && [ "$1" = -b ] || exit 64\nexec "' + tool + '" "$@"'
+        result = self.reader(data, stub)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.strip(), '177105114106002001 267000')
+        for elf_class, machine in [(1, 40), (2, 62)]:
+            other = bytearray(data); other[4] = elf_class; struct.pack_into('<H', other, 18, machine)
+            result = self.reader(other, stub)
+            self.assertEqual(result.returncode, 0)
+            self.assertNotEqual(result.stdout.strip(), '177105114106002001 267000')
+        result = self.reader(b'short', stub)
+        self.assertEqual(result.returncode, 0); self.assertEqual(result.stdout.strip(), 'short-header')
+
+    def test_reader_tool_failures_or_malformed_output_are_never_treated_as_another_abi(self):
+        data = bytearray(20); data[:6] = b'\x7fELF\x02\x01'
+        for stub in ('echo "od: invalid option" >&2; exit 64',
+                     "printf '0000000 invalid\\n'", "printf '0000000 177 105\\n'"):
+            with self.subTest(stub=stub):
+                result = self.reader(data, stub)
+                self.assertEqual(result.returncode, 2)
+                self.assertIn('READER_TOOL_ERROR', result.stderr)
+                self.assertNotIn('short-header', result.stdout)
+
+    def test_reader_selftest_literal_is_exactly_an_aarch64_header(self):
+        template = (ROOT / 'tools/vendor-dependency-probe.sh.in').read_text()
+        line = next(line for line in template.splitlines() if line.startswith("printf '\\177ELF"))
+        # Run only the literal-producing printf with a temporary work directory.
+        subprocess.run(['sh', '-c', 'work=$1\n' + line, 'fixture', str(self.root)], check=True)
+        data = (self.root / 'elf-reader-selftest.bin').read_bytes()
+        self.assertEqual(len(data), 20)
+        self.assertEqual(data[:7], b'\x7fELF\x02\x01\x01')
+        self.assertEqual(struct.unpack_from('<H', data, 18)[0], 183)
 
 
 if __name__ == '__main__': unittest.main()

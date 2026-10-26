@@ -1,5 +1,28 @@
 # N100: Stock-Vendor-Abhängigkeiten im RAM prüfen
 
+## Korrektur nach dem ersten Nutzerlauf (V2)
+
+Der [erste Vendor-Lauf](../validation/vendor-device-user-20261026.json) hat die
+Stock-Partition erfolgreich read-only eingebunden und wieder aufgeräumt. Die
+System-Abhängigkeitslisten waren weiterhin erfolgreich. Es wurde jedoch kein
+Vendor-Programm geprüft: Das BusyBox-od der Initramfs unterstützt die verwendeten
+GNU-Optionen nicht. Die Meldung „other ABI/format“ war deshalb keine gültige
+ABI-Erkennung. Auch das rohe `system_service_dependency_probe_passed=false`
+war eine Fehlklassifikation des späteren Werkzeugfehlers; die Auswertung ist
+im zusammenfassenden Bericht korrigiert. Der ursprüngliche Bericht bleibt erhalten.
+
+V2 verwendet nur `dd`, `od -b`, `wc` und Shell-Bordmittel. Ein Selbsttest mit einem
+20-Byte-AArch64-Header läuft vor den Payload-Downloads/Mounts. Lesefehler und
+Formatfehler des Werkzeugs brechen ab und werden nicht als andere ABI behandelt.
+Die Version-2-Kennung und der erfolgreiche Reader-Selbsttest sind für ein positives
+neues Ergebnis erforderlich. Das vorhandene V1-Bundle bleibt erhalten; die
+folgenden Befehle verwenden ein neues V2-Verzeichnis. Ein Android-Neubau ist nicht nötig.
+
+Außerdem wurden fehlende `/dev/binder`, `/dev/hwbinder`, `/dev/vndbinder` und
+`/dev/__properties__` in der frühen Debug-Umgebung protokolliert. Die konfigurierten
+Binder-Gerätenamen und Android-System-UIDs sind vorhanden. Die Initialisierung
+bleibt Arbeit vor einem tatsächlichen Dienststart; dieser Test startet keine Dienste.
+
 Die [System-Namespace-Probe](../validation/namespace-device-user-20261026.json)
 ist auf dem N100 bestanden. Alle drei Basisdienste lösen ihre Bibliotheken mit
 der erzeugten Konfiguration und ohne LD_LIBRARY_PATH auf. Die frühere Warnung
@@ -47,9 +70,9 @@ source "$HOME/n100-build/build.env"
 git -C "$N100_PORT" pull --ff-only
 python3 "$N100_PORT/tools/prepare-vendor-probe.py" prepare \
   --namespace-bundle "$HOME/n100-build/namespace-probe-20261026" \
-  --output-dir "$HOME/n100-build/vendor-probe-20261026"
+  --output-dir "$HOME/n100-build/vendor-probe-v2-20261026"
 python3 -m http.server 8081 --bind 192.168.2.14 \
-  --directory "$HOME/n100-build/vendor-probe-20261026"
+  --directory "$HOME/n100-build/vendor-probe-v2-20261026"
 )
 ```
 
@@ -57,15 +80,15 @@ Das Terminal offen lassen. Ein Neubau ist nicht erforderlich. Der Helfer prüft
 die bisher erfolgreiche Geräteprobe, das genaue Quell-Bundle und alle Dateien
 vor und nach dem Kopieren. Vorhandene Ausgabe-Verzeichnisse werden abgelehnt.
 Der SHA-256 des neuen Skripts lautet
-`7acbcbe673709c2ff0480e565f25d679ab8d4b2c1d0f4fe536e73f7f16fb9193`.
+`1aff4719a18e0d6294aceb2d683fb505f5c4c1b0a2cbb267b7553ecfb8a37df6`.
 
 ## 2. Telefon: in der bestehenden Telnet-Shell auf Port 23
 
 ```sh
 mkdir -p /tmp/n100-super
-/bin/busybox wget -O /tmp/n100-vendor-probe.sh http://192.168.2.14:8081/vendor-probe.sh &&
-echo '7acbcbe673709c2ff0480e565f25d679ab8d4b2c1d0f4fe536e73f7f16fb9193  /tmp/n100-vendor-probe.sh' | sha256sum -c - &&
-/bin/sh /tmp/n100-vendor-probe.sh run 2>&1 | tee /tmp/n100-super/vendor-probe.txt
+/bin/busybox wget -O /tmp/n100-vendor-probe-v2.sh http://192.168.2.14:8081/vendor-probe.sh &&
+echo '1aff4719a18e0d6294aceb2d683fb505f5c4c1b0a2cbb267b7553ecfb8a37df6  /tmp/n100-vendor-probe-v2.sh' | sha256sum -c - &&
+/bin/sh /tmp/n100-vendor-probe-v2.sh run 2>&1 | tee /tmp/n100-super/vendor-probe-v2.txt
 ```
 
 Bis zur Rückkehr des Telefon-Prompts warten. Fehlende Bibliotheken und deren
@@ -81,11 +104,11 @@ liefert `/tmp/n100-super` aus:
 (
 set -e
 source "$HOME/n100-build/build.env"
-n100_capture="$HOME/n100-build/vendor-result-$(date -u +%Y%m%dT%H%M%SZ)"
+n100_capture="$HOME/n100-build/vendor-v2-result-$(date -u +%Y%m%dT%H%M%SZ)"
 curl --fail --max-time 30 --output "$n100_capture.txt" \
-  http://192.168.2.15:8080/vendor-probe.txt
+  http://192.168.2.15:8080/vendor-probe-v2.txt
 python3 "$N100_PORT/tools/prepare-vendor-probe.py" report \
-  --bundle-dir "$HOME/n100-build/vendor-probe-20261026" \
+  --bundle-dir "$HOME/n100-build/vendor-probe-v2-20261026" \
   --probe-log "$n100_capture.txt" --output "$n100_capture.json"
 )
 ```

@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "kind": "stock-vendor-dependency-probe-v2-preparation",
+  "source_preview_sha256": "ef75ded3e79478d00f0196c89e548c20f57ff5e73ea524b7337cbcac7fe62820",
+  "source_rpm": {
+    "name": "droid-hal-billie2",
+    "arch": "aarch64",
+    "version_release": "0.0.6-202610262022",
+    "bytes": 23065994,
+    "sha256": "b6714b06b16f38e25d0298e4efe4e39b63b1b92128678e49c00b49b7fd5a3bc6",
+    "path": "/home/eugen/n100-build/android/droid-local-repo/billie2/droid-hal-billie2-0.0.6-202610262022.aarch64.rpm"
+  },
+  "payload": {
+    "bytes": 8110080,
+    "sha256": "2077c05b09aa83f466336c9fc6a7340f16bf335c570f10b27ee1b57623c78da0"
+  },
+  "vndk_payload": {
+    "bytes": 114651136,
+    "sha256": "4a2f197f68f1f042b5dbff01768d060535bb1058696cf53ecd6a8e2bb736fd4d"
+  },
+  "hal_archive_bytes": 24106184,
+  "hal_archive_sha256": "44606fa539bf90a084d764ad0ab926c91393b4cfa1daac824efcda54f7a0a576",
+  "configuration_files": {
+    "apex.libraries.config.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "com.android.runtime/ld.config.txt": {
+      "bytes": 7820,
+      "sha256": "a1251cc9a3f0515501c61d2d95df7142fe113b2709897648515e9ee46450a13e"
+    },
+    "ld.config.txt": {
+      "bytes": 58537,
+      "sha256": "85786c0ce02700fc751d3f6fccab66b7a1fa83ec26ed65e958f40d5ca7e2bcc8"
+    }
+  },
+  "script_sha256": "1aff4719a18e0d6294aceb2d683fb505f5c4c1b0a2cbb267b7553ecfb8a37df6",
+  "source_strict_diagnostic_passed": false,
+  "nnapi_requirement_resolved": false,
+  "device_tested": false,
+  "persistent_installation_performed": false,
+  "systemd_started": false,
+  "android_hal_started": false,
+  "flashable_release": false,
+  "probe_version": 2,
+  "source_namespace_device_report_sha256": "b32b453845a33ce80cac0ba3fe97e889de9ee1f52ee314b13e6e27058836be27",
+  "source_system_namespace_probe_passed": true,
+  "logical_vendor_snapshot": {
+    "name": "vendor_b",
+    "sectors": 1856272,
+    "physical_sector": 18888896,
+    "source_device": "8:10",
+    "metadata_bytes": 405504,
+    "metadata_sha256": "bb42777e434f73ae5e4a9871af64f792a61a832be3852adf7c3d2f8b7012dcc7"
+  },
+  "scope": "Selected regular AArch64 stock composer/allocator/audio/sensors service dependency lists; no daemon main",
+  "implementation": "portable dd/od -b/wc and POSIX shell header parser; self-test before downloads or mounts",
+  "host_tests_passed": 259,
+  "fs_config_compat_tests_passed": 16,
+  "restricted_od_option_surface_tests_passed": true,
+  "tool_failure_and_malformed_output_tests_passed": true,
+  "v1_actual_report_regression_test_passed": true,
+  "shell_syntax_passed": true,
+  "python_syntax_passed": true,
+  "whitespace_check_passed": true,
+  "on_device_v2_executed": false,
+  "phone_modified": false
+}
