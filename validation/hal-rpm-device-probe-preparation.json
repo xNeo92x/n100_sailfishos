@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "temporary AArch64 dependency probe from exact local HAL RPM",
+  "rpm_build_confirmation": "validation/runtime-service-rpm-build-user-20261026.json",
+  "reference_build_pins": "validation/runtime-service-build-report-user-20261026.json",
+  "source_package_selection": "Exactly one main droid-hal-billie2 aarch64 RPM, or explicit --rpm; name/architecture checked with rpm -qp.",
+  "source_integrity": "RPM size/hash captured and hash rechecked after rpm2cpio; required packaged files match the reviewed build hashes.",
+  "cpio_handling": "Bounded newc/CRC parser, hardlinks expanded, no CPIO extraction into host paths; reject traversal, duplicate paths, symlink parents and special files.",
+  "runtime_payload_sha256": "52b434e4197f95bbc741b5657f1583186b40c2bc2b9448c6f978865c106974b9",
+  "tree_scope": "AArch64 HAL system tree; 32-bit lib subtree omitted from the temporary view.",
+  "device_plan": [
+    "Verify whole downloaded archives and every regular HAL file",
+    "Bind RPM-derived system tree at both Android HAL paths in RAM overlay",
+    "Use existing verified runtime APEX payload on readonly loop",
+    "Only linker help and dependency listing; no service main functions",
+    "Reverse own mounts/loop and remove large RAM files after successful cleanup"
+  ],
+  "host_tests_passed": 216,
+  "compat_tests_passed": 16,
+  "new_fixture_tests": 6,
+  "shell_and_python_syntax_passed": true,
+  "real_hal_rpm_unpacked_here": false,
+  "new_device_probe_executed": false,
+  "rpm_scripts_executed": false,
+  "persistent_installation_performed": false,
+  "full_os_boot_verified": false
+}

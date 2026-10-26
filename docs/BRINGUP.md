@@ -299,3 +299,9 @@ working Android modem. AppSupport is not bundled or promised by this port.
 
 Update `status.json` with log/build evidence for each milestone. Do not mark a
 feature working merely because a matching package was installed.
+
+## Updated HAL RPM: next device check
+
+The explicit service build and corrected HAL RPM build are now reported successful.
+Use the [RAM device probe from the exact HAL RPM](HAL_RPM_DEVICE_PROBE.md) to check
+the packaged AArch64 dependencies. Full rootfs/systemd/HAL startup remains pending.

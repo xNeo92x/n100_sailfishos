@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "source": "User-provided terminal output in conversation after linkerconfig copy fix",
+  "reported_output": "* Building rpm/droid-hal-billie2.spec\n* Building of droid-hal-billie2 finished successfully",
+  "runtime_service_rpm_rebuilt": true,
+  "rpm_bytes_independently_inspected": false,
+  "rpm_nevra_and_sha256": "To be collected from the exact main RPM by the next preparation helper",
+  "phone_modified_by_this_report": false,
+  "services_started": false,
+  "rootfs_rebuilt": false,
+  "full_os_boot_verified": false,
+  "next_step": "Prepare the exact main HAL RPM into a RAM-only AArch64 dependency probe bundle."
+}

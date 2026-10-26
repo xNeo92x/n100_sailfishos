@@ -134,3 +134,9 @@ Der neue Build und das neue RPM müssen auf dem Build-PC ausgeführt werden.
 Host-Tests mit ELF-/Dateisystem-Fixtures prüfen ABI-Fehler, fehlende Inputs,
 RC-Deklarationen, Schutz vor Symlinks, RPM-Dateilisten und Snapshot-Migration.
 Sie ersetzen weder den echten Android-Compiler noch RPM- oder Gerätetests.
+
+## HAL-RPM-Neubau bestätigt
+
+Der Nutzer meldet den HAL-RPM-Neubau nach der linkerconfig-Kopierkorrektur als
+erfolgreich; [Nachweis](../validation/runtime-service-rpm-build-user-20261026.json).
+Weiter mit dem [RAM-Gerätetest aus dem neuen RPM](HAL_RPM_DEVICE_PROBE.md).
