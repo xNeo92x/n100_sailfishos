@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "art-provider-tls-conflict-native-runtime-rebuild-prepared",
+  "stage": "native-runtime-no-dex-built-rpm-audit-prepared",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -218,10 +218,10 @@
   "android_mount_probe_plan": "docs/ANDROID_MOUNT_PROBE.md",
   "android_runtime_apex_installed": false,
   "runtime_blockers": [
-    "Exact updated HAL RPM files and all three AArch64 service dependency lists passed in temporary RAM view; no Android service main functions or systemd started",
-    "Host linker configuration generated; strict log contains unresolved libneuralnetworks.so and libdexfile.so despite exit zero. Native provider build prepared; no device namespace test yet.",
+    "Historical HAL RPM dependency probe passed; current no-DEX Runtime has a new libc hash and requires new RPM and device checks",
+    "Runtime no longer requires libdexfile.so; NNAPI and regular linker namespaces remain unverified on device",
     "Persistent early mapping/mounts, full switch_root and peripherals remain unvalidated",
-    "Full ART provider build failed at TLS_SLOT_ART_THREAD_SELF; native Android no-DEX diagnostic rebuild prepared, not yet executed on user PC"
+    "Full ART route stopped after TLS compile failure; native no-DEX Runtime build passed, latest payload not yet deployed"
   ],
   "android_mount_probe_preparation_validation": "validation/android-mount-probe-preparation.json",
   "android_readonly_mapping_probe_passed": true,
@@ -253,7 +253,7 @@
   "linker_namespace_preview_prepared": true,
   "linker_namespace_preview_generated": true,
   "linker_namespace_device_tested": false,
-  "next_step": "Run tools/build-native-runtime.sh in Ubuntu and review report.json; no full ART package or TLS slot restoration",
+  "next_step": "Rebuild the HAL RPM inside Platform SDK and run tools/prepare-native-runtime-rpm.py; share manifest.json before a new device probe",
   "linker_namespace_preview_documentation": "docs/LINKER_HOST_PREVIEW.md",
   "linker_namespace_preview_preparation_validation": "validation/linker-host-preview-preparation.json",
   "linker_namespace_preview_validation": "validation/linker-host-preview-user-20261026.json",
@@ -268,7 +268,16 @@
   "linker_provider_build_blocked": true,
   "art_provider_build_failure_validation": "validation/art-provider-build-failure-user-20261026.json",
   "native_runtime_no_dex_prepared": true,
-  "native_runtime_no_dex_built": false,
+  "native_runtime_no_dex_built": true,
   "native_runtime_no_dex_documentation": "docs/NATIVE_RUNTIME.md",
-  "native_runtime_no_dex_preparation_validation": "validation/native-runtime-build-preparation.json"
+  "native_runtime_no_dex_preparation_validation": "validation/native-runtime-build-preparation.json",
+  "native_runtime_no_dex_build_validation": "validation/native-runtime-build-user-20261026.json",
+  "native_runtime_rpm_rebuilt": false,
+  "native_runtime_device_tested": false,
+  "native_runtime_rpm_audit_prepared": true,
+  "native_runtime_changed_checked_core_files": [
+    "lib64/bionic/libc.so"
+  ],
+  "native_runtime_rpm_documentation": "docs/NATIVE_RUNTIME_RPM.md",
+  "native_runtime_rpm_preparation_validation": "validation/native-runtime-rpm-preparation.json"
 }

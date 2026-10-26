@@ -23,11 +23,11 @@ RAM-Ansicht; auch `linkerconfig --help` und Cleanup sind bestätigt. Die fehlend
 Dienste `hwservicemanager` und `logd` sind inzwischen nachgebaut und strukturell
 geprüft. Auch der korrigierte HAL-RPM-Neubau und die Bibliotheksauflösung aller drei
 Dienste aus diesem RPM sind am Gerät bestätigt; Cleanup erfolgreich. Weiter mit
-dem [nativen Runtime-Neubau ohne DEX-Unwinding](docs/NATIVE_RUNTIME.md).
-Die Host-Konfiguration ist inzwischen erzeugt. Die strenge Diagnose meldet noch
-`libneuralnetworks.so` und `libdexfile.so`; eine Geräteprüfung der Namespaces steht aus.
-Der Voll-ART-Providerbau scheitert an der Hybris-TLS-Anpassung. Für die native
-Runtime ist deshalb ein Neubau ohne DEX-Diagnoseabhängigkeit vorbereitet.
+der [Paketprüfung der neuen nativen Runtime](docs/NATIVE_RUNTIME_RPM.md).
+Die Host-Konfiguration ist erzeugt. Der native Runtime-Neubau ohne DEX-Unwinding
+ist geprüft und benötigt kein `libdexfile.so` mehr. Da libc einen neuen Hash hat,
+stehen neue RPM-/Geräteprüfungen aus. NNAPI, reguläre Namespaces und der
+vollständige Start bleiben offen.
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,

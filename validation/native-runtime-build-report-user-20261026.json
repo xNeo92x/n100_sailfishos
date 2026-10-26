@@ -1,0 +1,204 @@
+{
+  "schema": 1,
+  "kind": "native-runtime-no-dex-build",
+  "passed": true,
+  "apex": {
+    "path": "/home/eugen/n100-build/android/out/target/product/billie2/system/apex/com.android.runtime.apex",
+    "bytes": 8175616,
+    "sha256": "b751f946c52d60d63a7009f627406366eb0372b9c36514f1c1eb543a056f2456"
+  },
+  "payload": {
+    "bytes": 8110080,
+    "sha256": "2077c05b09aa83f466336c9fc6a7340f16bf335c570f10b27ee1b57623c78da0"
+  },
+  "manifest": {
+    "name": "com.android.runtime",
+    "version": 1,
+    "provide_native_libs": [],
+    "require_native_libs": [
+      "liblog.so"
+    ]
+  },
+  "metadata": {
+    "apex_manifest.pb": {
+      "bytes": 34,
+      "sha256": "1268d1aa2a7b1f8f0d7b6874d8e45b3554d127b955e607c14ae6afcba8690ba2"
+    },
+    "etc/linker.config.pb": {
+      "bytes": 2,
+      "sha256": "27c24fcb8474773e2af799d0848495ff053272d33c432dc26277993df45c9276"
+    }
+  },
+  "core_files": {
+    "bin/linker": {
+      "bytes": 1311204,
+      "sha256": "b4cc0d3534db2a18ec0828f394657a0aad773137c0127c3ebbe142a65ef16ae2",
+      "elf_class": 1,
+      "elf_machine": 40,
+      "matches_flattened_reference": true,
+      "flattened_reference_bytes": 1311204,
+      "flattened_reference_sha256": "b4cc0d3534db2a18ec0828f394657a0aad773137c0127c3ebbe142a65ef16ae2"
+    },
+    "bin/linker64": {
+      "bytes": 1790304,
+      "sha256": "7edbd7684bba7a53fc5d666ed23fe3f7927adc11ca060d4b079e7f73918f56cc",
+      "elf_class": 2,
+      "elf_machine": 183,
+      "matches_flattened_reference": true,
+      "flattened_reference_bytes": 1790304,
+      "flattened_reference_sha256": "7edbd7684bba7a53fc5d666ed23fe3f7927adc11ca060d4b079e7f73918f56cc"
+    },
+    "lib64/bionic/libc.so": {
+      "bytes": 1020008,
+      "sha256": "65aa28664008ff41d455708a9c63e9c620184d0370e5cba7a982f18f9897a722",
+      "elf_class": 2,
+      "elf_machine": 183,
+      "matches_flattened_reference": false,
+      "flattened_reference_bytes": 1020008,
+      "flattened_reference_sha256": "d109ef03d686bd6b549a602f9ed5d774af2fdccc312f178d2f42b188787a6d3a"
+    },
+    "lib64/bionic/libdl.so": {
+      "bytes": 13728,
+      "sha256": "316c59f9624362bd59f1fb2be6c15bfd32e8d5f47aac3356075811c4bf667e03",
+      "elf_class": 2,
+      "elf_machine": 183,
+      "matches_flattened_reference": true,
+      "flattened_reference_bytes": 13728,
+      "flattened_reference_sha256": "316c59f9624362bd59f1fb2be6c15bfd32e8d5f47aac3356075811c4bf667e03"
+    },
+    "lib64/bionic/libm.so": {
+      "bytes": 225176,
+      "sha256": "d5348e97648de62112f1625a70e87a93771ba641d1ee0c3f61f47e0858dec1e8",
+      "elf_class": 2,
+      "elf_machine": 183,
+      "matches_flattened_reference": true,
+      "flattened_reference_bytes": 225176,
+      "flattened_reference_sha256": "d5348e97648de62112f1625a70e87a93771ba641d1ee0c3f61f47e0858dec1e8"
+    }
+  },
+  "previously_tested_core_hashes_unchanged": false,
+  "source_revisions": {
+    "bionic": "7e5f1da67e33e126c147859fca80f85a3e814f3b",
+    "system/core": "dc5500b011bc10d7c54ede37fdd06248a4e100c4",
+    "system/unwinding": "ccff6ed95a00daf470bf14ef7461499685042361"
+  },
+  "source_adaptation": {
+    "schema": 1,
+    "kind": "native-android-no-dex-unwind",
+    "passed": true,
+    "protected_tls_header": {
+      "path": "/home/eugen/n100-build/android/bionic/libc/platform/bionic/tls_defines.h",
+      "bytes": 5058,
+      "sha256": "d2bece3aa03ea066ac18c0157925d8e1b6f927d3252bf98e2975049180f1b972"
+    },
+    "tls_header_modified": false,
+    "edits": [
+      {
+        "source": "system/unwinding/libunwindstack/Android.bp",
+        "state": "applied",
+        "before": {
+          "path": "/home/eugen/n100-build/android/system/unwinding/libunwindstack/Android.bp",
+          "bytes": 16246,
+          "sha256": "5784a767c7a1e14e027a176464a80634be69daf1ad55545dd169fca92f5819f8"
+        },
+        "after": {
+          "path": "/home/eugen/n100-build/android/system/unwinding/libunwindstack/Android.bp",
+          "bytes": 16525,
+          "sha256": "5b0ce8a61a4fcbab320cd9a352233aa9ff32cbe7e47a61f617e2877c0cb0a0d5"
+        }
+      },
+      {
+        "source": "system/core/debuggerd/Android.bp",
+        "state": "applied",
+        "before": {
+          "path": "/home/eugen/n100-build/android/system/core/debuggerd/Android.bp",
+          "bytes": 11011,
+          "sha256": "48f76505fa0ca846f97855fe6dcf3070e08509f3a266503cdd0f0bac2d0a0465"
+        },
+        "after": {
+          "path": "/home/eugen/n100-build/android/system/core/debuggerd/Android.bp",
+          "bytes": 11211,
+          "sha256": "fe359b5e72a8c3bac40f463d4621a230e7ed95b77911c3c88e4d0ac4595b8e91"
+        }
+      }
+    ],
+    "art_tls_slot_definitions": [
+      "#define TLS_SLOT_ART_THREAD_SELF",
+      "#define TLS_SLOT_ART_THREAD_SELF"
+    ],
+    "scope": "Android variants only; retain native unwinding, disable DEX symbolization/runtime libdexfile dependency",
+    "runtime_apex_built": false,
+    "phone_modified": false
+  },
+  "dex_unwinding_disabled": true,
+  "native_unwinding_retained": true,
+  "art_package_requested": false,
+  "nnapi_requirement_resolved": false,
+  "rpm_rebuilt": false,
+  "old_probe_bundles_automatically_updated": false,
+  "device_tested": false,
+  "phone_modified": false,
+  "ready_for_installation": false,
+  "full_os_boot_verified": false,
+  "hal_build_outputs": {
+    "schema": 1,
+    "kind": "hal-runtime-build-outputs",
+    "product": "/home/eugen/n100-build/android/out/target/product/billie2",
+    "files": {
+      "system/bin/hwservicemanager": {
+        "bytes": 102552,
+        "sha256": "f725315ef68027a5f32058fafda1d3d357c0eac2c718f5b9bff8923daabe2ba9",
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": "/system/bin/linker64",
+        "static_executable": false
+      },
+      "system/bin/logd": {
+        "bytes": 720816,
+        "sha256": "1e522e90d85b7f55934410f55d7b8f4f42061e6dc07a4a4abc0bcda8e76b4f0c",
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": "/system/bin/linker64",
+        "static_executable": false
+      },
+      "system/etc/init/hwservicemanager.rc": {
+        "bytes": 416,
+        "sha256": "e74c6f117deacdf0d59e799eb807311775a2ee888a2f9208e210f6bcf2de73f8"
+      },
+      "system/etc/init/logd.rc": {
+        "bytes": 903,
+        "sha256": "42d49cb06c2f6fd317a4d145e4c260d095a35d9258c1cf93a72cd5b9695a7078"
+      },
+      "system/apex/com.android.runtime.apex": {
+        "bytes": 8175616,
+        "sha256": "b751f946c52d60d63a7009f627406366eb0372b9c36514f1c1eb543a056f2456"
+      },
+      "apex/com.android.runtime/bin/linkerconfig": {
+        "bytes": 1369280,
+        "sha256": "4279b3d345d3dfc92b9f955533ce94135f1daceed3700d34764cfc07fdf285d6",
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 2,
+        "elf_interpreter": null,
+        "static_executable": true
+      },
+      "system/etc/sanitizer.libraries.txt": {
+        "bytes": 198,
+        "sha256": "87dbfd9e9a1fb0a9c78176532d4fbea28558932593c9b54bf61ef7bf70b67d11"
+      },
+      "system/etc/vndkcorevariant.libraries.txt": {
+        "bytes": 1,
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      }
+    },
+    "errors": [],
+    "passed": true,
+    "system_linker_config_pb_present": false,
+    "scope": "Build output ABI/layout only; dependency closure, signatures and device runtime unvalidated.",
+    "phone_modified": false,
+    "rpm_rebuilt": false,
+    "full_os_boot_verified": false
+  }
+}

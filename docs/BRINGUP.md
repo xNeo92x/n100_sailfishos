@@ -336,3 +336,11 @@ Der [Logbericht](../validation/art-provider-build-failure-user-20261026.json) is
 archiviert. Der nächste [native Runtime-Neubau](NATIVE_RUNTIME.md) entfernt die
 DEX-Unwind-Abhängigkeiten im Android-HAL-Build, ohne Bionic-TLS-Slots umzudefinieren.
 Dieser Neubau ist noch nicht als erfolgreich oder auf dem Gerät geprüft markiert.
+
+## Native Runtime ohne DEX gebaut (26.10.2026)
+
+Der [Nutzerbericht](../validation/native-runtime-build-user-20261026.json) bestätigt
+die neue Runtime ohne DEX-Anforderung. Die TLS-Header wurden nicht verändert;
+die neue libc benötigt dennoch eine neue Geräteprüfung. Der nächste Schritt ist
+der [HAL-RPM-Neubau mit Inhaltsprüfung](NATIVE_RUNTIME_RPM.md). NNAPI und der
+vollständige Systemstart bleiben unbestätigt.

@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "reviewed user native no-DEX Runtime build",
+  "raw_report": "validation/native-runtime-build-report-user-20261026.json",
+  "raw_report_sha256": "5928822aed5a521f58777c0bacfda31f34f6797849fbac6baa6c0eee093f929b",
+  "native_runtime_built": true,
+  "runtime_dex_requirement_removed": true,
+  "runtime_native_requirements": [
+    "liblog.so"
+  ],
+  "apex": {
+    "path": "/home/eugen/n100-build/android/out/target/product/billie2/system/apex/com.android.runtime.apex",
+    "bytes": 8175616,
+    "sha256": "b751f946c52d60d63a7009f627406366eb0372b9c36514f1c1eb543a056f2456"
+  },
+  "payload": {
+    "bytes": 8110080,
+    "sha256": "2077c05b09aa83f466336c9fc6a7340f16bf335c570f10b27ee1b57623c78da0"
+  },
+  "changed_checked_core_files": [
+    "lib64/bionic/libc.so"
+  ],
+  "checked_linkers_libdl_libm_unchanged": true,
+  "hwservicemanager_logd_static_linkerconfig_unchanged": true,
+  "tls_header_unchanged_during_adaptation_and_checked_after_build": true,
+  "rpm_rebuilt": false,
+  "current_payload_device_tested": false,
+  "phone_modified": false,
+  "nnapi_requirement_resolved": false,
+  "ready_for_installation": false
+}

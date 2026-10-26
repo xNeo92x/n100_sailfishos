@@ -105,8 +105,10 @@ def expected_files():
     return expected
 
 
-def write_hal_archive(records, output):
-    for name, pin in expected_files().items():
+def write_hal_archive(records, output, expected=None):
+    if expected is None:
+        expected = expected_files()
+    for name, pin in expected.items():
         record = records.get(name)
         require(record is not None and stat.S_ISREG(record['mode']), 'Missing packaged regular file: ' + name)
         require((len(record['data']), sha(record['data'])) == (pin['bytes'], pin['sha256']), 'Packaged file differs from reviewed build: ' + name)

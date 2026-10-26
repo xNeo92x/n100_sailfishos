@@ -91,3 +91,10 @@ Stock-Vendor-/ODM-Einbindung, vollständiger Systemstart und Hardwaretests bleib
 - [AOSP Android 13: libdebuggerd und Recovery-Ausschlüsse](https://android.googlesource.com/platform/system/core/+/android-13.0.0_r75/debuggerd/Android.bp)
 - [AOSP Android 13: Runtime-APEX](https://android.googlesource.com/platform/bionic/+/android-13.0.0_r75/apex/Android.bp)
 - [Hybris-Grundprinzip: angepasste Android-TLS-Zugriffe](https://github.com/libhybris/libhybris/blob/master/README.md)
+
+## Ergebnis des Nutzerbuilds
+
+Der [Buildbericht](../validation/native-runtime-build-user-20261026.json) bestätigt
+die Entfernung von `libdexfile.so` aus den Runtime-Anforderungen. Vier der fünf
+geprüften Kerndateien sind unverändert; libc hat einen neuen Hash. Weiter mit
+dem [HAL-RPM-Neubau und der Paketprüfung](NATIVE_RUNTIME_RPM.md).

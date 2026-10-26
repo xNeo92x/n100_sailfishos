@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "native no-DEX HAL RPM content audit preparation",
+  "reviewed_source": "validation/native-runtime-build-report-user-20261026.json",
+  "checks": [
+    "RPM identity and AArch64 architecture",
+    "bounded CPIO and safe archive paths",
+    "new exact Runtime APEX and payload hashes",
+    "reviewed native service files and init declarations",
+    "flat lib64 libc/libdl/libm match the new payload core references"
+  ],
+  "tests": {
+    "host_passed": 241,
+    "compat_passed": 16,
+    "new_tests": 4,
+    "stale_apex_and_flat_libc_refused": true,
+    "old_probe_pin_defaults_unchanged": true,
+    "real_user_rpm_built_or_inspected_here": false
+  },
+  "rpm_rebuilt": false,
+  "device_script_generated": false,
+  "device_tested": false,
+  "nnapi_requirement_resolved": false,
+  "phone_modified": false,
+  "ready_for_installation": false
+}
