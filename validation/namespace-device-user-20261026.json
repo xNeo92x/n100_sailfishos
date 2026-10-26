@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "kind": "generated-system-namespace-device-probe-user",
+  "source_report": "validation/namespace-device-report-user-20261026.json",
+  "source_report_sha256": "b32b453845a33ce80cac0ba3fe97e889de9ee1f52ee314b13e6e27058836be27",
+  "generated_config_dependency_probe_passed": true,
+  "source_rpm": {
+    "name": "droid-hal-billie2",
+    "arch": "aarch64",
+    "version_release": "0.0.6-202610262022",
+    "bytes": 23065994,
+    "sha256": "b6714b06b16f38e25d0298e4efe4e39b63b1b92128678e49c00b49b7fd5a3bc6",
+    "path": "/home/eugen/n100-build/android/droid-local-repo/billie2/droid-hal-billie2-0.0.6-202610262022.aarch64.rpm"
+  },
+  "runtime_payload": {
+    "bytes": 8110080,
+    "sha256": "2077c05b09aa83f466336c9fc6a7340f16bf335c570f10b27ee1b57623c78da0"
+  },
+  "vndk_payload": {
+    "bytes": 114651136,
+    "sha256": "4a2f197f68f1f042b5dbff01768d060535bb1058696cf53ecd6a8e2bb736fd4d"
+  },
+  "configuration_files": {
+    "apex.libraries.config.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "com.android.runtime/ld.config.txt": {
+      "bytes": 7820,
+      "sha256": "a1251cc9a3f0515501c61d2d95df7142fe113b2709897648515e9ee46450a13e"
+    },
+    "ld.config.txt": {
+      "bytes": 58537,
+      "sha256": "85786c0ce02700fc751d3f6fccab66b7a1fa83ec26ed65e958f40d5ca7e2bcc8"
+    }
+  },
+  "ld_library_path_used": false,
+  "loader_error_or_warning_lines": [],
+  "dependency_exit_codes": {
+    "servicemanager": 0,
+    "hwservicemanager": 0,
+    "logd": 0
+  },
+  "linker_help_exit": 0,
+  "linkerconfig_help_exit": 0,
+  "cleanup": {
+    "exit": 0,
+    "cleanup_failed": 0
+  },
+  "scope": "Three AArch64 system service dependency lists with generated configuration; no service main or vendor integration",
+  "source_strict_diagnostic_passed": false,
+  "nnapi_requirement_resolved": false,
+  "vendor_namespace_tested": false,
+  "rootfs_boot_tested": false,
+  "android_services_started": false,
+  "flashable_release": false
+}

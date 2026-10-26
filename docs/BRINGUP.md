@@ -371,3 +371,12 @@ Generatorfehler in drei Sektionen offen. Keines der 245 ELFs nennt DEX oder
 NNAPI direkt in DT_NEEDED. Weiter mit dem begrenzten
 [Systemdienst-Test der unveränderten generierten Konfiguration](NAMESPACE_DEVICE_PROBE.md)
 ohne LD_LIBRARY_PATH. Noch kein Vendor-/systemd- oder vollständiger HAL-Start.
+
+## System-Namespaces am Gerät geprüft (26.10.2026)
+
+Die [Geräteprobe](../validation/namespace-device-user-20261026.json) bestätigt
+die Auflösung aller drei Systemdienste mit generierter Konfiguration ohne
+LD_LIBRARY_PATH und ohne Loader-Warnungen. Beide APEX-Loops und die Mounts
+wurden erfolgreich aufgeräumt. Weiter mit der
+[schreibgeschützten Stock-Vendor-Abhängigkeitsprobe](VENDOR_DEPENDENCY_PROBE.md)
+einschließlich Binder-/UID-Inventar. Kein Dienst-Hauptprozess oder systemd gestartet.

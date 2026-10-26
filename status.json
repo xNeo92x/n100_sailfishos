@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "native-namespace-preview-generated-limited-device-probe-prepared",
+  "stage": "system-namespaces-device-dependencies-verified-vendor-probe-prepared",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -218,8 +218,8 @@
   "android_mount_probe_plan": "docs/ANDROID_MOUNT_PROBE.md",
   "android_runtime_apex_installed": false,
   "runtime_blockers": [
-    "New no-DEX Runtime and libc now passed the exact HAL RPM RAM dependency probe; generated linker configuration is still absent on device",
-    "Runtime no longer requires libdexfile.so; native strict preview still has three NNAPI requirements; generated config system-service device probe is pending",
+    "Generated linker configuration now passes all three AArch64 system-service dependency lists without LD_LIBRARY_PATH; selected stock vendor dependency probe remains pending",
+    "Runtime no longer requires libdexfile.so; strict host NNAPI requirements remain unresolved; limited system namespace device probe passed",
     "Persistent early mapping/mounts, full switch_root and peripherals remain unvalidated",
     "Native no-DEX Runtime/RPM and three service dependency lists are verified; service main functions and systemd have not been started"
   ],
@@ -252,8 +252,8 @@
   "linker_inputs_validation": "validation/linker-inputs-build-user-20261026.json",
   "linker_namespace_preview_prepared": true,
   "linker_namespace_preview_generated": true,
-  "linker_namespace_device_tested": false,
-  "next_step": "Prepare and run the limited generated-config RAM dependency probe for three AArch64 system services without LD_LIBRARY_PATH; share namespace-result JSON",
+  "linker_namespace_device_tested": true,
+  "next_step": "Prepare and run the selected stock AArch64 vendor dependency probe with read-only vendor_b/odm in the tested RAM namespace view; share vendor-result JSON",
   "linker_namespace_preview_documentation": "docs/LINKER_HOST_PREVIEW.md",
   "linker_namespace_preview_preparation_validation": "validation/linker-host-preview-preparation.json",
   "linker_namespace_preview_validation": "validation/linker-host-preview-user-20261026.json",
@@ -294,5 +294,12 @@
   "native_hal_service_flat_closures_complete": true,
   "namespace_device_probe_prepared": true,
   "namespace_device_probe_documentation": "docs/NAMESPACE_DEVICE_PROBE.md",
-  "namespace_device_probe_preparation_validation": "validation/namespace-device-probe-preparation.json"
+  "namespace_device_probe_preparation_validation": "validation/namespace-device-probe-preparation.json",
+  "linker_namespace_device_test_scope": "Three AArch64 system-service dependency lists without LD_LIBRARY_PATH; vendor namespaces and service main functions remain untested",
+  "namespace_device_probe_passed": true,
+  "namespace_device_validation": "validation/namespace-device-user-20261026.json",
+  "vendor_dependency_probe_prepared": true,
+  "vendor_dependency_probe_executed": false,
+  "vendor_dependency_probe_documentation": "docs/VENDOR_DEPENDENCY_PROBE.md",
+  "vendor_dependency_probe_preparation_validation": "validation/vendor-dependency-probe-preparation.json"
 }

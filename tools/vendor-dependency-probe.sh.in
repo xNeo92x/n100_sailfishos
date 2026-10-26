@@ -1,0 +1,288 @@
+#!/bin/sh
+# MIT. Render with prepare-vendor-probe.py; temporary RAM view only.
+set -eu
+PAYLOAD_SHA='@PAYLOAD_SHA@'
+PAYLOAD_BYTES=@PAYLOAD_BYTES@
+HAL_SHA='@HAL_SHA@'
+HAL_BYTES=@HAL_BYTES@
+VNDK_SHA='@VNDK_SHA@'
+VNDK_BYTES=@VNDK_BYTES@
+case "${1:-}" in
+    --plan) echo "payload_sha256=$PAYLOAD_SHA bytes=$PAYLOAD_BYTES"; exit 0 ;;
+    run) [ "$#" -eq 1 ] || exit 2 ;;
+    *) echo 'Usage: vendor-probe.sh --plan | run' >&2; exit 2 ;;
+esac
+die() { echo "STOP: $*" >&2; exit 1; }
+mounted() { grep -F " $1 " /proc/mounts >/dev/null; }
+ROOT=/data/.stowaways/sailfishos
+[ "$(id -u)" = 0 ] || die 'Run in the existing initramfs root shell'
+grep -Eq '(^|[[:space:]])n100_debug=1([[:space:]]|$)' /proc/cmdline || die 'Early-debug flag missing'
+grep -Eq '(^|[[:space:]])androidboot.slot_suffix=_b([[:space:]]|$)' /proc/cmdline || die 'Expected slot B'
+grep -Eq '^/dev/sda16 /data ext4 ro(,| )' /proc/mounts || die 'Expected read-only userdata mount'
+[ -d "$ROOT/usr/libexec/droid-hybris/system" ] || die 'Built Android HAL system tree missing'
+if grep -E '/tmp/n100-(runtime|namespace|vendor)-probe\.' /proc/mounts >/dev/null; then
+    die 'A previous runtime-probe mount remains; inspect its cleanup first'
+fi
+work=$(mktemp -d /tmp/n100-vendor-probe.XXXXXX)
+P=$work/root
+mounts=
+loops=
+vendor_mounts=
+vendor_map=
+dm() { chroot "$P" /usr/sbin/dmsetup --noudevsync "$@"; }
+cleanup() {
+    rc=$?
+    trap - 0 HUP INT TERM
+    set +e
+    failed=0
+    # DM removal still needs the native dmsetup in the mounted Sailfish view.
+    for point in $vendor_mounts; do
+        if mounted "$point" && ! umount "$point"; then failed=1; fi
+    done
+    if [ -n "$vendor_map" ]; then
+        for item in /sys/class/block/dm-*/dm/name; do
+            [ -r "$item" ] || continue
+            if [ "$(cat "$item")" = "$vendor_map" ]; then
+                if ! dm remove "$vendor_map"; then failed=1; fi
+                break
+            fi
+        done
+    fi
+    for point in $mounts; do
+        if mounted "$point" && ! umount "$point"; then failed=1; fi
+    done
+    for loop in $loops; do
+        backing=/sys/class/block/${loop##*/}/loop/backing_file
+        if [ -r "$backing" ]; then
+            case "$(cat "$backing")" in
+                "$work/payload.img"|"${work#/}/payload.img"|"$work/vndk.img"|"${work#/}/vndk.img")
+                    if ! losetup -d "$loop"; then failed=1; fi ;;
+                *) echo 'Refusing to detach a foreign loop backing file'; failed=1 ;;
+            esac
+        fi
+    done
+    if [ "$failed" = 0 ]; then
+        rm -rf "$work/hal"
+        rm -f "$work/hal-system.tar.gz" "$work/payload.img" "$work/vndk.img"
+    fi
+    echo "N100_VENDOR_PROBE_RESULT exit=$rc cleanup_failed=$failed"
+    echo "RAM work directory: $work"
+    if [ "$failed" != 0 ] && [ "$rc" = 0 ]; then rc=1; fi
+    exit "$rc"
+}
+trap cleanup 0
+trap 'exit 130' INT
+trap 'exit 143' HUP TERM
+
+echo 'N100_VENDOR_PROFILE @PROFILE_SHA@'
+echo 'N100_VENDOR_MODE generated-config-stock-vendor-no-ld-library-path'
+echo "Kernel: $(uname -r)"
+wget -O "$work/payload.img" http://192.168.2.14:8081/apex_payload.img
+[ "$(wc -c < "$work/payload.img")" -eq "$PAYLOAD_BYTES" ] || die 'Payload size mismatch'
+actual=$(sha256sum "$work/payload.img"); actual=${actual%% *}
+[ "$actual" = "$PAYLOAD_SHA" ] || die 'Payload hash mismatch'
+echo "Verified payload SHA-256: $actual"
+
+mkdir "$work/runtime" "$work/ram" "$P"
+loop=$(losetup -f)
+case "$loop" in /dev/loop[0-9]*) ;; *) die 'Unexpected loop device name' ;; esac
+losetup -r "$loop" "$work/payload.img"
+loops="$loop $loops"
+[ "$(cat /sys/class/block/${loop##*/}/ro)" = 1 ] || die 'Loop device is not read-only'
+mounts="$work/runtime $mounts"
+mount -t ext4 -o ro,noload "$loop" "$work/runtime"
+while read -r path size expected; do
+    file=$work/runtime/$path
+    [ -f "$file" ] && [ "$(wc -c < "$file")" -eq "$size" ] || die "Missing or changed core file: $path"
+    actual=$(sha256sum "$file"); actual=${actual%% *}
+    [ "$actual" = "$expected" ] || die "Core file hash mismatch: $path"
+    echo "Verified runtime core: $path"
+done <<'N100_CORE_FILES'
+@FILE_CHECKS@
+N100_CORE_FILES
+
+echo '=== Read-only VNDK-30 payload ==='
+wget -O "$work/vndk.img" http://192.168.2.14:8081/vndk_payload.img
+[ "$(wc -c < "$work/vndk.img")" -eq "$VNDK_BYTES" ] || die 'VNDK payload size mismatch'
+actual=$(sha256sum "$work/vndk.img"); actual=${actual%% *}
+[ "$actual" = "$VNDK_SHA" ] || die 'VNDK payload hash mismatch'
+echo "Verified VNDK payload SHA-256: $actual"
+mkdir "$work/vndk"
+loop=$(losetup -f)
+case "$loop" in /dev/loop[0-9]*) ;; *) die 'Unexpected VNDK loop device name' ;; esac
+losetup -r "$loop" "$work/vndk.img"
+loops="$loop $loops"
+[ "$(cat /sys/class/block/${loop##*/}/ro)" = 1 ] || die 'VNDK loop is not read-only'
+mounts="$work/vndk $mounts"
+mount -t ext4 -o ro,noload "$loop" "$work/vndk"
+
+echo '=== Reviewed generated linker files ==='
+mkdir "$work/config"
+while read -r path size expected; do
+    mkdir -p "$work/config/$(dirname "$path")"
+    wget -O "$work/config/$path" "http://192.168.2.14:8081/linkerconfig/$path"
+    [ "$(wc -c < "$work/config/$path")" -eq "$size" ] || die "Config size mismatch: $path"
+    actual=$(sha256sum "$work/config/$path"); actual=${actual%% *}
+    [ "$actual" = "$expected" ] || die "Config hash mismatch: $path"
+    echo "Verified linker config: $path"
+done <<'N100_CONFIG_FILES'
+@CONFIG_CHECKS@
+N100_CONFIG_FILES
+
+echo '=== Download and verify updated HAL RPM files ==='
+wget -O "$work/hal-system.tar.gz" http://192.168.2.14:8081/hal-system.tar.gz
+[ "$(wc -c < "$work/hal-system.tar.gz")" -eq "$HAL_BYTES" ] || die 'HAL archive size mismatch'
+actual=$(sha256sum "$work/hal-system.tar.gz"); actual=${actual%% *}
+[ "$actual" = "$HAL_SHA" ] || die 'HAL archive hash mismatch'
+mkdir "$work/hal"
+tar -xzf "$work/hal-system.tar.gz" -C "$work/hal"
+if ! (cd "$work/hal" && sha256sum -c n100-files.sha256) > "$work/hal-check.log" 2>&1; then
+    cat "$work/hal-check.log"
+    die 'HAL RPM file hash verification failed'
+fi
+echo 'Verified every regular file in the selected HAL RPM system tree.'
+mounts="$work/ram $mounts"
+mount -t tmpfs -o size=32m,mode=0700,nosuid,nodev tmpfs "$work/ram"
+mkdir "$work/ram/upper" "$work/ram/overlay-work"
+mounts="$P $mounts"
+mount -t overlay overlay -o "lowerdir=$ROOT,upperdir=$work/ram/upper,workdir=$work/ram/overlay-work,index=off" "$P"
+for leaf in dev proc sys; do
+    [ -d "$P/$leaf" ] || die "Missing rootfs mountpoint: $leaf"
+    mounts="$P/$leaf $mounts"
+    mount --bind "/$leaf" "$P/$leaf"
+done
+[ ! -e "$P/system" ] && [ ! -L "$P/system" ] || die 'Unexpected existing /system in lower rootfs'
+[ ! -e "$P/apex/com.android.runtime" ] && [ ! -L "$P/apex/com.android.runtime" ] || die 'Runtime is already present in lower rootfs'
+[ ! -e "$P/apex/com.android.vndk.v30" ] && [ ! -L "$P/apex/com.android.vndk.v30" ] || die 'VNDK is already present in lower rootfs'
+[ ! -L "$P/linkerconfig" ] || die 'Unexpected linkerconfig symlink'
+mkdir "$P/system" "$P/apex/com.android.runtime" "$P/apex/com.android.vndk.v30"
+mkdir -p "$P/linkerconfig"
+mounts="$P/system $mounts"
+mount --bind "$work/hal" "$P/system"
+mounts="$P/usr/libexec/droid-hybris/system $mounts"
+mount --bind "$work/hal" "$P/usr/libexec/droid-hybris/system"
+mounts="$P/apex/com.android.runtime $mounts"
+mount --bind "$work/runtime" "$P/apex/com.android.runtime"
+mounts="$P/apex/com.android.vndk.v30 $mounts"
+mount --bind "$work/vndk" "$P/apex/com.android.vndk.v30"
+mounts="$P/linkerconfig $mounts"
+mount --bind "$work/config" "$P/linkerconfig"
+echo 'N100_NAMESPACE_CONFIG_READY'
+
+echo '=== Stock vendor: verify live super snapshot before creating a read-only mapping ==='
+grep -qx 'PARTNAME=super' /sys/class/block/sda10/uevent || die 'sda10 is not super'
+[ "$(cat /sys/class/block/sda10/dev)" = 8:10 ] || die 'Unexpected super device number'
+[ "$(cat /sys/class/block/sda10/size)" = 20971520 ] || die 'Unexpected super size'
+[ -x "$P/usr/sbin/dmsetup" ] || die 'Native Sailfish dmsetup missing'
+for item in /sys/class/block/dm-*/dm/name; do
+    [ -r "$item" ] || continue
+    case "$(cat "$item")" in n100_ro_*|n100_vendor_*) die 'A reserved mapping already exists' ;; esac
+done
+dd if=/dev/sda10 of="$work/metadata.bin" bs=512 count=792
+[ "$(wc -c < "$work/metadata.bin")" -eq 405504 ] || die 'Incomplete super metadata read'
+actual=$(sha256sum "$work/metadata.bin"); actual=${actual%% *}
+[ "$actual" = bb42777e434f73ae5e4a9871af64f792a61a832be3852adf7c3d2f8b7012dcc7 ] || die 'Super metadata changed'
+echo "N100_VENDOR_METADATA_SHA256 $actual"
+vendor_map=n100_vendor_probe_${work##*.}
+dm create "$vendor_map" --readonly --table '0 1856272 linear 8:10 18888896'
+node=
+for block in /sys/class/block/dm-*; do
+    [ -r "$block/dm/name" ] || continue
+    [ "$(cat "$block/dm/name")" = "$vendor_map" ] || continue
+    [ "$(cat "$block/ro")" = 1 ] || die 'Vendor mapping is not read-only'
+    node=/dev/${block##*/}
+    break
+done
+[ -n "$node" ] && [ -b "$node" ] || die 'Vendor mapping block node missing'
+[ "$(dm table "$vendor_map")" = '0 1856272 linear 8:10 18888896' ] || die 'Vendor mapping table differs'
+echo "N100_VENDOR_MAPPING_READONLY $node"
+mkdir "$work/vendor"
+vendor_mounts="$work/vendor $vendor_mounts"
+mount -t ext4 -o ro,noload "$node" "$work/vendor"
+grep -qx 'ro.vendor.build.fingerprint=OnePlus/OnePlusN100_EEA/OnePlusN100:11/RKQ1.201217.002/2310092135:user/release-keys' "$work/vendor/build.prop" || die 'Stock vendor fingerprint differs'
+echo 'N100_VENDOR_FINGERPRINT_VERIFIED'
+for leaf in vendor odm; do
+    [ ! -L "$P/$leaf" ] || die "Unexpected existing /$leaf symlink"
+    mkdir -p "$P/$leaf"
+done
+vendor_mounts="$P/vendor $vendor_mounts"
+mount --bind "$work/vendor" "$P/vendor"
+[ -d "$work/vendor/odm" ] && [ ! -L "$work/vendor/odm" ] || die 'Stock vendor/odm directory missing'
+vendor_mounts="$P/odm $vendor_mounts"
+mount --bind "$work/vendor/odm" "$P/odm"
+echo 'N100_VENDOR_VIEW_READY'
+
+echo '=== Binder, SELinux and Android UID preflight (read-only inventory) ==='
+ls -l /dev/binder /dev/hwbinder /dev/vndbinder /dev/binderfs /dev/__properties__ 2>&1 || :
+for file in /sys/module/binder/parameters/devices /sys/fs/selinux/enforce; do
+    if [ -r "$file" ]; then echo "--- $file ---"; cat "$file"; fi
+done
+grep -E '^(root|system|radio|media|audio|camera|graphics|log|shell):' "$P/etc/passwd" || :
+grep -E '^(system|radio|media|audio|camera|graphics|log|shell):' "$P/etc/group" || :
+echo 'N100_VENDOR_PREFLIGHT_RECORDED'
+echo '=== Temporary mount view ==='
+grep -F " $P" /proc/mounts || :
+
+echo '=== Android linker64 --help ==='
+timeout 15 chroot "$P" /bin/sh -c '
+unset LD_LIBRARY_PATH LD_PRELOAD LD_CONFIG_FILE
+exec /apex/com.android.runtime/bin/linker64 --help
+'
+echo 'N100_LINKER_HELP_EXIT=0'
+echo '=== Static Android linkerconfig --help (direct execution) ==='
+if timeout 15 chroot "$P" /system/bin/linkerconfig --help; then
+    echo 'N100_LINKERCONFIG_HELP_EXIT=0'
+else
+    echo "N100_LINKERCONFIG_HELP_EXIT=$?"
+fi
+for program in /system/bin/servicemanager /system/bin/hwservicemanager /system/bin/logd; do
+    echo "=== Dependency listing: $program ==="
+    if timeout 15 chroot "$P" /bin/sh -c '
+        [ -x "$1" ] || { echo "UNAVAILABLE_AT_PATH: $1"; exit 3; }
+        unset LD_LIBRARY_PATH LD_PRELOAD LD_CONFIG_FILE
+        exec /apex/com.android.runtime/bin/linker64 --list "$1"
+    ' n100-list "$program"; then
+        echo "N100_NAMESPACE_DEPENDENCY_EXIT $program 0"
+    else
+        code=$?
+        echo "N100_NAMESPACE_DEPENDENCY_EXIT $program $code"
+    fi
+done
+
+echo '=== Selected stock AArch64 vendor service dependency lists ==='
+count=0
+for program in "$P"/vendor/bin/hw/*composer* "$P"/vendor/bin/hw/*allocator* "$P"/vendor/bin/hw/*audio* "$P"/vendor/bin/hw/*sensors*; do
+    [ -f "$program" ] || continue
+    path=${program#"$P"}
+    printf '%s\n' "$path" | grep -Eq '^/vendor/bin/hw/[A-Za-z0-9_.@+-]+$' || die 'Unexpected vendor executable filename'
+    if [ -L "$program" ]; then echo "N100_VENDOR_SKIPPED symlink $path"; continue; fi
+    header=$(od -An -tx1 -N6 "$program" | tr -d ' \n')
+    if [ "$header" != 7f454c460201 ]; then
+        echo "N100_VENDOR_SKIPPED other-ABI-or-format $path"
+        continue
+    fi
+    machine=$(od -An -tx1 -j18 -N2 "$program" | tr -d ' \n')
+    if [ "$machine" != b700 ]; then
+        echo "N100_VENDOR_SKIPPED other-ABI-or-format $path"
+        continue
+    fi
+    count=$((count + 1))
+    [ "$count" -le 24 ] || die 'Too many selected vendor programs'
+    actual=$(sha256sum "$program"); actual=${actual%% *}
+    echo "N100_VENDOR_SELECTED $path $actual"
+    if timeout 15 chroot "$P" /bin/sh -c '
+        unset LD_LIBRARY_PATH LD_PRELOAD LD_CONFIG_FILE
+        exec /apex/com.android.runtime/bin/linker64 --list "$1"
+    ' n100-vendor-list "$path"; then
+        echo "N100_VENDOR_DEPENDENCY_EXIT $path 0"
+    else
+        code=$?
+        echo "N100_VENDOR_DEPENDENCY_EXIT $path $code"
+    fi
+done
+echo "N100_VENDOR_PROGRAM_COUNT $count"
+[ "$count" -gt 0 ] || die 'No selected regular AArch64 vendor service found'
+echo 'Only linker help, linkerconfig help and dependency listing were requested; no HAL services started.'
+echo 'NNAPI strict diagnostics remain unresolved; this does not validate full vendor compatibility or HAL startup.'
+echo 'Persistent Sailfish /apex and userdata contents remain unchanged.'
+# EXIT trap unmounts views and detaches only our own loop device.

@@ -1,5 +1,14 @@
 # N100: generierte Linker-Konfiguration im RAM prüfen
 
+## Ergebnis auf dem N100
+
+Der [Nutzerlauf](../validation/namespace-device-user-20261026.json) ist erfolgreich:
+alle drei Abhängigkeitslisten und beide Hilfsaufrufe mit Status 0, keine
+Loader-Warnung, Cleanup 0. Runtime und VNDK waren read-only gemountet; die
+generierte Konfiguration funktioniert für diesen begrenzten Systemdienst-Test
+ohne LD_LIBRARY_PATH. Weiter mit der [Stock-Vendor-Abhängigkeitsprobe](VENDOR_DEPENDENCY_PROBE.md).
+Die folgenden Schritte dokumentieren den abgeschlossenen Test.
+
 Die [native Host-Vorschau](../validation/native-linker-preview-user-20261026.json)
 erzeugt die Konfiguration. 245 reguläre HAL-ELFs wurden mit readelf untersucht;
 keines nennt `libdexfile.so` oder `libneuralnetworks.so` als direkte Abhängigkeit.

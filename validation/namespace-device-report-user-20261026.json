@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "kind": "generated-namespace-device-probe-report",
+  "bundle": {
+    "schema": 1,
+    "kind": "temporary-generated-namespace-probe",
+    "source_preview_sha256": "ef75ded3e79478d00f0196c89e548c20f57ff5e73ea524b7337cbcac7fe62820",
+    "source_rpm": {
+      "name": "droid-hal-billie2",
+      "arch": "aarch64",
+      "version_release": "0.0.6-202610262022",
+      "bytes": 23065994,
+      "sha256": "b6714b06b16f38e25d0298e4efe4e39b63b1b92128678e49c00b49b7fd5a3bc6",
+      "path": "/home/eugen/n100-build/android/droid-local-repo/billie2/droid-hal-billie2-0.0.6-202610262022.aarch64.rpm"
+    },
+    "payload": {
+      "bytes": 8110080,
+      "sha256": "2077c05b09aa83f466336c9fc6a7340f16bf335c570f10b27ee1b57623c78da0"
+    },
+    "vndk_payload": {
+      "bytes": 114651136,
+      "sha256": "4a2f197f68f1f042b5dbff01768d060535bb1058696cf53ecd6a8e2bb736fd4d"
+    },
+    "hal_archive_bytes": 24106184,
+    "hal_archive_sha256": "44606fa539bf90a084d764ad0ab926c91393b4cfa1daac824efcda54f7a0a576",
+    "configuration_files": {
+      "apex.libraries.config.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "com.android.runtime/ld.config.txt": {
+        "bytes": 7820,
+        "sha256": "a1251cc9a3f0515501c61d2d95df7142fe113b2709897648515e9ee46450a13e"
+      },
+      "ld.config.txt": {
+        "bytes": 58537,
+        "sha256": "85786c0ce02700fc751d3f6fccab66b7a1fa83ec26ed65e958f40d5ca7e2bcc8"
+      }
+    },
+    "script_sha256": "6175afdc0a5a3b4a2b6ed3053c1edf1bd628480ab88c6945b288878ba0f50b4f",
+    "source_strict_diagnostic_passed": false,
+    "nnapi_requirement_resolved": false,
+    "device_tested": false,
+    "persistent_installation_performed": false,
+    "systemd_started": false,
+    "android_hal_started": false,
+    "flashable_release": false
+  },
+  "bundle_integrity_rechecked": true,
+  "device_probe_log": "N100_NAMESPACE_PROFILE ef75ded3e79478d00f0196c89e548c20f57ff5e73ea524b7337cbcac7fe62820\nN100_NAMESPACE_MODE generated-config-no-ld-library-path\nKernel: 4.19.325-perf+\nConnecting to 192.168.2.14:8081 (192.168.2.14:8081)\nsaving to '/tmp/n100-namespace-probe.nqA9qy/payload.img'\npayload.img          100% |********************************| 7920k  0:00:00 ETA\n'/tmp/n100-namespace-probe.nqA9qy/payload.img' saved\nVerified payload SHA-256: 2077c05b09aa83f466336c9fc6a7340f16bf335c570f10b27ee1b57623c78da0\nVerified runtime core: bin/linker\nVerified runtime core: bin/linker64\nVerified runtime core: lib64/bionic/libc.so\nVerified runtime core: lib64/bionic/libdl.so\nVerified runtime core: lib64/bionic/libm.so\n=== Read-only VNDK-30 payload ===\nConnecting to 192.168.2.14:8081 (192.168.2.14:8081)\nsaving to '/tmp/n100-namespace-probe.nqA9qy/vndk.img'\nvndk.img              15% |****                            | 16.5M  0:00:05 ETA\nvndk.img              33% |**********                      | 36.7M  0:00:03 ETA\nvndk.img              52% |****************                | 57.7M  0:00:02 ETA\nvndk.img              72% |***********************         | 78.9M  0:00:01 ETA\nvndk.img              93% |*****************************   |  101M  0:00:00 ETA\nvndk.img             100% |********************************|  109M  0:00:00 ETA\n'/tmp/n100-namespace-probe.nqA9qy/vndk.img' saved\nVerified VNDK payload SHA-256: 4a2f197f68f1f042b5dbff01768d060535bb1058696cf53ecd6a8e2bb736fd4d\n=== Reviewed generated linker files ===\nConnecting to 192.168.2.14:8081 (192.168.2.14:8081)\nsaving to '/tmp/n100-namespace-probe.nqA9qy/config/apex.libraries.config.txt'\n'/tmp/n100-namespace-probe.nqA9qy/config/apex.libraries.config.txt' saved\nVerified linker config: apex.libraries.config.txt\nConnecting to 192.168.2.14:8081 (192.168.2.14:8081)\nsaving to '/tmp/n100-namespace-probe.nqA9qy/config/com.android.runtime/ld.config.txt'\nld.config.txt        100% |********************************|  7820  0:00:00 ETA\n'/tmp/n100-namespace-probe.nqA9qy/config/com.android.runtime/ld.config.txt' saved\nVerified linker config: com.android.runtime/ld.config.txt\nConnecting to 192.168.2.14:8081 (192.168.2.14:8081)\nsaving to '/tmp/n100-namespace-probe.nqA9qy/config/ld.config.txt'\nld.config.txt        100% |********************************| 58537  0:00:00 ETA\n'/tmp/n100-namespace-probe.nqA9qy/config/ld.config.txt' saved\nVerified linker config: ld.config.txt\n=== Download and verify updated HAL RPM files ===\nConnecting to 192.168.2.14:8081 (192.168.2.14:8081)\nsaving to '/tmp/n100-namespace-probe.nqA9qy/hal-system.tar.gz'\nhal-system.tar.gz     14% |****                            | 3419k  0:00:05 ETA\nhal-system.tar.gz    100% |********************************| 22.9M  0:00:00 ETA\n'/tmp/n100-namespace-probe.nqA9qy/hal-system.tar.gz' saved\nVerified every regular file in the selected HAL RPM system tree.\nN100_NAMESPACE_CONFIG_READY\n=== Temporary mount view ===\noverlay /tmp/n100-namespace-probe.nqA9qy/root overlay rw,relatime,lowerdir=/data/.stowaways/sailfishos,upperdir=/tmp/n100-namespace-probe.nqA9qy/ram/upper,workdir=/tmp/n100-namespace-probe.nqA9qy/ram/overlay-work 0 0\ndevtmpfs /tmp/n100-namespace-probe.nqA9qy/root/dev devtmpfs rw,relatime,size=1749840k,nr_inodes=437460,mode=755 0 0\nproc /tmp/n100-namespace-probe.nqA9qy/root/proc proc rw,relatime 0 0\nsysfs /tmp/n100-namespace-probe.nqA9qy/root/sys sysfs rw,relatime 0 0\nrootfs /tmp/n100-namespace-probe.nqA9qy/root/system rootfs rw,size=1749840k,nr_inodes=437460 0 0\nrootfs /tmp/n100-namespace-probe.nqA9qy/root/usr/libexec/droid-hybris/system rootfs rw,size=1749840k,nr_inodes=437460 0 0\n/dev/loop0 /tmp/n100-namespace-probe.nqA9qy/root/apex/com.android.runtime ext4 ro,relatime,norecovery 0 0\n/dev/loop1 /tmp/n100-namespace-probe.nqA9qy/root/apex/com.android.vndk.v30 ext4 ro,relatime,norecovery 0 0\nrootfs /tmp/n100-namespace-probe.nqA9qy/root/linkerconfig rootfs rw,size=1749840k,nr_inodes=437460 0 0\n=== Android linker64 --help ===\nUsage: /apex/com.android.runtime/bin/linker64 [--list] PROGRAM [ARGS-FOR-PROGRAM...]\n       /apex/com.android.runtime/bin/linker64 [--list] path.zip!/PROGRAM [ARGS-FOR-PROGRAM...]\n\nA helper program for linking dynamic executables. Typically, the kernel loads\nthis program because it's the PT_INTERP of a dynamic executable.\n\nThis program can also be run directly to load and run a dynamic executable. The\nexecutable can be inside a zip file if it's stored uncompressed and at a\npage-aligned offset.\n\nThe --list option gives behavior equivalent to ldd(1) on other systems.\nN100_LINKER_HELP_EXIT=0\n=== Static Android linkerconfig --help (direct execution) ===\nUsage : linkerconfig [--target <target_directory>] [--strict] [--help]\nN100_LINKERCONFIG_HELP_EXIT=0\n=== Dependency listing: /system/bin/servicemanager ===\n\tlinux-vdso.so.1 => [vdso] (0x7f97ce0000)\n\tlibbase.so => /system/lib64/libbase.so (0x7f968c0000)\n\tlibbinder.so => /system/lib64/libbinder.so (0x7f93cc3000)\n\tlibvintf.so => /system/lib64/libvintf.so (0x7f93f49000)\n\tlibcutils.so => /system/lib64/libcutils.so (0x7f96990000)\n\tliblog.so => /system/lib64/liblog.so (0x7f91d83000)\n\tlibutils.so => /system/lib64/libutils.so (0x7f91dcd000)\n\tlibselinux.so => /system/lib64/libselinux.so (0x7f93dc6000)\n\tlibc++.so => /system/lib64/libc++.so (0x7f93e39000)\n\tlibc.so => /system/lib64/libc.so (0x7f91701000)\n\tlibm.so => /system/lib64/libm.so (0x7f96882000)\n\tlibdl.so => /system/lib64/libdl.so (0x7f96933000)\n\tlibhidl-gen-utils.so => /system/lib64/libhidl-gen-utils.so (0x7f93daa000)\n\tlibtinyxml2.so => /system/lib64/libtinyxml2.so (0x7f93c82000)\n\tlibz.so => /system/lib64/libz.so (0x7f9684b000)\n\tlibvndksupport.so => /system/lib64/libvndksupport.so (0x7f91696000)\n\tlibpcre2.so => /system/lib64/libpcre2.so (0x7f93c22000)\n\tlibpackagelistparser.so => /system/lib64/libpackagelistparser.so (0x7f916c1000)\n\tlibdl_android.so => /system/lib64/libdl_android.so (0x7f9696e000)\nN100_NAMESPACE_DEPENDENCY_EXIT /system/bin/servicemanager 0\n=== Dependency listing: /system/bin/hwservicemanager ===\n\tlinux-vdso.so.1 => [vdso] (0x7f8db97000)\n\tandroid.hidl.token@1.0.so => /system/lib64/android.hidl.token@1.0.so (0x7f880c2000)\n\tlibcrypto.so => /system/lib64/libcrypto.so (0x7f87603000)\n\tlibbase.so => /system/lib64/libbase.so (0x7f87783000)\n\tlibhidl-gen-utils.so => /system/lib64/libhidl-gen-utils.so (0x7f8776a000)\n\tlibselinux.so => /system/lib64/libselinux.so (0x7f87908000)\n\tlibutils.so => /system/lib64/libutils.so (0x7f8c858000)\n\tlibvintf.so => /system/lib64/libvintf.so (0x7f87967000)\n\tlibhidlbase.so => /system/lib64/libhidlbase.so (0x7f87801000)\n\tliblog.so => /system/lib64/liblog.so (0x7f877cb000)\n\tlibcutils.so => /system/lib64/libcutils.so (0x7f8945c000)\n\tlibc++.so => /system/lib64/libc++.so (0x7f87548000)\n\tlibc.so => /system/lib64/libc.so (0x7f87a3f000)\n\tlibm.so => /system/lib64/libm.so (0x7f88143000)\n\tlibdl.so => /system/lib64/libdl.so (0x7f895cc000)\n\tlibpcre2.so => /system/lib64/libpcre2.so (0x7f894ff000)\n\tlibpackagelistparser.so => /system/lib64/libpackagelistparser.so (0x7f8810c000)\n\tlibvndksupport.so => /system/lib64/libvndksupport.so (0x7f8819a000)\n\tlibtinyxml2.so => /system/lib64/libtinyxml2.so (0x7f8948b000)\n\tlibz.so => /system/lib64/libz.so (0x7f881c9000)\n\tlibdl_android.so => /system/lib64/libdl_android.so (0x7f878e9000)\nN100_NAMESPACE_DEPENDENCY_EXIT /system/bin/hwservicemanager 0\n=== Dependency listing: /system/bin/logd ===\n\tlinux-vdso.so.1 => [vdso] (0x7fbdd2e000)\n\tlibbase.so => /system/lib64/libbase.so (0x7fbc143000)\n\tlibz.so => /system/lib64/libz.so (0x7fbc056000)\n\tlibbinder.so => /system/lib64/libbinder.so (0x7fbc4c7000)\n\tlibsysutils.so => /system/lib64/libsysutils.so (0x7fbc353000)\n\tlibcutils.so => /system/lib64/libcutils.so (0x7fbc45f000)\n\tlibpackagelistparser.so => /system/lib64/libpackagelistparser.so (0x7fbc110000)\n\tlibprocessgroup.so => /system/lib64/libprocessgroup.so (0x7fbc09d000)\n\tlibcap.so => /system/lib64/libcap.so (0x7fbc32a000)\n\tlibutils.so => /system/lib64/libutils.so (0x7fbc382000)\n\tlibc++.so => /system/lib64/libc++.so (0x7fbc206000)\n\tlibc.so => /system/lib64/libc.so (0x7fb82e1000)\n\tlibm.so => /system/lib64/libm.so (0x7fbc186000)\n\tlibdl.so => /system/lib64/libdl.so (0x7fbc2e4000)\n\tliblog.so => /system/lib64/liblog.so (0x7fbc3da000)\n\tlibcgrouprc.so => /system/lib64/libcgrouprc.so (0x7fbc409000)\n\tlibvndksupport.so => /system/lib64/libvndksupport.so (0x7fbc1fb000)\n\tlibdl_android.so => /system/lib64/libdl_android.so (0x7fbc4b1000)\nN100_NAMESPACE_DEPENDENCY_EXIT /system/bin/logd 0\nOnly linker help, linkerconfig help and dependency listing were requested; no HAL services started.\nNNAPI strict diagnostics remain unresolved; this test does not validate vendor or full HAL startup.\nPersistent Sailfish /apex and userdata contents remain unchanged.\nN100_NAMESPACE_PROBE_RESULT exit=0 cleanup_failed=0\nRAM work directory: /tmp/n100-namespace-probe.nqA9qy\n",
+  "assessment": {
+    "generated_config_dependency_probe_passed": true,
+    "missing_or_duplicate_markers": [],
+    "unexpected_status_markers": [],
+    "loader_error_or_warning_lines": [],
+    "scope": "Three AArch64 system service dependency lists with generated config and no LD_LIBRARY_PATH; no service main, vendor or systemd test."
+  },
+  "source_strict_diagnostic_passed": false,
+  "nnapi_requirement_resolved": false,
+  "vendor_namespace_tested": false,
+  "rootfs_boot_tested": false,
+  "android_services_started": false,
+  "flashable_release": false
+}
