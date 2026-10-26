@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "kind": "hal-runtime-build-outputs",
+  "product": "/home/eugen/n100-build/android/out/target/product/billie2",
+  "files": {
+    "system/bin/hwservicemanager": {
+      "bytes": 102552,
+      "sha256": "f725315ef68027a5f32058fafda1d3d357c0eac2c718f5b9bff8923daabe2ba9",
+      "elf_class": 2,
+      "elf_machine": 183,
+      "elf_type": 3,
+      "elf_interpreter": "/system/bin/linker64",
+      "static_executable": false
+    },
+    "system/bin/logd": {
+      "bytes": 720816,
+      "sha256": "1e522e90d85b7f55934410f55d7b8f4f42061e6dc07a4a4abc0bcda8e76b4f0c",
+      "elf_class": 2,
+      "elf_machine": 183,
+      "elf_type": 3,
+      "elf_interpreter": "/system/bin/linker64",
+      "static_executable": false
+    },
+    "system/etc/init/hwservicemanager.rc": {
+      "bytes": 416,
+      "sha256": "e74c6f117deacdf0d59e799eb807311775a2ee888a2f9208e210f6bcf2de73f8"
+    },
+    "system/etc/init/logd.rc": {
+      "bytes": 903,
+      "sha256": "42d49cb06c2f6fd317a4d145e4c260d095a35d9258c1cf93a72cd5b9695a7078"
+    },
+    "system/apex/com.android.runtime.apex": {
+      "bytes": 8187904,
+      "sha256": "293e90ce25eec01a38b723731eea03d378750e7ee0287df93305d43073e8bdf0"
+    },
+    "apex/com.android.runtime/bin/linkerconfig": {
+      "bytes": 1369280,
+      "sha256": "4279b3d345d3dfc92b9f955533ce94135f1daceed3700d34764cfc07fdf285d6",
+      "elf_class": 2,
+      "elf_machine": 183,
+      "elf_type": 2,
+      "elf_interpreter": null,
+      "static_executable": true
+    },
+    "system/etc/sanitizer.libraries.txt": {
+      "bytes": 198,
+      "sha256": "87dbfd9e9a1fb0a9c78176532d4fbea28558932593c9b54bf61ef7bf70b67d11"
+    },
+    "system/etc/vndkcorevariant.libraries.txt": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    }
+  },
+  "errors": [],
+  "passed": true,
+  "system_linker_config_pb_present": false,
+  "scope": "Build output ABI/layout only; dependency closure, signatures and device runtime unvalidated.",
+  "phone_modified": false,
+  "rpm_rebuilt": false,
+  "full_os_boot_verified": false
+}

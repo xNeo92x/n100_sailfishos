@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "runtime-tools-verified-missing-hal-service-build-fix-prepared",
+  "stage": "runtime-services-built-awaiting-hal-rpm-rebuild",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -218,7 +218,7 @@
   "android_mount_probe_plan": "docs/ANDROID_MOUNT_PROBE.md",
   "android_runtime_apex_installed": false,
   "runtime_blockers": [
-    "hwservicemanager and its init declaration absent from installed/probed build paths; explicit build targets and RPM staging fix prepared, not yet built on user PC",
+    "hwservicemanager, logd and init declarations now built and structurally checked; updated HAL RPM build and device dependency/runtime tests remain unconfirmed",
     "Runtime APEX and static linkerconfig execute in RAM view; permanent activation and generated linker configuration remain unimplemented",
     "Stock Android-11 mappings must be integrated without obscuring built Android-13 HAL files",
     "Full switch_root/systemd/HAL startup and device peripherals remain unvalidated"
@@ -235,7 +235,8 @@
   "android_runtime_v2_preparation_validation": "validation/runtime-probe-v2-preparation.json",
   "android_runtime_v2_validation": "validation/runtime-apex-v2-user-20261026.json",
   "android_static_linkerconfig_help_verified": true,
-  "hal_runtime_services_built": false,
+  "hal_runtime_services_built": true,
   "runtime_service_rpm_rebuilt": false,
-  "runtime_service_build_plan": "docs/HAL_RUNTIME_SERVICES.md"
+  "runtime_service_build_plan": "docs/HAL_RUNTIME_SERVICES.md",
+  "runtime_service_build_validation": "validation/runtime-service-build-user-20261026.json"
 }

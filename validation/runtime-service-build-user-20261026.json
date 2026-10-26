@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "source": "validation/runtime-service-build-report-user-20261026.json",
+  "source_sha256": "c1c429b35a685208e506b1bf5a835d64df62ce4b44147c6f2d3b0e7b4ada8b75",
+  "build_outputs_verified": true,
+  "services": [
+    "hwservicemanager",
+    "logd"
+  ],
+  "aarch64_elf_and_android_interpreters_verified": true,
+  "init_declarations_checked": true,
+  "runtime_apex_sha256": "293e90ce25eec01a38b723731eea03d378750e7ee0287df93305d43073e8bdf0",
+  "static_linkerconfig_fallback": {
+    "bytes": 1369280,
+    "sha256": "4279b3d345d3dfc92b9f955533ce94135f1daceed3700d34764cfc07fdf285d6",
+    "elf_class": 2,
+    "elf_machine": 183,
+    "elf_type": 2,
+    "elf_interpreter": null,
+    "static_executable": true
+  },
+  "system_linker_config_pb_present": false,
+  "rpm_build_confirmed": false,
+  "phone_installation_confirmed": false,
+  "services_started": false,
+  "full_os_boot_verified": false,
+  "next_step": "Rebuild the HAL RPM in Platform SDK after leaving Ubuntu once; retain the current phone debug session."
+}

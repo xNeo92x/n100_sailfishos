@@ -11,6 +11,15 @@ Build-Ausgaben für system, system_ext, vendor und product. `logd` fehlt in der
 system/bin-Liste. Der gepinnte [hybris-boot-Stand](https://github.com/mer-hybris/hybris-boot/blob/6547fd1c3aeb9c987271a01b298d2ae5d39be231/Android.mk)
 fordert diese Dienste im `hybris-hal`-Ziel nicht ausdrücklich an.
 
+## Build auf dem Nutzer-PC bestätigt
+
+Der [Buildbericht vom 26.10.2026](../validation/runtime-service-build-report-user-20261026.json) bestätigt
+AArch64-Dateien für hwservicemanager und logd, beide Init-Dateien, das unveränderte
+Runtime-APEX und den statischen linkerconfig-Fallback. `passed=true`, keine
+Prüffehler. `system/etc/linker.config.pb` fehlt weiterhin, wie für diesen
+Buildabschnitt getrennt ausgewiesen. Der Bericht belegt noch keinen RPM-Neubau
+oder gestartete Dienste. Weiter mit **Schritt 4** unten.
+
 ## Änderung
 
 `build-hal.sh runtime` baut gezielt `hwservicemanager logd linkerconfig`. Der normale Gesamtbuild enthält dieselben zusätzlichen
