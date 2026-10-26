@@ -1,4 +1,4 @@
-# N100: gebaute Android-Runtime vorübergehend prüfen
+# N100: Android-Runtime und HAL-Pfade prüfen (V2)
 
 Der neue [Gerätebericht](../validation/android-bringup-report-user-20261025.json)
 bestätigt alle vier schreibgeschützten Slot-B-Mounts und erfolgreichen Cleanup.
@@ -11,6 +11,28 @@ Jetzt ist die Runtime-Lücke direkt belegt: `/apex` enthält nur `.` und `..`,
 passende Runtime-APEX-Paket samt beider ARM-Linker und Bionic-Bibliotheken vor.
 Die frühere Ausgabe mit `ls -ld /apex` allein hätte diesen Schluss nicht erlaubt;
 die neue Inhalts-/Zielprüfung liefert den Nachweis.
+
+## Geräteergebnis vom 26.10.2026
+
+Der [unveränderte Runtime-Bericht](../validation/runtime-apex-report-user-20261026.json)
+und die [Auswertung](../validation/runtime-apex-user-20261026.json) bestätigen:
+
+- Payload-Hash und alle fünf Kern-Dateihashes stimmen; flache Build-Dateien und
+  Paketinhalt sind für diese Dateien identisch.
+- Read-only-Loop, Runtime-Mount und RAM-Overlay funktionieren auf dem N100.
+- `linker64 --help` beendet sich mit 0; die Abhängigkeiten von `servicemanager`
+  werden vollständig aufgelöst. Der Dienst wurde dadurch nicht gestartet.
+- Cleanup endet mit `exit=0 cleanup_failed=0`.
+- `/linkerconfig/ld.config.txt` fehlt weiterhin.
+
+V1 hat `linkerconfig` fälschlich als dynamisches Programm an den Linker übergeben.
+Die Meldung `unexpected e_type: 2` ist kein Nachweis einer fehlenden Bibliothek:
+AOSP baut das Geräteprogramm statisch. V2 ruft deshalb direkt dessen `--help`
+auf, ohne Konfiguration zu erzeugen. Der Hostbericht prüft zusätzlich ELF-Typ
+und PT_INTERP. Fehlende Ausführbarkeit von `getprop` oder `hwservicemanager`
+an `/system/bin/...` beweist keinen fehlenden Build; V2 sammelt die tatsächlichen
+Pfade, Symlinks, Verzeichnisinhalte und Init-Verweise sowie das Build-Inventar.
+Das klärt insbesondere, ob Dateien anders abgelegt oder nicht paketiert sind.
 
 ## Umfang
 
@@ -33,9 +55,9 @@ tmpfs für Upper- und Work-Verzeichnis. In dieser temporären Ansicht werden
 der gebaute HAL-Systembaum nach `/system` und die Runtime an ihren APEX-Pfad
 gebunden. Das ursprüngliche `/data` bleibt schreibgeschützt.
 
-Der Test ruft `linker64 --help` und danach `linker64 --list` für vier gebaute
-Werkzeuge auf. Das listet Abhängigkeiten; die jeweiligen Dienst-Hauptfunktionen
-werden nicht gestartet. LD_LIBRARY_PATH wird nur für diese Android-Linker-
+Der Test ruft `linker64 --help`, direkt `linkerconfig --help` und anschließend
+`linker64 --list` für die dynamischen Kandidaten auf. Das listet Abhängigkeiten;
+die jeweiligen Dienst-Hauptfunktionen werden nicht gestartet. LD_LIBRARY_PATH wird nur für die Android-Linker-
 Aufrufe gesetzt. Es wird keine dauerhafte Linker-Konfiguration erfunden.
 Fehlende Programme oder Abhängigkeiten bleiben als Ergebnis sichtbar.
 
@@ -56,9 +78,9 @@ source "$HOME/n100-build/build.env"
 git -C "$N100_PORT" pull --ff-only
 python3 "$N100_PORT/tools/prepare-runtime-probe.py" prepare \
   --android-root "$ANDROID_ROOT" \
-  --output-dir "$HOME/n100-build/runtime-probe-v1"
+  --output-dir "$HOME/n100-build/runtime-probe-v2-20261026"
 python3 -m http.server 8081 --bind 192.168.2.14 \
-  --directory "$HOME/n100-build/runtime-probe-v1"
+  --directory "$HOME/n100-build/runtime-probe-v2-20261026"
 )
 ```
 
@@ -87,6 +109,7 @@ Erwartete Markierungen:
 
 ```text
 N100_LINKER_HELP_EXIT=0
+N100_LINKERCONFIG_HELP_EXIT=0
 N100_DEPENDENCY_EXIT ... <Status>
 N100_RUNTIME_PROBE_RESULT exit=0 cleanup_failed=0
 ```
@@ -109,23 +132,30 @@ curl --fail --max-time 30 \
   --output "$n100_capture.txt" \
   http://192.168.2.15:8080/runtime-probe.txt
 python3 "$N100_PORT/tools/prepare-runtime-probe.py" report \
-  --bundle-dir "$HOME/n100-build/runtime-probe-v1" \
+  --bundle-dir "$HOME/n100-build/runtime-probe-v2-20261026" \
+  --android-root "$ANDROID_ROOT" \
   --probe-log "$n100_capture.txt" \
   --output "$n100_capture.json"
 )
 ```
 
-Die ausgegebene `.json`-Datei im Gespräch bereitstellen. Anschließend kann der
+Der Bericht enthält nun auch das Build-Inventar mit ELF-Typen, Interpretern
+und Android-Symlinkzielen. Die ausgegebene `.json`-Datei im Gespräch bereitstellen.
+Anschließend kann der
 PC-HTTP-Server mit Strg+C beendet werden. Der Telefon-HTTP-Dienst auf Port 8080
 und Telnet bleiben für die bestehende Debug-Sitzung verfügbar.
 
 ## Quellen und Grenzen
 
+- [Android-13-linkerconfig: statischer Build](https://android.googlesource.com/platform/system/linkerconfig/+/android-13.0.0_r1/Android.bp).
+- [linkerconfig --help vor der Konfigurationserzeugung](https://android.googlesource.com/platform/system/linkerconfig/+/android-13.0.0_r1/main.cc).
 - [APEX-Format](https://source.android.com/docs/core/ota/apex).
 - [Android-Linker: --help und --list](https://android.1.googlesource.com/platform/bionic/+/53408dbc63d7aff71cc7900d3aef4e96b7730b3e/linker/linker_main.cpp).
 - [OverlayFS und Upper-/Work-Verzeichnisse](https://www.kernel.org/doc/html/v5.6/filesystems/overlayfs.html).
 
 Die Host-Tests umfassen ein echtes ext4-Testimage mit ZIP-Verpackung,
 debugfs-Auslesen, ABI-Prüfung, Bundle-Erstellung und Integritätsprüfung des
-späteren Berichts. Das tatsächliche N100-APEX-Binary liegt nur auf dem Build-PC;
-es wurde hier nicht unabhängig entpackt oder auf dem Gerät ausgeführt.
+späteren Berichts. Das tatsächliche N100-APEX-Binary liegt nur auf dem Build-PC.
+Die V1-Ausführung
+auf dem Telefon ist im hochgeladenen Bericht dokumentiert; V2 ist noch nicht
+auf dem Gerät ausgeführt. Ein Hosttest ersetzt diesen Geräteversuch nicht.

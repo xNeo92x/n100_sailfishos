@@ -92,8 +92,11 @@ class RuntimeProbeTests(unittest.TestCase):
             self.assertFalse(any(bundle.glob('core-*')))
             log = self.root / 'probe.txt'; log.write_text('N100_LINKER_HELP_EXIT=0\n')
             report = self.root / 'report.json'
-            runtime.collect(bundle, log, report)
-            self.assertTrue(json.loads(report.read_text())['bundle_integrity_rechecked'])
+            runtime.collect(bundle, log, report, self.root / 'android')
+            record = json.loads(report.read_text())
+            self.assertTrue(record['bundle_integrity_rechecked'])
+            self.assertEqual(record['bundle']['probe_version'], 2)
+            self.assertIn('hal_layout', record['android_output_inventory'])
             with self.assertRaisesRegex(ValueError, 'exists'):
                 runtime.collect(bundle, log, report)
             (bundle / 'runtime-probe.sh').write_text('changed')

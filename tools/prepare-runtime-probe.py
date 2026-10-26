@@ -2,6 +2,7 @@
 """Prepare a pinned runtime APEX probe bundle, or combine its device report."""
 import argparse
 import hashlib
+import importlib.util
 import io
 import json
 from pathlib import Path
@@ -92,6 +93,7 @@ def prepare(android_root, output):
         (staging / 'runtime-probe.sh').write_text(script)
         (staging / 'runtime-probe.sh').chmod(0o755)
         manifest = {'schema': 1, 'kind': 'temporary-runtime-apex-probe',
+                    'probe_version': 2,
                     'source_apex_sha256': APEX_SHA, 'payload_bytes': len(payload),
                     'payload_sha256': digest(payload), 'script_sha256': digest(script.encode()),
                     'verified_core_files': verified, 'oem_signature_verified': False,
@@ -106,7 +108,7 @@ def prepare(android_root, output):
     print('Bundle: {}'.format(output))
 
 
-def collect(bundle, log, output):
+def collect(bundle, log, output, android_root=None):
     require(not output.exists(), 'Report exists; use a new filename')
     manifest = json.loads((bundle / 'manifest.json').read_text())
     require(manifest['source_apex_sha256'] == APEX_SHA, 'Unexpected source APEX pin')
@@ -119,6 +121,11 @@ def collect(bundle, log, output):
     result = {'schema': 1, 'kind': 'runtime-apex-device-probe-report', 'bundle': manifest,
               'device_probe_log': log.read_text(errors='replace'), 'bundle_integrity_rechecked': True,
               'scope': 'Device probe result is unclassified terminal output; no full OS/HAL success inferred.'}
+    if android_root is not None:
+        spec = importlib.util.spec_from_file_location('n100_android_inventory', ROOT / 'tools/inspect-android-output.py')
+        inspector = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(inspector)
+        result['android_output_inventory'] = inspector.inspect(android_root)
     with output.open('x') as stream:
         stream.write(json.dumps(result, indent=2) + '\n')
     print('Report: {}'.format(output))
@@ -134,12 +141,13 @@ def main():
     report.add_argument('--bundle-dir', type=Path, required=True)
     report.add_argument('--probe-log', type=Path, required=True)
     report.add_argument('--output', type=Path, required=True)
+    report.add_argument('--android-root', type=Path, help='Attach current HAL file, symlink and ELF-interpreter inventory')
     args = parser.parse_args()
     try:
         if args.mode == 'prepare':
             prepare(args.android_root, args.output_dir)
         else:
-            collect(args.bundle_dir, args.probe_log, args.output)
+            collect(args.bundle_dir, args.probe_log, args.output, args.android_root)
     except (OSError, ValueError, KeyError, zipfile.BadZipFile, subprocess.SubprocessError) as exc:
         parser.exit(1, 'Runtime probe preparation/report failed: {}\n'.format(exc))
 

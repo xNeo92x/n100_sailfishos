@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "runtime probe V2 correction and HAL layout inventory",
+  "device_report": "validation/runtime-apex-report-user-20261026.json",
+  "changes": [
+    "Execute the expected static linkerconfig --help directly, not through linker64 --list",
+    "Replace misleading NOT_BUILT with unavailable-at-path diagnostic",
+    "Collect packaged bin directory, symlink paths and init references",
+    "Attach host HAL inventory across system/system_ext/vendor/product/root including ELF type and PT_INTERP"
+  ],
+  "host_tests_passed": 199,
+  "compat_tests_passed": 16,
+  "new_elf_layout_tests": 4,
+  "shell_and_python_syntax_passed": true,
+  "device_v2_executed": false,
+  "persistent_changes_on_phone": false,
+  "full_os_boot_verified": false,
+  "primary_android13_sources": {
+    "Android.bp": {
+      "url": "https://android.googlesource.com/platform/system/linkerconfig/+/android-13.0.0_r1/Android.bp",
+      "sha256": "f6c545e713a1964593789c90f4390db9d1b523cc5bbb08d3c496cc94e1d7a156"
+    },
+    "main.cc": {
+      "url": "https://android.googlesource.com/platform/system/linkerconfig/+/android-13.0.0_r1/main.cc",
+      "sha256": "78cc9d8f12141ae6fdb4321a93699aba8dd1fe2271ef8f324c27fbb29c1d9a67"
+    }
+  }
+}

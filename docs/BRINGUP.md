@@ -18,7 +18,12 @@ Sailfish dmsetup is available. The exact snapshot-bound read-only mapping test
 and Android-13 runtime inventory are in [ANDROID_MOUNT_PROBE.md](ANDROID_MOUNT_PROBE.md).
 The device has now passed all four read-only mount probes and their cleanup.
 The empty /apex directory and missing runtime linker targets are confirmed;
-continue with the [temporary runtime APEX probe](RUNTIME_APEX_PROBE.md).
+the matching APEX was subsequently mounted in a temporary RAM overlay.
+`linker64 --help` and the servicemanager dependency list passed, and cleanup
+succeeded. Generated linker configuration remains missing. V1 incorrectly
+passed the static linkerconfig binary to the dynamic linker, and missing
+executability at one path was mislabeled NOT_BUILT. Continue with the corrected
+[Runtime/HAL layout probe V2](RUNTIME_APEX_PROBE.md) before choosing a packaging fix.
 The exact debug/DTBO candidate, verified stock rollback file preparation and
 explicit first-test commands are in [FIRST_DEVICE_TEST.md](FIRST_DEVICE_TEST.md).
 

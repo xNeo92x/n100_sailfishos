@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "readonly-android-mappings-verified-runtime-apex-probe-prepared",
+  "stage": "temporary-runtime-linker-verified-hal-layout-probe-prepared",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -97,7 +97,7 @@
       "host_prerequisites_passed": true
     },
     "userdata_image_deployed": true,
-    "userdata_deployment_scope": "All three sparse userdata parts and writes acknowledged by fastboot; filesystem/readback not yet verified.",
+    "userdata_deployment_scope": "Fastboot transfer and read-only on-device ext4 mount/chroot verified.",
     "userdata_image_on_device_verified": true
   },
   "hal_build_validation": "validation/hal-build-user-20261025.json",
@@ -218,14 +218,19 @@
   "android_mount_probe_plan": "docs/ANDROID_MOUNT_PROBE.md",
   "android_runtime_apex_installed": false,
   "runtime_blockers": [
-    "Empty rootfs /apex and missing com.android.runtime/linker targets confirmed by device probe; matching built APEX probe prepared",
-    "Stock Android-11 partitions must not obscure the built Android-13 HAL system files",
-    "Automatic early mapping/mount integration, persistent APEX activation and full switch_root/systemd/HAL startup remain unvalidated"
+    "Matching runtime APEX and Android linker64 tested in temporary RAM view; persistent activation remains absent",
+    "Generated /linkerconfig/ld.config.txt missing; static linkerconfig help and actual HAL executable layout need V2 inspection",
+    "getprop and hwservicemanager unavailable at tested /system/bin paths; alternate paths, symlinks and packaging need comparison",
+    "Stock Android-11 partitions must not obscure built Android-13 HAL system files; persistent early mapping and full systemd/HAL startup remain unvalidated"
   ],
   "android_mount_probe_preparation_validation": "validation/android-mount-probe-preparation.json",
   "android_readonly_mapping_probe_passed": true,
   "android_mapping_probe_validation": "validation/android-mount-probe-user-20261025.json",
   "android_mappings_currently_active": false,
   "android_runtime_probe_plan": "docs/RUNTIME_APEX_PROBE.md",
-  "android_runtime_probe_preparation_validation": "validation/runtime-apex-probe-preparation.json"
+  "android_runtime_probe_preparation_validation": "validation/runtime-apex-probe-preparation.json",
+  "android_runtime_linker_probe_passed": true,
+  "android_runtime_probe_validation": "validation/runtime-apex-user-20261026.json",
+  "servicemanager_dependency_probe_passed": true,
+  "android_runtime_v2_preparation_validation": "validation/runtime-probe-v2-preparation.json"
 }

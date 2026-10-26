@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "kind": "runtime-apex-device-probe-report",
+  "bundle": {
+    "schema": 1,
+    "kind": "temporary-runtime-apex-probe",
+    "source_apex_sha256": "293e90ce25eec01a38b723731eea03d378750e7ee0287df93305d43073e8bdf0",
+    "payload_bytes": 8110080,
+    "payload_sha256": "52b434e4197f95bbc741b5657f1583186b40c2bc2b9448c6f978865c106974b9",
+    "script_sha256": "6e6157319095d549d7b6ac703cbab4c75967e8bae87179cdb784dc08ab9ca39e",
+    "verified_core_files": {
+      "bin/linker": {
+        "bytes": 1311204,
+        "sha256": "b4cc0d3534db2a18ec0828f394657a0aad773137c0127c3ebbe142a65ef16ae2",
+        "elf_class": 1,
+        "elf_machine": 40,
+        "matches_flattened_reference": true,
+        "flattened_reference_bytes": 1311204,
+        "flattened_reference_sha256": "b4cc0d3534db2a18ec0828f394657a0aad773137c0127c3ebbe142a65ef16ae2"
+      },
+      "bin/linker64": {
+        "bytes": 1790304,
+        "sha256": "7edbd7684bba7a53fc5d666ed23fe3f7927adc11ca060d4b079e7f73918f56cc",
+        "elf_class": 2,
+        "elf_machine": 183,
+        "matches_flattened_reference": true,
+        "flattened_reference_bytes": 1790304,
+        "flattened_reference_sha256": "7edbd7684bba7a53fc5d666ed23fe3f7927adc11ca060d4b079e7f73918f56cc"
+      },
+      "lib64/bionic/libc.so": {
+        "bytes": 1020008,
+        "sha256": "d109ef03d686bd6b549a602f9ed5d774af2fdccc312f178d2f42b188787a6d3a",
+        "elf_class": 2,
+        "elf_machine": 183,
+        "matches_flattened_reference": true,
+        "flattened_reference_bytes": 1020008,
+        "flattened_reference_sha256": "d109ef03d686bd6b549a602f9ed5d774af2fdccc312f178d2f42b188787a6d3a"
+      },
+      "lib64/bionic/libdl.so": {
+        "bytes": 13728,
+        "sha256": "316c59f9624362bd59f1fb2be6c15bfd32e8d5f47aac3356075811c4bf667e03",
+        "elf_class": 2,
+        "elf_machine": 183,
+        "matches_flattened_reference": true,
+        "flattened_reference_bytes": 13728,
+        "flattened_reference_sha256": "316c59f9624362bd59f1fb2be6c15bfd32e8d5f47aac3356075811c4bf667e03"
+      },
+      "lib64/bionic/libm.so": {
+        "bytes": 225176,
+        "sha256": "d5348e97648de62112f1625a70e87a93771ba641d1ee0c3f61f47e0858dec1e8",
+        "elf_class": 2,
+        "elf_machine": 183,
+        "matches_flattened_reference": true,
+        "flattened_reference_bytes": 225176,
+        "flattened_reference_sha256": "d5348e97648de62112f1625a70e87a93771ba641d1ee0c3f61f47e0858dec1e8"
+      }
+    },
+    "oem_signature_verified": false,
+    "device_tested": false,
+    "persistent_installation_performed": false,
+    "systemd_started": false,
+    "android_hal_started": false,
+    "flashable_release": false
+  },
+  "device_probe_log": "N100 temporary Android Runtime probe V1\nKernel: 4.19.325-perf+\nConnecting to 192.168.2.14:8081 (192.168.2.14:8081)\nsaving to '/tmp/n100-runtime-probe.nkMnGX/payload.img'\npayload.img          100% |********************************| 7920k  0:00:00 ETA\n'/tmp/n100-runtime-probe.nkMnGX/payload.img' saved\nVerified payload SHA-256: 52b434e4197f95bbc741b5657f1583186b40c2bc2b9448c6f978865c106974b9\nVerified runtime core: bin/linker\nVerified runtime core: bin/linker64\nVerified runtime core: lib64/bionic/libc.so\nVerified runtime core: lib64/bionic/libdl.so\nVerified runtime core: lib64/bionic/libm.so\n=== Temporary mount view ===\noverlay /tmp/n100-runtime-probe.nkMnGX/root overlay rw,relatime,lowerdir=/data/.stowaways/sailfishos,upperdir=/tmp/n100-runtime-probe.nkMnGX/ram/upper,workdir=/tmp/n100-runtime-probe.nkMnGX/ram/overlay-work 0 0\ndevtmpfs /tmp/n100-runtime-probe.nkMnGX/root/dev devtmpfs rw,relatime,size=1749840k,nr_inodes=437460,mode=755 0 0\nproc /tmp/n100-runtime-probe.nkMnGX/root/proc proc rw,relatime 0 0\nsysfs /tmp/n100-runtime-probe.nkMnGX/root/sys sysfs rw,relatime 0 0\n/dev/sda16 /tmp/n100-runtime-probe.nkMnGX/root/system ext4 ro,relatime,norecovery 0 0\n/dev/loop0 /tmp/n100-runtime-probe.nkMnGX/root/apex/com.android.runtime ext4 ro,relatime,norecovery 0 0\n=== Android linker64 --help ===\nUsage: /apex/com.android.runtime/bin/linker64 [--list] PROGRAM [ARGS-FOR-PROGRAM...]\n       /apex/com.android.runtime/bin/linker64 [--list] path.zip!/PROGRAM [ARGS-FOR-PROGRAM...]\n\nA helper program for linking dynamic executables. Typically, the kernel loads\nthis program because it's the PT_INTERP of a dynamic executable.\n\nThis program can also be run directly to load and run a dynamic executable. The\nexecutable can be inside a zip file if it's stored uncompressed and at a\npage-aligned offset.\n\nThe --list option gives behavior equivalent to ldd(1) on other systems.\nN100_LINKER_HELP_EXIT=0\n=== Dependency listing: /system/bin/getprop ===\nNOT_BUILT: /system/bin/getprop\nN100_DEPENDENCY_EXIT /system/bin/getprop 3\n=== Dependency listing: /system/bin/linkerconfig ===\nerror: \"/system/bin/linkerconfig\" has unexpected e_type: 2\nlinker: error: \"/system/bin/linkerconfig\" has unexpected e_type: 2\n\nN100_DEPENDENCY_EXIT /system/bin/linkerconfig 1\n=== Dependency listing: /system/bin/servicemanager ===\n\tlinux-vdso.so.1 => [vdso] (0x7fb3009000)\nlinker: Warning: failed to find generated linker configuration from \"/linkerconfig/ld.config.txt\"\nWARNING: linker: Warning: failed to find generated linker configuration from \"/linkerconfig/ld.config.txt\"\n\tlibbase.so => /system/lib64/libbase.so (0x7fae083000)\n\tlibbinder.so => /system/lib64/libbinder.so (0x7fb1c85000)\n\tlibvintf.so => /system/lib64/libvintf.so (0x7fb150b000)\n\tlibcutils.so => /system/lib64/libcutils.so (0x7fb149d000)\n\tliblog.so => /system/lib64/liblog.so (0x7fb14cd000)\n\tlibutils.so => /system/lib64/libutils.so (0x7fae98c000)\n\tlibselinux.so => /system/lib64/libselinux.so (0x7fb1d50000)\n\tlibc++.so => /system/lib64/libc++.so (0x7fae210000)\n\tlibc.so => /system/lib64/libc.so (0x7fae2fc000)\n\tlibm.so => /system/lib64/libm.so (0x7fae0c5000)\n\tlibdl.so => /system/lib64/libdl.so (0x7fb1c74000)\n\tlibhidl-gen-utils.so => /system/lib64/libhidl-gen-utils.so (0x7fae123000)\n\tlibtinyxml2.so => /system/lib64/libtinyxml2.so (0x7fb1d8f000)\n\tlibz.so => /system/lib64/libz.so (0x7fae9e3000)\n\tlibvndksupport.so => /system/lib64/libvndksupport.so (0x7fb144e000)\n\tlibpcre2.so => /system/lib64/libpcre2.so (0x7fae14a000)\n\tlibpackagelistparser.so => /system/lib64/libpackagelistparser.so (0x7fae1d5000)\n\tlibdl_android.so => /system/lib64/libdl_android.so (0x7fae079000)\nN100_DEPENDENCY_EXIT /system/bin/servicemanager 0\n=== Dependency listing: /system/bin/hwservicemanager ===\nNOT_BUILT: /system/bin/hwservicemanager\nN100_DEPENDENCY_EXIT /system/bin/hwservicemanager 3\nAndroid application/service main functions were not requested; dependency-list mode only.\nPersistent Sailfish /apex and userdata contents remain unchanged.\nN100_RUNTIME_PROBE_RESULT exit=0 cleanup_failed=0\nRAM work directory: /tmp/n100-runtime-probe.nkMnGX\n",
+  "bundle_integrity_rechecked": true,
+  "scope": "Device probe result is unclassified terminal output; no full OS/HAL success inferred."
+}

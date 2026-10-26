@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "source": "validation/runtime-apex-report-user-20261026.json",
+  "source_sha256": "4a1dcaafa2508a8416d11d0241c014727a2e4ab9613d80fbdebfb6b74325cf87",
+  "kernel": "4.19.325-perf+",
+  "payload_sha256": "52b434e4197f95bbc741b5657f1583186b40c2bc2b9448c6f978865c106974b9",
+  "five_core_hashes_match_flattened_build": true,
+  "readonly_runtime_loop_mount_verified": true,
+  "tmpfs_overlay_view_verified": true,
+  "android_linker64_help_exit": 0,
+  "servicemanager_dependency_list_exit": 0,
+  "generated_linker_configuration_present": false,
+  "v1_probe_issues": {
+    "linkerconfig": "Invoked incorrectly through the dynamic linker. e_type=2 is compatible with the expected static AOSP binary; V2 calls --help directly and inventories PT_INTERP on the host.",
+    "getprop_and_hwservicemanager": "Not executable at the tested /system/bin paths. V1 NOT_BUILT wording was too strong; source build absence and packaging loss are not yet established."
+  },
+  "cleanup_failed": false,
+  "persistent_runtime_installed": false,
+  "bundle_device_tested_flag": "False is the original preparation-time manifest snapshot, not the outcome of this later device execution.",
+  "systemd_started": false,
+  "android_hal_started": false,
+  "full_os_boot_verified": false,
+  "flashable_release": false,
+  "next_step": "Runtime probe V2: direct static linkerconfig --help, packaged path/init inventory, matching host ELF and symlink inventory; no linker config generation or service startup yet."
+}

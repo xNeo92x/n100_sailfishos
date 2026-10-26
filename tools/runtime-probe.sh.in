@@ -50,7 +50,7 @@ trap cleanup 0
 trap 'exit 130' INT
 trap 'exit 143' HUP TERM
 
-echo 'N100 temporary Android Runtime probe V1'
+echo 'N100 temporary Android Runtime probe V2'
 echo "Kernel: $(uname -r)"
 wget -O "$work/payload.img" http://192.168.2.14:8081/apex_payload.img
 [ "$(wc -c < "$work/payload.img")" -eq "$PAYLOAD_BYTES" ] || die 'Payload size mismatch'
@@ -100,10 +100,25 @@ timeout 15 chroot "$P" /bin/sh -c '
 LD_LIBRARY_PATH=/system/lib64:/apex/com.android.runtime/lib64/bionic /apex/com.android.runtime/bin/linker64 --help
 '
 echo 'N100_LINKER_HELP_EXIT=0'
-for program in /system/bin/getprop /system/bin/linkerconfig /system/bin/servicemanager /system/bin/hwservicemanager; do
+echo '=== Rootfs HAL layout (missing paths are observations, not proof of a missing build) ==='
+for path in /system/bin/getprop /system/bin/toolbox /system/bin/toybox /system/bin/hwservicemanager /system/system_ext /system_ext /vendor /usr/bin/getprop /usr/libexec/droid-hybris/system/bin/hwservicemanager; do
+    echo "PATH: $path"
+    chroot "$P" /bin/sh -c 'ls -ld "$1"; if [ -L "$1" ]; then readlink "$1"; fi' n100-layout "$path" || :
+done
+echo '=== Packaged HAL bin directory ==='
+ls -l "$ROOT/usr/libexec/droid-hybris/system/bin" || :
+echo '=== Packaged init references ==='
+grep -nE 'hwservicemanager|linkerconfig|apexd' "$ROOT"/usr/libexec/droid-hybris/system/etc/init/*.rc "$ROOT"/usr/libexec/droid-hybris/system/etc/init/hw/*.rc || :
+echo '=== Static Android linkerconfig --help (direct execution) ==='
+if timeout 15 chroot "$P" /system/bin/linkerconfig --help; then
+    echo 'N100_LINKERCONFIG_HELP_EXIT=0'
+else
+    echo "N100_LINKERCONFIG_HELP_EXIT=$?"
+fi
+for program in /system/bin/getprop /system/bin/servicemanager /system/bin/hwservicemanager /system_ext/bin/hwservicemanager /vendor/bin/hwservicemanager; do
     echo "=== Dependency listing: $program ==="
     if timeout 15 chroot "$P" /bin/sh -c '
-        [ -x "$1" ] || { echo "NOT_BUILT: $1"; exit 3; }
+        [ -x "$1" ] || { echo "UNAVAILABLE_AT_PATH: $1"; exit 3; }
         LD_LIBRARY_PATH=/system/lib64:/apex/com.android.runtime/lib64/bionic /apex/com.android.runtime/bin/linker64 --list "$1"
     ' n100-list "$program"; then
         echo "N100_DEPENDENCY_EXIT $program 0"
@@ -112,6 +127,6 @@ for program in /system/bin/getprop /system/bin/linkerconfig /system/bin/servicem
         echo "N100_DEPENDENCY_EXIT $program $code"
     fi
 done
-echo 'Android application/service main functions were not requested; dependency-list mode only.'
+echo 'Only linker help, linkerconfig help and dependency listing were requested; no HAL services started.'
 echo 'Persistent Sailfish /apex and userdata contents remain unchanged.'
 # EXIT trap unmounts views and detaches only our own loop device.
