@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "source": "validation/hal-runtime-rpm-failure-user-20261026.log",
+  "source_sha256": "9d465d8be19609addacbfb64d5a9c9fba79b000475d4408522b2ebb7845b005b",
+  "observed_failure": "RPM %install: DHD runtime APEX linkerconfig fallback copy fails after system/bin was already copied successfully.",
+  "diagnosis": "A dangling destination APEX symlink is consistent with the log and the recreated cp failure; original destination link target was not separately collected on the user PC.",
+  "fix": "Only the pinned linkerconfig cp recipe gains --remove-destination, preserving archive metadata while replacing the staged destination itself.",
+  "upstream_include_git_blob": "7717982261ad321df173e489145a2f58126691c6",
+  "previous_mount_fixup_preserved": true,
+  "previous_audit_marker_migrated": true,
+  "unreviewed_include_or_audit_edits_rejected": true,
+  "host_tests_passed": 210,
+  "compat_tests_passed": 16,
+  "exact_upstream_include_patch_checked": true,
+  "symlink_target_preservation_checked": true,
+  "real_sb2_rpm_retry_executed": false,
+  "phone_changed": false,
+  "full_os_boot_verified": false
+}

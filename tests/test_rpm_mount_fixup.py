@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -22,7 +23,7 @@ class RpmMountFixupTests(unittest.TestCase):
         self.path.parent.mkdir(parents=True)
         self.original = ("# include fixture\n%build\necho Fixing up mount points\n"
                          "hybris/hybris-boot/fixup-mountpoints %{device} tmp/units/*\n"
-                         "echo Creating hw-release\n")
+                         "echo Creating hw-release\n" + n100.DHD_LINKERCONFIG_COPY + "\n")
         self.path.write_text(self.original)
         self.override = self.android / "hybris/fixup-rpm-mountpoints"
         self.override.parent.mkdir(parents=True)
@@ -45,7 +46,8 @@ class RpmMountFixupTests(unittest.TestCase):
         n100.install_rpm_mount_fixup(self.android)
         self.assertEqual(self.path.read_bytes(), first)
         self.assertEqual(first.decode(), self.original.replace(
-            "hybris/hybris-boot/fixup-mountpoints", "hybris/fixup-rpm-mountpoints"))
+            "hybris/hybris-boot/fixup-mountpoints", "hybris/fixup-rpm-mountpoints").replace(
+                n100.DHD_LINKERCONFIG_COPY, n100.DHD_LINKERCONFIG_COPY_FIXED))
         self.checkout.assert_called_with(self.android / "rpm/dhd",
                                          "775f6c05123ca7e58422df1fcfd51943eb56920f")
         units = self.android / "tmp/units"
@@ -79,6 +81,63 @@ class RpmMountFixupTests(unittest.TestCase):
         with self.assertRaisesRegex(n100.PortError, "unreviewed"):
             n100.install_rpm_mount_fixup(self.android)
         self.assertEqual(self.path.read_text(), changed)
+
+    def test_upgrades_the_previous_mount_only_include_and_marker(self):
+        old = self.original.replace('hybris/hybris-boot/fixup-mountpoints', 'hybris/fixup-rpm-mountpoints')
+        self.path.write_text(old)
+        dependency = next(p for p in n100.read_lock()['packaging'] if p['path'] == 'dhd')
+        marker = self.android / '.n100-rpm-mounts.json'
+        marker.write_text(json.dumps({
+            'schema': 1, 'dhd_revision': dependency['revision'],
+            'original_include_blob': n100.git_blob_identity(self.original.encode()),
+            'installed_include_blob': n100.git_blob_identity(old.encode()),
+            'mount_fixup': 'hybris/fixup-rpm-mountpoints',
+            'slotselect_runtime_implemented': False, 'boot_tested': False}))
+        n100.install_rpm_mount_fixup(self.android)
+        first = self.path.read_bytes(), marker.read_bytes()
+        n100.install_rpm_mount_fixup(self.android)
+        self.assertEqual(first, (self.path.read_bytes(), marker.read_bytes()))
+        self.assertTrue(json.loads(marker.read_text())['linkerconfig_copy_replaces_destination'])
+        self.assertIn('hybris/fixup-rpm-mountpoints', self.path.read_text())
+
+    def test_rejects_unknown_audit_metadata_before_changing_include(self):
+        marker = self.android / '.n100-rpm-mounts.json'
+        marker.write_text('{"custom": true}\n')
+        with self.assertRaisesRegex(n100.PortError, 'metadata has unreviewed'):
+            n100.install_rpm_mount_fixup(self.android)
+        self.assertEqual(self.path.read_text(), self.original)
+        self.assertEqual(marker.read_text(), '{"custom": true}\n')
+
+    def test_copy_recipe_replaces_link_without_touching_its_target(self):
+        source = self.android / 'out/target/product/billie2/apex/com.android.runtime/bin/linkerconfig'
+        source.parent.mkdir(parents=True)
+        source.write_bytes(b'checked static executable fixture')
+        source.chmod(0o755)
+        buildroot = self.android / 'installroot'
+        destination = buildroot / 'usr/libexec/droid-hybris/system/bin/linkerconfig'
+        destination.parent.mkdir(parents=True)
+        outside = self.android / 'outside/keep'
+        outside.parent.mkdir()
+        recipe = n100.DHD_LINKERCONFIG_COPY.replace('%{android_root}', str(self.android)).replace('%{device}', 'billie2').replace('%{_libexecdir}', '/usr/libexec')
+        env = dict(os.environ, RPM_BUILD_ROOT=str(buildroot))
+        env.pop('POSIXLY_CORRECT', None)
+        destination.symlink_to(outside)
+        before = subprocess.run(['sh', '-ec', recipe], env=env, capture_output=True)
+        self.assertNotEqual(before.returncode, 0)
+        self.assertFalse(outside.exists())
+        fixed = n100.DHD_LINKERCONFIG_COPY_FIXED.replace('%{android_root}', str(self.android)).replace('%{device}', 'billie2').replace('%{_libexecdir}', '/usr/libexec')
+        for existing_target in (False, True):
+            if destination.exists() or destination.is_symlink():
+                destination.unlink()
+            if existing_target:
+                outside.write_bytes(b'preserve outside file')
+            destination.symlink_to(outside)
+            subprocess.run(['sh', '-ec', fixed], env=env, check=True, capture_output=True)
+            self.assertFalse(destination.is_symlink())
+            self.assertEqual(destination.read_bytes(), source.read_bytes())
+            self.assertEqual(destination.stat().st_mode & 0o777, 0o755)
+            self.assertEqual(outside.read_bytes() if existing_target else None,
+                             b'preserve outside file' if existing_target else None)
 
     def test_requires_regular_executable_override(self):
         self.override.chmod(0o644)

@@ -1,0 +1,629 @@
+Directory walk started
+Directory walk done - 48 packages
+Temporary output repo path: /home/eugen/n100-build/android/.mb2/filtered-output-dir/.repodata/
+Pool started (with 5 workers)
+Pool finished
+Entering 'no-gpg-checks' mode.
+Entering non-interactive mode.
+Verbosity: 2
+Non-option program arguments: 'oneshot' 'pkgconfig(systemd)' 'pkgconfig(zlib)' 'qt5-qttools-kmap2qmap >= 5.1.0+git5' 'rsync' 
+Initializing Target
+Checking whether to refresh metadata for dir:/home/eugen/n100-build/android/.mb2/filtered-output-dir
+Retrieving repository 'dir:/home/eugen/n100-build/android/.mb2/filtered-output-dir' metadata [.
+Warning: Accepting an unsigned file 'repomd.xml' from repository 'dir:/home/eugen/n100-build/android/.mb2/filtered-output-dir'.
+done]
+Building repository 'dir:/home/eugen/n100-build/android/.mb2/filtered-output-dir' cache [...done]
+Loading repository data...
+Reading installed packages...
+'qt5-qttools-kmap2qmap >= 5.1.0+git5' is already installed.
+No update candidate for 'qt5-qttools-kmap2qmap-5.6.3+git2-1.5.39.jolla.aarch64'. The highest available version is already installed.
+'oneshot' is already installed.
+No update candidate for 'oneshot-0.6.12-1.6.2.jolla.noarch'. The highest available version is already installed.
+'pkgconfig(systemd)' not found in package names. Trying capabilities.
+'systemd-devel' providing 'pkgconfig(systemd)' is already installed.
+'pkgconfig(zlib)' not found in package names. Trying capabilities.
+'zlib-devel' providing 'pkgconfig(zlib)' is already installed.
+'rsync' is already installed.
+No update candidate for 'rsync-3.4.1+git1-1.7.3.jolla.aarch64'. The highest available version is already installed.
+Resolving package dependencies...
+Force resolution: No
+Nothing to do.
+Entering 'no-gpg-checks' mode.
+Entering non-interactive mode.
+Verbosity: 2
+Initializing Target
+Checking whether to refresh metadata for dir:/home/eugen/n100-build/android/.mb2/filtered-output-dir
+Retrieving repository 'dir:/home/eugen/n100-build/android/.mb2/filtered-output-dir' metadata [.
+Warning: Accepting an unsigned file 'repomd.xml' from repository 'dir:/home/eugen/n100-build/android/.mb2/filtered-output-dir'.
+done]
+Building repository 'dir:/home/eugen/n100-build/android/.mb2/filtered-output-dir' cache [...done]
+Loading repository data...
+Reading installed packages...
+Computing distribution upgrade...
+Force resolution: No
+
+The following 5 packages are going to be upgraded:
+droid-config-billie2                    
+  1-202610251521 -> 1-202610251555
+droid-config-billie2-policy-settings    
+  1-202610251521 -> 1-202610251555
+droid-config-billie2-preinit-plugin     
+  1-202610251521 -> 1-202610251555
+droid-config-billie2-pulseaudio-settings
+  1-202610251521 -> 1-202610251555
+droid-config-billie2-sailfish           
+  1-202610251521 -> 1-202610251555
+
+5 packages to upgrade.
+Overall download size: 70.9 KiB. Already cached: 0 B. No additional space will be used or freed after the operation.
+Continue? [y/n/v/...? shows all options] (y): y
+committing
+Retrieving: droid-config-billie2-1-202610251555.aarch64 (dir:/home/eugen/n100-build/android/.mb2/filtered-output-dir) (1/5),  29.7 KiB    
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+    Package header is not signed!
+
+Retrieving: droid-config-billie2-policy-settings-1-202610251555.aarch64 (dir:/home/eugen/n100-build/android/.mb2/filtered-output-dir) (2/5),   8.5 KiB    
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+    Package header is not signed!
+
+Retrieving: droid-config-billie2-preinit-plugin-1-202610251555.aarch64 (dir:/home/eugen/n100-build/android/.mb2/filtered-output-dir) (3/5),   8.4 KiB    
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+    Package header is not signed!
+
+Retrieving: droid-config-billie2-pulseaudio-settings-1-202610251555.aarch64 (dir:/home/eugen/n100-build/android/.mb2/filtered-output-dir) (4/5),  17.0 KiB    
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+    Package header is not signed!
+
+Retrieving: droid-config-billie2-sailfish-1-202610251555.noarch (dir:/home/eugen/n100-build/android/.mb2/filtered-output-dir) (5/5),   7.4 KiB    
+    Header SHA256 digest: OK
+    Header SHA1 digest: OK
+    Payload SHA256 digest: OK
+    MD5 digest: OK
+    Package header is not signed!
+
+
+Checking for file conflicts: [..done]
+(1/5) Installing: droid-config-billie2-1-202610251555.aarch64 [..
+Removing ssu feature cache
+Removing ssu board-mappings cache
+DBus unavailable, falling back to libssu
+add-oneshot: /usr/lib/oneshot.d/ssu-update-repos - run OK
+DBus unavailable, falling back to libssu
+add-oneshot: /usr/lib/oneshot.d/ssu-update-repos - run OK
+done]
+(2/5) Installing: droid-config-billie2-policy-settings-1-202610251555.aarch64 [..done]
+(3/5) Installing: droid-config-billie2-preinit-plugin-1-202610251555.aarch64 [..done]
+(4/5) Installing: droid-config-billie2-pulseaudio-settings-1-202610251555.aarch64 [..done]
+(5/5) Installing: droid-config-billie2-sailfish-1-202610251555.noarch [..
+add-oneshot: /etc/oneshot.d/0/dconf-update - job saved OK
+done]
+CommitResult  (total 5, done 5, error 0, skipped 0, updateMessages 0)
+Check for running processes using deleted libraries is disabled in zypper.conf. Run 'zypper ps -s' to check manually.
+ 
+Building target platforms: aarch64-meego-linux-gnu
+Building for target aarch64-meego-linux-gnu
+Executing(%build): /bin/sh -e /var/tmp/rpm-tmp.807dZt
++ umask 022
++ cd /home/eugen/n100-build/android
++ LANG=C
++ export LANG
++ unset DISPLAY
++ CFLAGS='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -march=armv8-a'
++ export CFLAGS
++ CXXFLAGS='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -march=armv8-a'
++ export CXXFLAGS
++ FFLAGS='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -march=armv8-a -I/usr/lib64/gfortran/modules'
++ export FFLAGS
++ LD_AS_NEEDED=1
++ export LD_AS_NEEDED
++ echo _target_cpu is aarch64
+_target_cpu is aarch64
++ rm -rf tmp
++ mkdir tmp
++ echo Verifying kernel config
+Verifying kernel config
++ hybris/mer-kernel-check/mer_verify_kernel_config ./out/target/product/billie2/obj/DTBO_OBJ/.config ./out/target/product/billie2/obj/DTB_OBJ/.config ./out/target/product/billie2/obj/KERNEL_OBJ/.config
+WARNING: CONFIG_ANDROID_LOW_MEMORY_KILLER is invalid
+It is unset
+Allowed values : y, !
+Comment says: Helping memory handling at least with Android runtime (tested on Jolla C)
+
+WARNING: CONFIG_SECURITY_YAMA_STACKED is invalid
+It is unset
+Allowed values : y, !, <4.3
+Comment says: optional, only valid for kernel < 4.3
+
+WARNING: CONFIG_NF_CONNTRACK_IPV4 is invalid
+It is unset
+Allowed values : y, m, !, <=4.18
+Comment says: optional, exists up to 4.18
+
+WARNING: CONFIG_NETFILTER_XT_MATCH_SCTP is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman: for iptables sctp match
+
+WARNING: CONFIG_SECURITY_YAMA is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, prevents user's processes from ptracing each other
+
+WARNING: CONFIG_IP6_NF_MATCH_AH is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman: for ip6tables ah match
+
+WARNING: CONFIG_CGROUP_PERF is invalid
+It is unset
+Allowed values : y, !
+Comment says: systemd (optional): https://github.com/systemd/systemd/blob/v238/README
+
+WARNING: CONFIG_IP6_NF_MATCH_MH is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman: for ip6tables mh match
+
+WARNING: CONFIG_CHECKPOINT_RESTORE is invalid
+It is unset
+Allowed values : y, !
+Comment says: rich-core-dumper (https://github.com/mer-tools/sp-rich-core/) needs this to collect all data for environment recreation.
+
+WARNING: CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE is invalid
+Value is: 1
+Allowed values : 0, !
+Comment says: Alternative way to disable SELinux at boottime
+
+WARNING: CONFIG_CUSE is invalid
+It is unset
+Allowed values : y, !, >=2.6
+Comment says: CUSE (optional): Required for software security modules support.
+
+WARNING: CONFIG_NFS_V4 is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_HIDRAW is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional: Support HID devices
+
+WARNING: CONFIG_IP6_NF_MATCH_FRAG is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman: for ip6tables frag match
+
+WARNING: CONFIG_BLK_DEV_NBD is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional, for NFS & CIFS support
+
+WARNING: CONFIG_NFS_FS is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_NFS_V3 is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_NETFILTER_XT_MATCH_NFACCT is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman (optional): for routing and statistic support in sessions, http://git.kernel.org/cgit/network/connman/connman.git/commit/README?id=41f37125887cb9208da2441e350e1e3324c17ee6
+
+WARNING: CONFIG_SUNRPC is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_UDF_FS is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional extra filesystem (DVD & portable USB)
+
+WARNING: CONFIG_LOCKD is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_FANOTIFY is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, required for systemd readahead.
+
+WARNING: CONFIG_NFS_USE_KERNEL_DNS is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_NET_DROP_MONITOR is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: Enable package drop monitoring
+
+WARNING: CONFIG_NET_CLS_CGROUP is invalid
+It is unset
+Allowed values : y, !
+Comment says: systemd (optional): https://github.com/systemd/systemd/blob/v238/README
+
+WARNING: CONFIG_ECRYPT_FS is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional extra filesystem (ecryptfs)
+
+WARNING: CONFIG_NF_NAT_IPV6 is invalid
+It is unset
+Allowed values : y, m, !, >=3.7, <=5.0
+Comment says: connman: to enable IPv6 NAT, optional as exists in kernel between 3.7 to 5.0
+
+WARNING: CONFIG_BT_HCIUART is invalid
+It is unset
+Allowed values : y, !
+Comment says: Bluez (optional): Needed if bluez used as bluetooth stack
+
+WARNING: CONFIG_BTRFS_FS is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional extra filesystem (BTRFS)
+
+WARNING: CONFIG_SUNRPC_GSS is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_WATCHDOG_NOWAYOUT is invalid
+It is unset
+Allowed values : y, !
+Comment says: If device uses watchdogs with dsme (https://github.com/sailfishos/dsme), this option should be enabled or watchdog does not protect the device in case dsme crashes.
+
+WARNING: CONFIG_NETWORK_FILESYSTEMS is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_BT_HCIUART_H4 is invalid
+It is unset
+Allowed values : y, !
+Comment says: Bluez (optional): Needed if bluez used as bluetooth stack
+
+WARNING: CONFIG_NETFILTER_XT_MATCH_DCCP is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman: for iptables dccp match
+
+WARNING: CONFIG_NF_CONNTRACK_IPV6 is invalid
+It is unset
+Allowed values : y, m, !, <=4.18
+Comment says: optional, exists up to 4.18
+
+WARNING: CONFIG_NETFILTER_NETLINK_ACCT is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman (optional): for routing and statistic support in sessions, http://git.kernel.org/cgit/network/connman/connman.git/commit/README?id=41f37125887cb9208da2441e350e1e3324c17ee6
+
+WARNING: CONFIG_NETFILTER_XT_MATCH_RECENT is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: connman: for iptables recent match
+
+WARNING: CONFIG_RTC_DRV_CMOS is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, but highly recommended, not available on arm64
+
+WARNING: CONFIG_NFS_ACL_SUPPORT is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_LOCKD_V4 is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_CGROUP_NET_PRIO is invalid
+It is unset
+Allowed values : y, !, >=3.14
+Comment says: systemd (optional): https://github.com/systemd/systemd/blob/v238/README
+
+WARNING: CONFIG_CIFS is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional extra filesystem (CIFS - Windows net fs)
+
+WARNING: CONFIG_LBDAF is invalid
+It is unset
+Allowed values : y, !
+Comment says: ext4 filesystem requires this in order to support filesysetms with huge_file feature, which is enabled by default by mke2fs.ext4, not needed for 64bit architectures
+
+WARNING: CONFIG_NFS_V3_ACL is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_NFS_V4_1 is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
+WARNING: CONFIG_ISO9660_FS is invalid
+It is unset
+Allowed values : y, m, !
+Comment says: optional extra filesystem (CD-ROM)
+
+WARNING: CONFIG_NFS_COMMON is invalid
+It is unset
+Allowed values : y, !
+Comment says: optional, for NFS support
+
++ grep -q string_value 'build/release/flag_values/*/RELEASE_PLATFORM_VERSION_LAST_STABLE.textproto'
+grep: build/release/flag_values/*/RELEASE_PLATFORM_VERSION_LAST_STABLE.textproto: No such file or directory
++ '[' -f ./build/release/build_flags.scl ']'
+++ awk '/PLATFORM_VERSION([A-Z0-9.]*|_LAST_STABLE) := ([0-9.]+)/ { print $3; }'
+++ awk -F. '{print $1}'
++ android_version_major=13
+++ readlink -e .
++ ANDROID_ROOT=/home/eugen/n100-build/android
++ echo Building local tools
+Building local tools
++ '[' 13 -ge 8 ']'
++ /home/eugen/n100-build/android/build/make/tools/fs_config/fs_config_generator.py aidarray /home/eugen/n100-build/android/system/core/libcutils/include/private/android_filesystem_config.h
++ '[' -f rpm/helpers/mkbootimg.mk ']'
++ '[' 13 -lt 7 ']'
++ '[' -f rpm/helpers/simg2img.mk ']'
++ '[' -f rpm/helpers/img2simg.mk ']'
++ '[' 13 -ge 13 ']'
++ echo '#include <cstring>'
++ echo '#include "sparse_read.cpp"'
++ IMG2SIMG_SOURCES='backed_block.c output_file.c sparse.c sparse_crc32.c sparse_err.c sparse_read_fix.cpp img2simg.c ../../libbase/mapped_file.cpp ../../libbase/stringprintf.cpp'
++ SIMG2IMG_SOURCES='backed_block.c output_file.c sparse.c sparse_crc32.c sparse_err.c sparse_read_fix.cpp simg2img.c ../../libbase/mapped_file.cpp ../../libbase/stringprintf.cpp'
++ pushd rpm/dhd/helpers
+~/n100-build/android/rpm/dhd/helpers ~/n100-build/android
++ make ANDROID_ROOT=/home/eugen/n100-build/android 'IMG2SIMG_SOURCES=backed_block.c output_file.c sparse.c sparse_crc32.c sparse_err.c sparse_read_fix.cpp img2simg.c ../../libbase/mapped_file.cpp ../../libbase/stringprintf.cpp' 'SIMG2IMG_SOURCES=backed_block.c output_file.c sparse.c sparse_crc32.c sparse_err.c sparse_read_fix.cpp simg2img.c ../../libbase/mapped_file.cpp ../../libbase/stringprintf.cpp'
+make -f /home/eugen/n100-build/android/rpm/dhd/helpers/img2simg.mk -C /home/eugen/n100-build/android/system/core/libsparse/
+make[1]: Entering directory '/home/eugen/n100-build/android/system/core/libsparse'
+g++ -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -march=armv8-a -std=gnu++14 -Iinclude -I../base/include -I../../libbase/include  -c -o sparse_read_fix.o sparse_read_fix.cpp
+g++ -o img2simg -Iinclude -I../base/include -I../../libbase/include -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -march=armv8-a -std=gnu++14  backed_block.o output_file.o sparse.o sparse_crc32.o sparse_err.o sparse_read_fix.o img2simg.o ../../libbase/mapped_file.o ../../libbase/stringprintf.o -lz
+make[1]: Leaving directory '/home/eugen/n100-build/android/system/core/libsparse'
+make -f /home/eugen/n100-build/android/rpm/dhd/helpers/simg2img.mk -C /home/eugen/n100-build/android/system/core/libsparse/
+make[1]: Entering directory '/home/eugen/n100-build/android/system/core/libsparse'
+g++ -o simg2img -Iinclude -I../base/include -I../../libbase/include -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -march=armv8-a -std=gnu++14  backed_block.o output_file.o sparse.o sparse_crc32.o sparse_err.o sparse_read_fix.o simg2img.o ../../libbase/mapped_file.o ../../libbase/stringprintf.o -lz
+make[1]: Leaving directory '/home/eugen/n100-build/android/system/core/libsparse'
++ popd
+~/n100-build/android
++ echo Building uid scripts
+Building uid scripts
++ rpm/dhd/helpers/usergroupgen
++ echo Building udev rules
+Building udev rules
++ mkdir tmp/udev.rules
+++ find ./out/target/product/billie2/system ./out/target/product/billie2/root ./out/target/product/billie2/vendor -name ueventd.rc -o -name 'ueventd.*.rc' -a '!' -name '*.goldfish.rc'
++ rpm/dhd/helpers/makeudev ./out/target/product/billie2/system/etc/ueventd.rc ./out/target/product/billie2/vendor/etc/ueventd.rc
+WARNING Rule not converted: import /vendor/etc/ueventd.rc
+
+WARNING Rule not converted: import /odm/etc/ueventd.rc
+
+WARNING Rule not converted: firmware_directories /etc/firmware/ /odm/firmware/ /vendor/firmware/ /firmware/image/
+
+WARNING Rule not converted: uevent_socket_rcvbuf_size 16M
+
+WARNING Rule not converted: subsystem graphics
+
+WARNING Rule not converted:     devname uevent_devpath
+
+WARNING Rule not converted:     dirname /dev/graphics
+
+WARNING Rule not converted: subsystem drm
+
+WARNING Rule not converted:     devname uevent_devpath
+
+WARNING Rule not converted:     dirname /dev/dri
+
+WARNING Rule not converted: subsystem input
+
+WARNING Rule not converted:     devname uevent_devpath
+
+WARNING Rule not converted:     dirname /dev/input
+
+WARNING Rule not converted: subsystem sound
+
+WARNING Rule not converted:     devname uevent_devpath
+
+WARNING Rule not converted:     dirname /dev/snd
+
+WARNING Rule not converted: subsystem dma_heap
+
+WARNING Rule not converted:    devname uevent_devpath
+
+WARNING Rule not converted:    dirname /dev/dma_heap
+
+WARNING Rule not converted: firmware_directories /vendor/firmware_mnt/image/
+
++ echo Building mount units
+Building mount units
++ mkdir tmp/units
++ shopt -s nullglob
+++ echo ./out/target/product/billie2/system/etc/init/hw/init.rc ./out/target/product/billie2/system/etc/init/hw/init.usb.configfs.rc ./out/target/product/billie2/system/etc/init/hw/init.usb.rc ./out/target/product/billie2/system/etc/init/hw/init.zygote32.rc ./out/target/product/billie2/system/etc/init/hw/init.zygote64_32.rc ./out/target/product/billie2/root/init.environ.rc ./out/target/product/billie2/root/init.recovery.qcom.rc ./out/target/product/billie2/vendor/etc/fstab.qcom
++ fstab_files='./out/target/product/billie2/system/etc/init/hw/init.rc ./out/target/product/billie2/system/etc/init/hw/init.usb.configfs.rc ./out/target/product/billie2/system/etc/init/hw/init.usb.rc ./out/target/product/billie2/system/etc/init/hw/init.zygote32.rc ./out/target/product/billie2/system/etc/init/hw/init.zygote64_32.rc ./out/target/product/billie2/root/init.environ.rc ./out/target/product/billie2/root/init.recovery.qcom.rc ./out/target/product/billie2/vendor/etc/fstab.qcom'
++ shopt -u nullglob
++ rpm/dhd/helpers/makefstab --files ./out/target/product/billie2/system/etc/init/hw/init.rc ./out/target/product/billie2/system/etc/init/hw/init.usb.configfs.rc ./out/target/product/billie2/system/etc/init/hw/init.usb.rc ./out/target/product/billie2/system/etc/init/hw/init.zygote32.rc ./out/target/product/billie2/system/etc/init/hw/init.zygote64_32.rc ./out/target/product/billie2/root/init.environ.rc ./out/target/product/billie2/root/init.recovery.qcom.rc ./out/target/product/billie2/vendor/etc/fstab.qcom --skip auto none /acct /boot /cache /data /data/user/0 /data_mirror /data_mirror/data_ce/null /data_mirror/data_de/null /data_mirror/cur_profiles /data_mirror/misc_ce/null /data_mirror/misc_de/null /data_mirror/ref_profiles /data_mirror/storage_area /misc /recovery /staging /storage /storage/sdcard1 /storage/usbdisk /storage/usbotg /sys/fs/bpf /sys/fs/cgroup /sys/fs/cgroup/memory /sys/fs/fuse/connections /sys/fs/pstore /sys/kernel/debug /sys/kernel/config /sys/kernel/tracing /dev/cpuctl /dev/cpuset /dev/stune /dev/usb-ffs/adb /dev/usb-ffs/mtp /dev/usb-ffs/ptp /mnt/cd-rom /tmp / /system /system_ext /vendor /product /odm /metadata /linkerconfig /dev/stune /dev/cpuset /dev/cpuctl --outputdir tmp/units
+Wrote config.unit
+Wrote dev-binderfs.unit
+Wrote mnt-vendor-persist.unit
+Wrote vendor-firmware_mnt.unit
+Wrote vendor-dsp.unit
+Wrote vendor-bt_firmware.unit
+Wrote mnt-vendor-op2.unit
++ echo Fixing up mount points
+Fixing up mount points
++ hybris/fixup-rpm-mountpoints billie2 tmp/units/config.mount tmp/units/dev-binderfs.mount tmp/units/mnt-vendor-op2.mount tmp/units/mnt-vendor-persist.mount tmp/units/vendor-bt_firmware.mount tmp/units/vendor-dsp.mount tmp/units/vendor-firmware_mnt.mount
+Fixing physical mount-point aliases for billie2
++ echo Creating hw-release
+Creating hw-release
++ cat
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%install): /bin/sh -e /var/tmp/rpm-tmp.g6f3gg
++ umask 022
++ cd /home/eugen/n100-build/android
++ flock /home/eugen/.mb2.lock.lock flock /home/eugen/.mb2.lock ln -f /home/eugen/.mb2.lock.tbM /home/eugen/.mb2.lock
++ '[' /home/eugen/n100-build/android/installroot '!=' / ']'
++ rm -rf /home/eugen/n100-build/android/installroot
+++ dirname /home/eugen/n100-build/android/installroot
++ mkdir -p /home/eugen/n100-build/android
++ mkdir /home/eugen/n100-build/android/installroot
++ LANG=C
++ export LANG
++ unset DISPLAY
++ grep -q string_value 'build/release/flag_values/*/RELEASE_PLATFORM_VERSION_LAST_STABLE.textproto'
+grep: build/release/flag_values/*/RELEASE_PLATFORM_VERSION_LAST_STABLE.textproto: No such file or directory
++ '[' -f ./build/release/build_flags.scl ']'
+++ awk '/PLATFORM_VERSION([A-Z0-9.]*|_LAST_STABLE) := ([0-9.]+)/ { print $3; }'
+++ awk -F. '{print $1}'
++ android_version_major=13
+++ cat tmp/units/all-units.txt
+cat: tmp/units/all-units.txt: No such file or directory
++ echo install
+install
++ mkdir -p /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/lib-dev-alog/
++ mkdir -p /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/lib64-dev-alog/
++ mkdir -p /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system
++ mkdir -p /home/eugen/n100-build/android/installroot/usr/include/droid-devel/
++ mkdir -p /home/eugen/n100-build/android/installroot/usr/lib/systemd/system
++ mkdir -p /home/eugen/n100-build/android/installroot/lib/udev/rules.d
++ mkdir -p /home/eugen/n100-build/android/installroot/etc/udev/rules.d
++ mkdir -p /home/eugen/n100-build/android/installroot//etc/os-release.d
++ mkdir -p /home/eugen/n100-build/android/installroot//usr/lib/droid
++ mkdir -p /home/eugen/n100-build/android/installroot//usr/bin/droid
++ mkdir -p /home/eugen/n100-build/android/installroot/img
++ mkdir -p /home/eugen/n100-build/android/installroot/boot
++ mkdir -p /home/eugen/n100-build/android/installroot/lib/modules
++ '[' 13 -ge 11 ']'
++ mkbootimg_dir=tools
++ '[' -e ./system/tools/mkbootimg/mkbootimg.py ']'
++ _mkbootimg=mkbootimg.py
++ install -m 755 -D ./system/tools/mkbootimg/mkbootimg.py /home/eugen/n100-build/android/installroot//usr/bin/mkbootimg
++ '[' 13 -ge 13 ']'
++ install -m 755 -D ./system/tools/mkbootimg/gki/generate_gki_certificate.py /home/eugen/n100-build/android/installroot//usr/bin/gki/generate_gki_certificate.py
++ echo /usr/bin/gki/generate_gki_certificate.py
++ install -m 755 -D ./system/core/libsparse/simg2img /home/eugen/n100-build/android/installroot//usr/bin/
++ install -m 755 -D ./system/core/libsparse/img2simg /home/eugen/n100-build/android/installroot//usr/bin/
++ rsync -av ./out/target/product/billie2/root/. /home/eugen/n100-build/android/installroot --exclude bin --exclude etc --exclude 'init.zygote*'
+sending incremental file list
+./
+bugreports -> /data/user_de/0/com.android.shell/files/bugreports
+cache -> /data/cache
+d -> /sys/kernel/debug
+init -> /system/bin/init
+init.environ.rc
+init.recovery.qcom.rc
+sdcard -> /storage/self/primary
+acct/
+apex/
+config/
+data/
+data_mirror/
+debug_ramdisk/
+dev/
+linkerconfig/
+metadata/
+mnt/
+odm/
+odm/app -> /vendor/odm/app
+odm/firmware -> /vendor/odm/firmware
+odm/framework -> /vendor/odm/framework
+odm/lib -> /vendor/odm/lib
+odm/lib64 -> /vendor/odm/lib64
+odm/overlay -> /vendor/odm/overlay
+odm/priv-app -> /vendor/odm/priv-app
+odm/usr -> /vendor/odm/usr
+odm_dlkm/
+oem/
+postinstall/
+proc/
+product/
+second_stage_resources/
+storage/
+sys/
+system/
+system_dlkm/
+system_ext/
+vendor/
+vendor_dlkm/
+
+sent 2,449 bytes  received 196 bytes  5,290.00 bytes/sec
+total size is 1,326  speedup is 0.50
++ rm -f /home/eugen/n100-build/android/installroot/sbin/modprobe
++ '[' 13 -ge 10 ']'
++ rm -f /home/eugen/n100-build/android/installroot/init
++ cp -a ./out/target/product/billie2/system/bin/init /home/eugen/n100-build/android/installroot/
++ sed -i -e '/^[[:space:]]*mount[[:space:]]/s/^/# Removed during droid-hal-device build : /' /home/eugen/n100-build/android/installroot/init.environ.rc /home/eugen/n100-build/android/installroot/init.recovery.qcom.rc
++ sed -i -e '/^[[:space:]]*mkdir[[:space:]]\/tmp[[:space:]]*/s/^/# Removed during droid-hal-device build : /' /home/eugen/n100-build/android/installroot/init.environ.rc /home/eugen/n100-build/android/installroot/init.recovery.qcom.rc
++ '[' 13 -ge 7 ']'
++ mkdir -p /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/etc/init
++ cp -a ./out/target/product/billie2/system/etc/init/servicemanager.rc /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/etc/init/
++ echo '/usr/libexec/droid-hybris/system/etc/init/*.rc'
++ '[' 13 -ge 11 ']'
++ mkdir -p /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/etc/init/hw
++ cp -a ./out/target/product/billie2/system/etc/init/hw/init.rc /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/etc/init/hw/
++ cp -a ./out/target/product/billie2/system/etc/init/hw/init.zygote32.rc ./out/target/product/billie2/system/etc/init/hw/init.zygote64_32.rc /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/etc/init/hw/
++ sed -i -e '/^[[:space:]]*mount[[:space:]]/s/^/# Removed during droid-hal-device build : /' /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/etc/init/hw/init.rc /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/etc/init/hw/init.zygote32.rc /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/etc/init/hw/init.zygote64_32.rc
++ echo '/usr/libexec/droid-hybris/system/etc/init/hw/*.rc'
++ '[' -f ./out/target/product/billie2/system/etc/init/android.system.suspend-service.rc ']'
++ '[' 13 -ge 12 ']'
++ cp -a ./out/target/product/billie2/system/etc/init/apexd.rc /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/etc/init/
++ '[' -f ./out/target/product/billie2/system/etc/init/hybris_extras.rc ']'
++ cp -a ./out/target/product/billie2/system/etc/init/hybris_extras.rc /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/etc/init/
++ '[' 13 -lt 13 ']'
++ cp -a ./out/target/product/billie2/system/bin /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/.
++ '[' -d ./out/target/product/billie2/system/lib ']'
++ echo /usr/libexec/droid-hybris/system/lib/
++ cp -a ./out/target/product/billie2/system/lib /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/.
++ cp -a ./out/target/product/billie2/system/lib64 /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/.
++ '[' 13 -ge 10 ']'
++ '[' 13 -le 14 ']'
++ mkdir -p /home/eugen/n100-build/android/installroot/apex
++ echo '%dir /apex'
++ '[' 13 -ge 14 ']'
++ art_path=./out/soong/.intermediates/art/build
++ apex_path=apex/com.android.runtime.release/android_common_com.android.runtime.release/image.apex
++ '[' '!' -f ./out/soong/.intermediates/art/build/apex/com.android.runtime.release/android_common_com.android.runtime.release/image.apex/lib/bionic/libc.so ']'
++ art_path=./out/target/product/billie2/system
++ apex_path=apex/com.android.runtime.release
++ '[' '!' -f ./out/target/product/billie2/system/apex/com.android.runtime.release/lib/bionic/libc.so ']'
++ art_path=./out/target/product/billie2
++ apex_path=apex/com.android.runtime
++ '[' '!' -f ./out/target/product/billie2/apex/com.android.runtime/lib/bionic/libc.so ']'
++ rm -f /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/lib/libdl.so /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/lib/libdl_android.so /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/lib/libc.so /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/lib/libm.so
++ '[' -d ./out/target/product/billie2/apex/com.android.runtime/lib ']'
++ cp -a ./out/target/product/billie2/apex/com.android.runtime/lib/bionic/libdl.so ./out/target/product/billie2/apex/com.android.runtime/lib/bionic/libdl_android.so ./out/target/product/billie2/apex/com.android.runtime/lib/bionic/libc.so ./out/target/product/billie2/apex/com.android.runtime/lib/bionic/libm.so /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/lib
++ rm -f /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/lib64/libdl.so /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/lib64/libdl_android.so /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/lib64/libc.so /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/lib64/libm.so
++ cp -a ./out/target/product/billie2/apex/com.android.runtime/lib64/bionic/libdl.so ./out/target/product/billie2/apex/com.android.runtime/lib64/bionic/libdl_android.so ./out/target/product/billie2/apex/com.android.runtime/lib64/bionic/libc.so ./out/target/product/billie2/apex/com.android.runtime/lib64/bionic/libm.so /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/lib64
++ '[' 13 -ge 15 ']'
++ '[' -f ./out/target/product/billie2/apex/com.android.runtime/bin/linkerconfig ']'
++ cp -a ./out/target/product/billie2/apex/com.android.runtime/bin/linkerconfig /home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/bin/
+cp: cannot create regular file '/home/eugen/n100-build/android/installroot/usr/libexec/droid-hybris/system/bin/linkerconfig': No such file or directory
+error: Bad exit status from /var/tmp/rpm-tmp.g6f3gg (%install)
+
+
+RPM build errors:
+    Bad exit status from /var/tmp/rpm-tmp.g6f3gg (%install)
+Messages from sb2:
+ (WARNING)	rsync[29738/-144668800]	Path not found for FD 0, for fstatat64()
+ (WARNING)	rsync[29740/-144668800]	Path not found for FD 1, for fstatat64()
+# exit 1 (1)

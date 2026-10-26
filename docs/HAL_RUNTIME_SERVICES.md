@@ -103,6 +103,27 @@ Bei einem Fehler die Fehlermeldung bzw. `n100-build-logs/runtime.log` oder
 `droid-hal-billie2.log` bereitstellen. Es wird jetzt weder userdata neu geflasht
 noch das alte Rootfs-Image erneut installiert.
 
+## RPM-Abbruch beim linkerconfig-Fallback
+
+Der [RPM-Log vom 26.10.2026](../validation/hal-runtime-rpm-failure-user-20261026.log)
+zeigt einen Abbruch in `%install`, bevor der neue Installationshelfer ausgeführt
+wird: Der system/bin-Baum wurde bereits kopiert, anschließend scheitert die
+statische linkerconfig-Fallback-Kopie. Das passt zu einem bereits vorhandenen
+APEX-Symlink am Ziel. Dessen konkretes Linkziel wurde im Geräte-/Hostlog nicht
+separat gesammelt; der Fehlermechanismus ist mit einem solchen Ziel reproduziert.
+
+Die exakt geprüfte DHD-Kopierregel erhält `cp -a --remove-destination`, damit die
+Zieldatei selbst ersetzt wird. Der Test prüft leere und vorhandene Symlinkziele
+und erhält die außerhalb des Buildroots liegenden Zieldateien unverändert.
+Der bestehende Mount-Fixup wird beibehalten. Das komplette Include wird nach
+Normalisierung beider Anpassungen gegen seinen gepinnten Git-Blob geprüft;
+der bisherige Audit-Marker wird nur bei exakt bekanntem Inhalt aktualisiert.
+
+Nach `git pull --ff-only` im Platform SDK genügt die Wiederholung von Schritt 4.
+Kein manuelles Löschen oder Anlegen von Buildroot-Verzeichnissen ist erforderlich.
+Die vollständige Auswertung steht in
+[rpm-linkerconfig-copy-fix.json](../validation/rpm-linkerconfig-copy-fix.json).
+
 ## Quellen und Grenzen
 
 - [Android 13 hwservicemanager mit Init-Datei](https://android.googlesource.com/platform/system/hwservicemanager/+/android-13.0.0_r75/Android.bp).

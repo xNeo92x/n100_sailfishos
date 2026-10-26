@@ -19,6 +19,10 @@ from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
 DHD_MOUNT_FIXUP_BLOB = "7717982261ad321df173e489145a2f58126691c6"
+DHD_LINKERCONFIG_COPY = """    cp -a \\
+        %{android_root}/out/target/product/%{device}/apex/com.android.runtime/bin/linkerconfig \\
+        $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/bin/"""
+DHD_LINKERCONFIG_COPY_FIXED = DHD_LINKERCONFIG_COPY.replace("cp -a ", "cp -a --remove-destination ")
 
 
 class PortError(Exception):
@@ -836,32 +840,50 @@ def install_rpm_mount_fixup(android):
     after = "hybris/fixup-rpm-mountpoints %{device} tmp/units/*"
     data = path.read_bytes()
     content = data.decode("utf-8")
-    if git_blob_identity(data) == original_blob and content.count(before) == 1:
-        replacement = content.replace(before, after)
-        mode = path.stat().st_mode & 0o777
-        temporary = None
-        try:
-            with tempfile.NamedTemporaryFile(prefix=".n100-dhd-mounts-", dir=str(path.parent),
-                                             delete=False) as stream:
-                temporary = Path(stream.name)
-                stream.write(replacement.encode("utf-8"))
-            temporary.chmod(mode)
-            os.replace(str(temporary), str(path))
-        finally:
-            if temporary is not None and temporary.exists():
-                temporary.unlink()
-    elif (content.count(after) != 1 or
-          git_blob_identity(content.replace(after, before).encode("utf-8")) != original_blob):
+    # Normalize only the two owned edits, then verify the complete pinned file.
+    normalized = content
+    transforms = ((before, after), (DHD_LINKERCONFIG_COPY, DHD_LINKERCONFIG_COPY_FIXED))
+    for original, changed in transforms:
+        if normalized.count(changed) == 1 and normalized.count(original) == 0:
+            normalized = normalized.replace(changed, original)
+        elif normalized.count(original) != 1 or normalized.count(changed) != 0:
+            raise PortError("droid-hal-device.inc has unreviewed changes; inspect manually")
+    if git_blob_identity(normalized.encode()) != original_blob:
         raise PortError("droid-hal-device.inc has unreviewed changes; inspect manually")
-    write_new(android / ".n100-rpm-mounts.json", json.dumps({
+    old_content = normalized.replace(before, after)
+    replacement = old_content.replace(DHD_LINKERCONFIG_COPY, DHD_LINKERCONFIG_COPY_FIXED)
+    old_audit = {
         "schema": 1, "dhd_revision": dependency["revision"],
         "original_include_blob": original_blob,
-        "installed_include_blob": git_blob_identity(path.read_bytes()),
+        "installed_include_blob": git_blob_identity(old_content.encode()),
         "mount_fixup": "hybris/fixup-rpm-mountpoints",
         "slotselect_runtime_implemented": False,
         "boot_tested": False,
-    }, indent=2) + "\n")
-    print("RPM mount generation now uses the report-derived billie2 fixup.")
+    }
+    audit = dict(old_audit, installed_include_blob=git_blob_identity(replacement.encode()),
+                 linkerconfig_copy_replaces_destination=True)
+    marker = android / ".n100-rpm-mounts.json"
+    if marker.is_symlink() or (marker.exists() and
+            (not marker.is_file() or json.loads(marker.read_text()) not in (old_audit, audit))):
+        raise PortError("RPM mount snapshot metadata has unreviewed changes; inspect manually")
+    # Reject edits before writing either file. A retry accepts either reviewed marker.
+    for destination, payload, mode in ((path, replacement.encode(), path.stat().st_mode & 0o777),
+            (marker, (json.dumps(audit, indent=2) + "\n").encode(), 0o644)):
+        if destination.exists() and destination.read_bytes() == payload:
+            continue
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(prefix=".n100-dhd-inputs-", dir=str(destination.parent),
+                                             delete=False) as stream:
+                temporary = Path(stream.name)
+                stream.write(payload)
+            temporary.chmod(mode)
+            os.replace(str(temporary), str(destination))
+        finally:
+            if temporary is not None and temporary.exists():
+                temporary.unlink()
+    print("RPM mount generation uses the report-derived billie2 fixup.")
+    print("RPM linkerconfig copy replaces its staged destination without following an APEX symlink.")
     print("A/B firmware slot selection remains runtime bring-up work.")
 
 
