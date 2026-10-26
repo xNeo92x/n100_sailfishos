@@ -308,5 +308,7 @@
   "vendor_dependency_probe_version": 2,
   "vendor_dependency_probe_v2_executed": false,
   "binder_device_nodes_observed_present": false,
-  "android_property_directory_observed_present": false
+  "android_property_directory_observed_present": false,
+  "vendor_dependency_probe_v2_bundle_reported_prepared": true,
+  "vendor_dependency_probe_v2_bundle_manifest": "validation/vendor-probe-v2-manifest-user-20261026.json"
 }
