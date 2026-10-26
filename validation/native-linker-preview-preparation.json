@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "kind": "native-linker-preview-preparation",
+  "source_device_report": "validation/native-runtime-device-report-user-20261026.json",
+  "source_device_report_sha256": "863033ecc9c3cf9d0bf2b18096205c8a196e0d978b30b76ae9e9da2b0bd0f58a",
+  "native_device_dependency_probe_passed": true,
+  "implementation": "generate-linker-preview.py --native-rpm",
+  "historical_profile_pins_unchanged": true,
+  "new_profile_checks": [
+    "exact native RPM audit manifest and native build provenance",
+    "exact reviewed native device report and all probe status markers",
+    "exact local probe bundle manifest, HAL archive and Runtime payload",
+    "readelf DT_NEEDED of every regular HAL ELF, recursive flat AArch64 dependency closures for three services",
+    "actual Runtime manifest metadata",
+    "normal and strict generator error logs including exit-zero failures"
+  ],
+  "host_tests_passed": 247,
+  "fs_config_compat_tests_passed": 16,
+  "real_readelf_aarch64_fixture_passed": true,
+  "python_syntax_passed": true,
+  "whitespace_check_passed": true,
+  "native_preview_generated_on_user_pc": false,
+  "native_preview_device_tested": false,
+  "nnapi_requirement_resolved": false,
+  "phone_modified": false,
+  "flashable_release": false
+}

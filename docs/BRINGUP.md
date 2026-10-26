@@ -352,3 +352,12 @@ mit dem neuen nativen Build überein. Runtime-APEX, libc und libunwindstack sind
 gegenüber dem alten Gerätetest geändert. Weiter mit der
 [an genau dieses Paket gebundenen RAM-Probe](NATIVE_RUNTIME_DEVICE_PROBE.md).
 Die neue libc ist noch nicht auf dem Gerät geprüft; keine Dienste gestartet.
+
+## Neues natives RPM am Gerät geprüft (26.10.2026)
+
+Der [Gerätebericht](../validation/native-runtime-device-user-20261026.json)
+bestätigt das neue Payload, fünf Kerndateien, alle 260 regulären HAL-Dateien,
+beide Hilfsaufrufe und die Abhängigkeitslisten aller drei Dienste mit Status 0.
+Cleanup erfolgreich. Die Warnung über die fehlende generierte Linker-Konfiguration
+bleibt. Weiter mit der [neuen nativen Namespace-Vorschau](NATIVE_LINKER_PREVIEW.md)
+einschließlich tatsächlicher ELF-Abhängigkeitsinventur. Kein Dienst-/systemd-Start.

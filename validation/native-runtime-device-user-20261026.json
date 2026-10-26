@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "kind": "native-runtime-device-probe-user",
+  "source_report": "validation/native-runtime-device-report-user-20261026.json",
+  "source_report_sha256": "863033ecc9c3cf9d0bf2b18096205c8a196e0d978b30b76ae9e9da2b0bd0f58a",
+  "native_runtime_device_tested": true,
+  "probe_scope": "New native no-DEX Runtime, linker help, static linkerconfig help, three AArch64 service dependency lists and cleanup only",
+  "source_rpm": {
+    "name": "droid-hal-billie2",
+    "arch": "aarch64",
+    "version_release": "0.0.6-202610262022",
+    "bytes": 23065994,
+    "sha256": "b6714b06b16f38e25d0298e4efe4e39b63b1b92128678e49c00b49b7fd5a3bc6",
+    "path": "/home/eugen/n100-build/android/droid-local-repo/billie2/droid-hal-billie2-0.0.6-202610262022.aarch64.rpm"
+  },
+  "payload": {
+    "bytes": 8110080,
+    "sha256": "2077c05b09aa83f466336c9fc6a7340f16bf335c570f10b27ee1b57623c78da0"
+  },
+  "verified_core_files": [
+    "bin/linker",
+    "bin/linker64",
+    "lib64/bionic/libc.so",
+    "lib64/bionic/libdl.so",
+    "lib64/bionic/libm.so"
+  ],
+  "regular_hal_files_checked": 260,
+  "dependency_exit_codes": {
+    "servicemanager": 0,
+    "hwservicemanager": 0,
+    "logd": 0
+  },
+  "linker_help_exit": 0,
+  "linkerconfig_help_exit": 0,
+  "cleanup_exit": 0,
+  "generated_linker_configuration_missing": true,
+  "linker_namespace_device_tested": false,
+  "rootfs_boot_tested": false,
+  "android_services_started": false,
+  "nnapi_requirement_resolved": false,
+  "flashable_release": false
+}

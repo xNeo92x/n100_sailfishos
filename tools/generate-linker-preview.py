@@ -9,6 +9,7 @@ from pathlib import Path, PurePosixPath
 import re
 import resource
 import shutil
+import struct
 import subprocess
 import tarfile
 import xml.etree.ElementTree as ET
@@ -249,14 +250,89 @@ def add_provider_inputs(report, provider_report, root, payloads, debugfs):
     report['scope'] = 'AArch64 HAL RPM with Runtime/VNDK and ART/NNAPI/ICU/StatsD provider metadata; no stock vendor/product metadata'
 
 
-def generate(android, bundle_dir, input_report, output, provider_report=None):
+def load_hal_bundle(bundle_dir, native_rpm=False):
+    local_bundle = json.loads((bundle_dir / 'manifest.json').read_text())
+    if not native_rpm:
+        bundle = json.loads((ROOT / 'validation/hal-rpm-device-report-user-20261026.json').read_text())['bundle']
+        require(local_bundle == bundle, 'HAL bundle manifest differs from successful device test')
+        return bundle, None
+    spec = importlib.util.spec_from_file_location('native_namespace_probe', ROOT / 'tools/prepare-native-runtime-probe.py')
+    probe = importlib.util.module_from_spec(spec); spec.loader.exec_module(probe)
+    manifest = probe.reviewed()
+    path = ROOT / 'validation/native-runtime-device-report-user-20261026.json'
+    raw = path.read_bytes()
+    require(digest(raw) == '863033ecc9c3cf9d0bf2b18096205c8a196e0d978b30b76ae9e9da2b0bd0f58a',
+            'Reviewed native device report changed')
+    device = json.loads(raw)
+    require(device['kind'] == 'native-no-dex-rpm-device-probe-report' and
+            device['bundle_integrity_rechecked'] is True and
+            device['bundle'] == probe.bundle_manifest(manifest, probe.render(manifest)) and
+            probe.classify(device['device_probe_log'], manifest)['dependency_probe_passed'],
+            'Native runtime device dependency probe did not pass')
+    require(local_bundle == device['bundle'], 'HAL bundle differs from successful native device test')
+    checked_file(bundle_dir / 'apex_payload.img', manifest['payload'])
+    checked_file(bundle_dir / 'hal-system.tar.gz',
+                 {'bytes': manifest['hal_archive_bytes'], 'sha256': manifest['hal_archive_sha256']})
+    # Normalize only this explicit new profile; historical defaults retain their old pins.
+    bundle = dict(manifest, payload_bytes=manifest['payload']['bytes'], payload_sha256=manifest['payload']['sha256'])
+    return bundle, {'kind': 'native-no-dex-device-tested-rpm', 'source_device_report_sha256': digest(raw),
+                    'source_input_manifest_sha256': probe.REFERENCE_SHA,
+                    'runtime_manifest': manifest['runtime_manifest'],
+                    'device_dependency_probe_passed': True, 'device_namespaces_tested': False}
+
+
+def audit_elf_dependencies(system, bundle):
+    """Read DT_NEEDED without executing Android files; a flat HAL audit, not namespace resolution."""
+    tool = shutil.which('readelf')
+    require(tool, 'readelf required in Ubuntu; install binutils')
+    files = {}
+    for name, expected in sorted(bundle['hal_tree']['regular_file_hashes'].items()):
+        path = system / name
+        with path.open('rb') as stream: header = stream.read(64)
+        if header[:4] != b'\x7fELF': continue
+        require(len(header) >= 52 and header[4] in (1, 2) and header[5] == 1, 'Unsupported HAL ELF header: ' + name)
+        env = dict(os.environ, LC_ALL='C')
+        result = subprocess.run([tool, '--dynamic', '--wide', str(path)], capture_output=True,
+                                text=True, check=True, timeout=15, env=env)
+        require(len(result.stdout) <= 262144 and not result.stderr, 'Unexpected readelf output: ' + name)
+        needed = re.findall(r'\(NEEDED\).*Shared library: \[([^]]+)\]', result.stdout)
+        require(len(needed) == result.stdout.count('(NEEDED)') and
+                all(re.fullmatch(r'[A-Za-z0-9_.+@-]+\.so', n) for n in needed), 'Unparsed DT_NEEDED: ' + name)
+        require(inputs.file_info(path)['sha256'] == expected, 'HAL ELF changed during inspection: ' + name)
+        files[name] = {'elf_class': header[4], 'elf_machine': struct.unpack_from('<H', header, 18)[0],
+                       'sha256': expected, 'needed': needed}
+    require(files, 'No ELF files in HAL inventory')
+    closures = {}
+    for program in ('bin/servicemanager', 'bin/hwservicemanager', 'bin/logd'):
+        require(program in files, 'Missing service ELF: ' + program)
+        visited, unresolved, pending = set(), set(), [program]
+        while pending:
+            name = pending.pop()
+            if name in visited: continue
+            visited.add(name)
+            require(files[name]['elf_class'] == 2 and files[name]['elf_machine'] == 183,
+                    'Wrong ABI in AArch64 service dependency closure: ' + name)
+            for library in files[name]['needed']:
+                target = 'lib64/' + library
+                if target in files: pending.append(target)
+                else: unresolved.add(library)
+        closures[program] = {'regular_flat_hal_files': sorted(visited),
+                             'not_found_in_regular_flat_hal': sorted(unresolved)}
+    consumers = {library: sorted(n for n, item in files.items() if library in item['needed'])
+                 for library in ('libdexfile.so', 'libneuralnetworks.so')}
+    return {'files': files, 'elf_files': len(files), 'service_flat_closures': closures,
+            'direct_consumers_of_missing_providers': consumers,
+            'vendor_included': False, 'apex_internal_elf_included': False, 'dlopen_analyzed': False,
+            'scope': 'Static DT_NEEDED from exact regular HAL RPM files; does not prove namespace or vendor compatibility.'}
+
+
+def generate(android, bundle_dir, input_report, output, provider_report=None, native_rpm=False):
     require(not output.exists() and not output.is_symlink(), 'Output exists; choose a new preview directory')
+    require(not (native_rpm and provider_report), 'Do not mix the no-DEX profile with the historical full ART provider route')
     reviewed = json.loads((ROOT / 'validation/linker-inputs-user-20261026.json').read_text())
     checked_file(input_report, inputs.file_info(ROOT / 'validation/linker-inputs-user-20261026.json'))
     require(reviewed['passed'] is True, 'Reviewed input report did not pass')
-    bundle = json.loads((ROOT / 'validation/hal-rpm-device-report-user-20261026.json').read_text())['bundle']
-    local_bundle = json.loads((bundle_dir / 'manifest.json').read_text())
-    require(local_bundle == bundle, 'HAL bundle manifest differs from successful device test')
+    bundle, native_profile = load_hal_bundle(bundle_dir, native_rpm)
     product = android / 'out/target/product/billie2'
     host = android / 'out/host/linux-x86/bin'
     tools = {n: host / n for n in ('linkerconfig', 'conv_linker_config')}
@@ -277,6 +353,9 @@ def generate(android, bundle_dir, input_report, output, provider_report=None):
         logs = output / 'logs'; logs.mkdir()
         payloads = output / 'payloads'; payloads.mkdir()
         report['hal'] = unpack_hal(bundle_dir / 'hal-system.tar.gz', root / 'system', bundle)
+        if native_profile is not None:
+            report['native_runtime_profile'] = native_profile
+            report['hal_elf_dependencies'] = audit_elf_dependencies(root / 'system', bundle)
         for directory in ('vendor', 'odm', 'product', 'system_ext'):
             (root / directory).mkdir()
         runtime_pin = bundle['hal_tree']['regular_file_hashes']['apex/com.android.runtime.apex']
@@ -286,6 +365,10 @@ def generate(android, bundle_dir, input_report, output, provider_report=None):
             runtime_package, {'bytes': runtime_package.stat().st_size, 'sha256': runtime_pin},
             {'bytes': bundle['payload_bytes'], 'sha256': bundle['payload_sha256']},
             'com.android.runtime', root, payloads, debugfs)
+        if native_profile is not None:
+            runtime = report['apexes']['com.android.runtime']
+            require(all(runtime[key] == value for key, value in native_profile['runtime_manifest'].items()),
+                    'Native Runtime manifest differs from reviewed build')
         vndk = product / 'system_ext/apex/com.android.vndk.v30.apex'
         report['apexes']['com.android.vndk.v30'] = stage_apex(
             vndk, reviewed['vndk_apex'], reviewed['vndk_apex']['payload'],
@@ -377,10 +460,11 @@ def main():
     parser.add_argument('--input-report', type=Path, required=True)
     parser.add_argument('--output-dir', type=Path, required=True)
     parser.add_argument('--provider-report', type=Path)
+    parser.add_argument('--native-rpm', action='store_true', help='Use the newly device-tested no-DEX RPM profile, with DT_NEEDED inventory')
     args = parser.parse_args()
     try:
         report = generate(args.android_root.resolve(), args.hal_bundle.resolve(), args.input_report.resolve(), args.output_dir.absolute(),
-                          args.provider_report.resolve() if args.provider_report else None)
+                          args.provider_report.resolve() if args.provider_report else None, args.native_rpm)
         print('Host linker preview generated; strict_passed={}. No installation performed.'.format(report['strict_diagnostic']['passed']))
         print('Share ' + str(args.output_dir.absolute() / 'report.json'))
     except (OSError, ValueError, KeyError, subprocess.SubprocessError, tarfile.TarError, zipfile.BadZipFile) as exc:

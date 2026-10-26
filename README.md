@@ -23,11 +23,11 @@ RAM-Ansicht; auch `linkerconfig --help` und Cleanup sind bestätigt. Die fehlend
 Dienste `hwservicemanager` und `logd` sind inzwischen nachgebaut und strukturell
 geprüft. Auch der korrigierte HAL-RPM-Neubau und die Bibliotheksauflösung aller drei
 Dienste aus diesem RPM sind am Gerät bestätigt; Cleanup erfolgreich. Weiter mit
-der [RAM-Geräteprüfung des neuen nativen RPMs](docs/NATIVE_RUNTIME_DEVICE_PROBE.md).
+der [Linker-Vorschau mit dem neuen nativen RPM](docs/NATIVE_LINKER_PREVIEW.md).
 Die Host-Konfiguration ist erzeugt. Der native Runtime-Neubau ohne DEX-Unwinding
-ist geprüft und benötigt kein `libdexfile.so` mehr. Da libc einen neuen Hash hat,
-ist das neu gebaute RPM inzwischen gegen den Build geprüft. Die neue
-Geräteprüfung steht aus. NNAPI, reguläre Namespaces und der
+ist geprüft und benötigt kein `libdexfile.so` mehr. Auch die geänderte libc ist in dieser Probe geprüft.
+Das neu gebaute RPM ist gegen den Build geprüft; die neue RAM-Geräteprobe ist
+erfolgreich. NNAPI, reguläre Namespaces und der
 vollständige Start bleiben offen.
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für

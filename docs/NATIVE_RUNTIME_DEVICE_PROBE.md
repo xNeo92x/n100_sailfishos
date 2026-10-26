@@ -1,5 +1,14 @@
 # N100: neues natives Runtime-RPM im RAM testen
 
+## Ergebnis auf dem Gerät
+
+Die [Geräteprobe](../validation/native-runtime-device-user-20261026.json) ist
+erfolgreich: neues Payload und alle fünf Kerndateien geprüft, alle drei
+Abhängigkeitslisten und beide Hilfsaufrufe mit Status 0, Cleanup erfolgreich.
+Die Dienste wurden noch nicht gestartet; die generierte Linker-Konfiguration
+fehlt weiterhin. Weiter mit der [neuen Host-Linker-Vorschau](NATIVE_LINKER_PREVIEW.md).
+Die folgenden Schritte dokumentieren den abgeschlossenen Probeablauf.
+
 Das [hochgeladene Manifest](../validation/native-runtime-rpm-manifest-user-20261026.json)
 bestätigt das Hauptpaket `droid-hal-billie2-0.0.6-202610262022.aarch64.rpm`:
 23.065.994 Bytes, SHA-256

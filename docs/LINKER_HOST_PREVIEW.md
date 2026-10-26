@@ -1,5 +1,10 @@
 # N100: Linker-Konfiguration auf dem PC erzeugen
 
+**Aktueller nächster Schritt:** Die neue native Runtime ist inzwischen als RPM
+und per RAM-Geräteprobe geprüft. Dafür die [neue native Vorschau](NATIVE_LINKER_PREVIEW.md)
+mit `--native-rpm` verwenden. Die folgenden alten Bundle-Pfade dokumentieren den
+historischen Lauf vor dem Runtime-Neubau.
+
 Der [Nutzerbericht](../validation/linker-inputs-user-20261026.json) bestätigt das
 VNDK-30-APEX (114.733.056 Bytes), alle vier Bibliothekslisten, ein AArch64-Beispiel,
 die Linux-Host-Werkzeuge und das Basis-Protobuf. Die fertige
