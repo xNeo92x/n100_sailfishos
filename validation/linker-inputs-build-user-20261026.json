@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "user-built VNDK-30 and host linker inputs verified from report",
+  "raw_report": "validation/linker-inputs-user-20261026.json",
+  "raw_report_sha256": "ace8f3ba17a4ffbf3b2c275b336ba798995d4560ff72e07faf4e92f860a4dfcd",
+  "vndk_package": {
+    "path": "/home/eugen/n100-build/android/out/target/product/billie2/system_ext/apex/com.android.vndk.v30.apex",
+    "bytes": 114733056,
+    "sha256": "ab5bbcbcfd254195bbb4e8773ea5ae85b09153e0ed06506e2f8ed0213e6e4f87",
+    "manifest": {
+      "name": "com.android.vndk.v30",
+      "version": 1
+    },
+    "payload": {
+      "bytes": 114651136,
+      "sha256": "4a2f197f68f1f042b5dbff01768d060535bb1058696cf53ecd6a8e2bb736fd4d",
+      "zip_crc_checked": true
+    }
+  },
+  "library_list_counts": {
+    "llndk": 22,
+    "vndksp": 36,
+    "vndkcore": 254,
+    "vndkprivate": 5
+  },
+  "list_text_sizes_and_hashes_rechecked": true,
+  "host_tools": {
+    "linkerconfig": {
+      "bytes": 19543368,
+      "sha256": "d98bcc133a9614b18f4cd1dff32fc8172ce8415183f452558a6cae6176eefd9f",
+      "help_exit": 0
+    },
+    "conv_linker_config": {
+      "bytes": 14376341,
+      "sha256": "53639a946da55965fcd101a9191cb3703e5bcb40a20275cd9ec67e7349d462f3",
+      "help_exit": 0
+    }
+  },
+  "base_protobuf_sha256": "ccb878f749843bbd0e469cb12e3e7aeb17935b31bb5d77f6d796a4561a0f83e4",
+  "source_revisions": {
+    "packages/modules/vndk": "2e2799dd657d16d4456be0674c21784be9114141",
+    "prebuilts/vndk/v30": "6b757e8ce9601ae95091c9546b4896f624496a4e",
+    "system/linkerconfig": "45d040fd8ba22330c0ca61d2b803bd4f6cea6b7b"
+  },
+  "user_build_completed": true,
+  "namespace_configuration_generated": false,
+  "phone_modified": false,
+  "full_os_boot_verified": false
+}

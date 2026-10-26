@@ -23,7 +23,9 @@ RAM-Ansicht; auch `linkerconfig --help` und Cleanup sind bestätigt. Die fehlend
 Dienste `hwservicemanager` und `logd` sind inzwischen nachgebaut und strukturell
 geprüft. Auch der korrigierte HAL-RPM-Neubau und die Bibliotheksauflösung aller drei
 Dienste aus diesem RPM sind am Gerät bestätigt; Cleanup erfolgreich. Weiter mit
-den [VNDK-30- und Linker-Konfigurationseingaben](docs/LINKER_NAMESPACE_INPUTS.md).
+der [Linker-Konfigurationsvorschau auf dem PC](docs/LINKER_HOST_PREVIEW.md).
+Das VNDK-30-Paket, die vier Listen und beide Host-Werkzeuge sind inzwischen
+gebaut und geprüft; die tatsächliche Erzeugung der Namespaces steht noch aus.
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,

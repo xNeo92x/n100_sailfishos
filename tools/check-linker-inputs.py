@@ -30,9 +30,10 @@ def file_info(path):
     return {'path': str(path.resolve()), 'bytes': path.stat().st_size, 'sha256': h.hexdigest()}
 
 
-def manifest_info(data):
+def manifest_info(data, expected_name='com.android.vndk.v30', include_libraries=False):
     require(len(data) <= 65536, 'Oversized APEX manifest')
     offset, result = 0, {}
+    native = {'provide_native_libs': [], 'require_native_libs': []}
     def varint():
         nonlocal offset
         value = 0
@@ -65,8 +66,14 @@ def manifest_info(data):
         elif field == 2 and wire == 0:
             require('version' not in result, 'Duplicate APEX version')
             result['version'] = value
-    require(result.get('name') == 'com.android.vndk.v30' and result.get('version', 0) > 0,
-            'Expected the VNDK-30 APEX manifest')
+        elif include_libraries and field in (7, 8) and wire == 2:
+            library = value.decode('utf-8')
+            require(re.fullmatch(r'[A-Za-z0-9_.+@-]+\.so', library), 'Invalid APEX native library name')
+            native['provide_native_libs' if field == 7 else 'require_native_libs'].append(library)
+    require(result.get('name') == expected_name and result.get('version', 0) > 0,
+            'Expected the VNDK-30 APEX manifest' if expected_name == 'com.android.vndk.v30' else 'Unexpected APEX manifest: ' + expected_name)
+    if include_libraries:
+        result.update(native)
     return result
 
 

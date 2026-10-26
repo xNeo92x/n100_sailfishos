@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "isolated AArch64 HAL host namespace preview preparation",
+  "input_validation": "validation/linker-inputs-build-user-20261026.json",
+  "profile": "adaptation/linkerconfig/system.json",
+  "generation": "native reviewed host linkerconfig; explicit VNDK 30, metadata-only Runtime/VNDK model",
+  "strict_diagnostic": "separate output; report first classified unresolved requirement without claiming full validation",
+  "tests": {
+    "host_passed": 228,
+    "compat_passed": 16,
+    "new_tests": 7,
+    "real_ext4_zip_debugfs_fixture": true,
+    "archive_traversal_and_hash_checks": true,
+    "wrapper_generator_calls_simulated": true,
+    "real_android_generator_executed_here": false
+  },
+  "source_checks": {
+    "apexutil": {
+      "sha256": "5be6c19e3bb9eb2874900f37d99562ab52ee79695d598120e19fb58a802ca37f"
+    },
+    "section": {
+      "sha256": "db2ebbac460623fc3eb8ee54cc43bbfc3a40a0b6644551b4f9e1ec48069b3338"
+    },
+    "configuration": {
+      "sha256": "4b9b0207773b6bbeca4afdbbe03ca9a50ab6b93b6b3b1867551b0d66a0ac202a"
+    },
+    "configwriter": {
+      "sha256": "4f712072e0b3f258c3c2fbf1f78b7af7320f29a0ec2d6b3b43c78c0927f1260c"
+    },
+    "vndk-ns": {
+      "sha256": "cac42090d764551782c6a5390afb2a694ac8dc814c30d31106074e811b6c80fb"
+    },
+    "conv": {
+      "sha256": "6f4fe718ae45f0eec40747837239b7cc0ce5360b2a9aeb56ed34499ac7679aae"
+    }
+  },
+  "namespace_preview_generated": false,
+  "phone_modified": false,
+  "ready_for_installation": false,
+  "full_os_boot_verified": false
+}

@@ -93,3 +93,8 @@ Die Host-Tests verwenden ein echtes ext4-Fixture mit APEX-ZIP, Bibliothekslisten
 und AArch64-Header sowie simulierte Host-Werkzeug-Hilfsausgaben. Sie prüfen auch
 Buildziele, falsche Umgebung, Fehlerrückgabe und das Ersetzen eines veralteten
 Berichts. Der echte VNDK-/Host-Werkzeug-Build muss auf dem Nutzer-PC erfolgen.
+
+## Ergebnis des Builds
+
+Der [Nutzerbericht vom 26.10.2026](../validation/linker-inputs-build-user-20261026.json)
+bestätigt diese Eingaben. Weiter mit der [Host-Vorschau](LINKER_HOST_PREVIEW.md).

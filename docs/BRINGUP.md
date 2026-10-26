@@ -312,3 +312,11 @@ The exact rebuilt HAL RPM passed its RAM device probe: 260 regular files,
 servicemanager/hwservicemanager/logd dependency exit status 0, and clean teardown.
 This used explicit library paths and did not start the service main functions.
 Continue with [VNDK-30 and host linker namespace inputs](LINKER_NAMESPACE_INPUTS.md).
+
+## Linker-Eingaben gebaut (26.10.2026)
+
+Das 114.733.056-Byte-VNDK-30-APEX, vier Bibliothekslisten, ein AArch64-Beispiel
+und beide Linux-Host-Werkzeuge sind im [Buildbericht](../validation/linker-inputs-build-user-20261026.json)
+bestätigt. Die Konfiguration selbst wurde dabei noch nicht erzeugt. Nächster
+Schritt ist die [isolierte HAL-Konfigurationsvorschau auf dem PC](LINKER_HOST_PREVIEW.md),
+mit separater strenger Diagnose und weiterhin ohne Telefoninstallation.

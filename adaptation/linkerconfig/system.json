@@ -1,0 +1,3 @@
+{
+  "requireLibs": ["libc.so", "libdl.so", "libm.so"]
+}
