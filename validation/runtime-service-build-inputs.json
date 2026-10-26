@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "explicit Android HAL services and RPM runtime inputs",
+  "device_evidence": "validation/runtime-apex-v2-report-user-20261026.json",
+  "required_build_targets": [
+    "hwservicemanager",
+    "logd",
+    "linkerconfig"
+  ],
+  "required_rpm_additions": [
+    "system/bin/hwservicemanager",
+    "system/bin/logd",
+    "system/etc/init/hwservicemanager.rc",
+    "system/etc/init/logd.rc",
+    "system/apex/com.android.runtime.apex",
+    "system/etc/sanitizer.libraries.txt",
+    "system/etc/vndkcorevariant.libraries.txt"
+  ],
+  "system_linker_config_pb_generation": "Separate Android Make systemprovide rule; presence reported but no incomplete file installed by this change.",
+  "reviewed_rpm_predecessor_spec_git_blob": "f80ea41b7a5f0c8b68c60673df2a9faa0cf1d040",
+  "preserves_existing_dhd_mount_fixup": true,
+  "host_checks": {
+    "host_tests_passed": 207,
+    "compat_tests_passed": 16,
+    "shell_python_syntax_passed": true,
+    "real_android_compile_executed_here": false,
+    "real_rpm_build_executed_here": false,
+    "fixture_rpm_staging_and_upgrade_passed": true
+  },
+  "phone_modified": false,
+  "services_started": false,
+  "full_sailfish_boot_verified": false,
+  "flashable_release": false
+}

@@ -117,6 +117,21 @@ class RpmSnapshotUpgradeTests(unittest.TestCase):
         self.assertTrue(self.spec.read_bytes().endswith(b"# local edit\n"))
         self.assertFalse((self.rpm / "helpers").exists())
 
+    def test_upgrade_from_the_deployed_root_cleanup_snapshot(self):
+        previous = (ROOT / 'tests/fixtures/droid-hal-billie2-before-runtime.spec').read_bytes()
+        helper = self.rpm / 'helpers/remove-android-root-aliases.sh'
+        helper.parent.mkdir()
+        helper.write_bytes(HELPER.read_bytes())
+        self.spec.write_bytes(previous)
+        self.marker.write_text(json.dumps({'dependency': self.dependency, 'files': {
+            self.spec.name: hashlib.sha256(previous).hexdigest(),
+            'helpers/remove-android-root-aliases.sh': hashlib.sha256(HELPER.read_bytes()).hexdigest()}}))
+        n100.prepare_rpm_spec(self.args)
+        n100.prepare_rpm_spec(self.args)
+        self.assertEqual((self.rpm / 'helpers/install-android-runtime.sh').read_bytes(),
+                         (ROOT / 'adaptation/rpm/helpers/install-android-runtime.sh').read_bytes())
+        n100.init_package(self.rpm, ROOT / 'adaptation/rpm', self.dependency)
+
     def test_unknown_predecessor_is_rejected_even_with_matching_marker_digest(self):
         self.spec.write_bytes(b"# other spec\n")
         self.marker.write_text(json.dumps({"dependency": self.dependency, "files": {

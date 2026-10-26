@@ -23,7 +23,11 @@ the matching APEX was subsequently mounted in a temporary RAM overlay.
 succeeded. Generated linker configuration remains missing. V1 incorrectly
 passed the static linkerconfig binary to the dynamic linker, and missing
 executability at one path was mislabeled NOT_BUILT. Continue with the corrected
-[Runtime/HAL layout probe V2](RUNTIME_APEX_PROBE.md) before choosing a packaging fix.
+[Runtime/HAL layout probe V2](RUNTIME_APEX_PROBE.md). That report now confirms
+static linkerconfig help succeeds, Sailfish getprop is present, and
+hwservicemanager plus its init file are absent in the probed product outputs.
+The pinned hybris-boot target list does not explicitly request this service.
+Continue with the [explicit runtime service build and HAL RPM staging](HAL_RUNTIME_SERVICES.md).
 The exact debug/DTBO candidate, verified stock rollback file preparation and
 explicit first-test commands are in [FIRST_DEVICE_TEST.md](FIRST_DEVICE_TEST.md).
 

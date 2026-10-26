@@ -19,8 +19,9 @@ Die [Super-Metadaten](docs/SUPER_METADATA.md) für Slot B sind ausgewertet.
 Alle vier [schreibgeschützten Android-Mounts](docs/ANDROID_MOUNT_PROBE.md) und
 deren Cleanup sind am Gerät bestätigt. Auch der Android-Linker und die
 Abhängigkeitsauflösung von `servicemanager` funktionieren in einer temporären
-RAM-Ansicht; Cleanup erfolgreich. Weiter mit dem korrigierten
-[Runtime-/HAL-Pfadtest V2](docs/RUNTIME_APEX_PROBE.md).
+RAM-Ansicht; auch `linkerconfig --help` und Cleanup sind bestätigt. Der Pfadvergleich
+zeigt fehlende HAL-Dienste im Build. Weiter mit dem
+[gezielten Runtime-Dienstebuild](docs/HAL_RUNTIME_SERVICES.md).
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,

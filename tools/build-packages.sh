@@ -18,6 +18,7 @@ case "${1:-}" in
         done
         exec bash "$port_dir/tools/build-packages.sh" rootfs ;;
     hal)
+        python3 "$port_dir/tools/check-hal-runtime.py" --android-root "$ANDROID_ROOT"
         python3 "$port_dir/tools/n100.py" prepare-rpm --android-root "$ANDROID_ROOT"
         python3 "$port_dir/tools/n100.py" prepare-rpm-spec --android-root "$ANDROID_ROOT"
         : "${N100_DEVICE_REPORT:?Source build.env or set N100_DEVICE_REPORT to the saved stock report}"

@@ -884,7 +884,8 @@ def prepare_rpm_spec(args):
     dependency = next(p for p in read_lock()["packaging"] if p["parent"] == "rpm")
     destination = android / "rpm"
     require_checkout(destination / dependency["path"], dependency["revision"])
-    names = ("droid-hal-billie2.spec", "helpers/remove-android-root-aliases.sh")
+    names = ("droid-hal-billie2.spec", "helpers/remove-android-root-aliases.sh",
+             "helpers/install-android-runtime.sh")
     source = ROOT / "adaptation/rpm"
     if {str(p.relative_to(source)) for p in source.rglob("*") if p.is_file() or p.is_symlink()} != set(names):
         raise PortError("Unexpected RPM adaptation source files; inspect the snapshot migration")
@@ -909,15 +910,19 @@ def prepare_rpm_spec(args):
         if path.is_symlink() or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
             raise PortError(f"Installed RPM snapshot has local edits: {path}")
     if installed == wanted:
-        print("RPM spec and staged-root cleanup helper are ready.")
+        print("RPM spec, staged-root cleanup and runtime payload helper are ready.")
         return
-    spec = destination / names[0]
-    if (set(installed["files"]) != {names[0]} or
-            git_blob_identity(spec.read_bytes()) != "b6184db55338fa680556ad2a4db65a30b33d15d5"):
+    predecessors = (
+        {names[0]: "b6184db55338fa680556ad2a4db65a30b33d15d5"},
+        {names[0]: "f80ea41b7a5f0c8b68c60673df2a9faa0cf1d040",
+         names[1]: "554019209560cca2338abdd03d64a5bb07af15f3"},
+    )
+    current = {name: git_blob_identity((destination / name).read_bytes()) for name in installed["files"]}
+    if current not in predecessors:
         raise PortError("RPM snapshot is not the reviewed predecessor; inspect manually")
     helpers = destination / "helpers"
-    new_helper = destination / names[1]
-    if helpers.is_symlink() or new_helper.exists() or new_helper.is_symlink():
+    additions = [destination / name for name in names if name not in installed["files"]]
+    if helpers.is_symlink() or any(path.exists() or path.is_symlink() for path in additions):
         raise PortError("Refusing to overwrite an existing RPM cleanup helper")
     # All old state has been checked; update only owned files and their snapshot marker.
     for name, content in data.items():
@@ -936,7 +941,7 @@ def prepare_rpm_spec(args):
             if temporary is not None and temporary.exists():
                 temporary.unlink()
     marker.write_text(json.dumps(wanted, indent=2) + "\n")
-    print("RPM spec upgraded with the targeted Android-root alias cleanup.")
+    print("RPM spec upgraded with root-alias cleanup and explicit Android runtime payloads.")
 
 
 def prepare_config_spec(args):
@@ -1106,7 +1111,7 @@ def main():
     p.add_argument("--android-root", required=True)
     p.add_argument("--device-report", required=True)
     p.set_defaults(func=prepare_rpm_mounts)
-    p = commands.add_parser("prepare-rpm-spec", help="Upgrade the owned RPM spec snapshot with root-alias cleanup")
+    p = commands.add_parser("prepare-rpm-spec", help="Upgrade the owned RPM snapshot with root cleanup and runtime payload staging")
     p.add_argument("--android-root", required=True)
     p.set_defaults(func=prepare_rpm_spec)
     p = commands.add_parser("prepare-config-spec", help="Upgrade reviewed config spec and rootfs packaging inputs")

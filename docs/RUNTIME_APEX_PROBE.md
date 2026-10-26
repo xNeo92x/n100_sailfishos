@@ -34,6 +34,19 @@ an `/system/bin/...` beweist keinen fehlenden Build; V2 sammelt die tatsächlich
 Pfade, Symlinks, Verzeichnisinhalte und Init-Verweise sowie das Build-Inventar.
 Das klärt insbesondere, ob Dateien anders abgelegt oder nicht paketiert sind.
 
+## V2 ausgewertet
+
+Der [zweite Gerätebericht](../validation/runtime-apex-v2-report-user-20261026.json)
+bestätigt `N100_LINKERCONFIG_HELP_EXIT=0`, unverändert erfolgreiche Linker- und
+servicemanager-Abhängigkeitsprüfung und Cleanup. `/usr/bin/getprop` existiert
+als Sailfish-Werkzeug. Es muss dafür kein Android-getprop nachgebaut werden.
+`hwservicemanager` und seine Init-Datei fehlen dagegen auch an den geprüften
+Buildpfaden. `logd` fehlt ebenfalls in der gemeldeten system/bin-Liste.
+
+Nicht denselben Test wiederholen. Der nächste Schritt ist jetzt der
+[Runtime-Dienstebuild mit korrigierter HAL-Paketierung](HAL_RUNTIME_SERVICES.md).
+Die folgenden V2-Kommandos bleiben als reproduzierbarer Diagnoseweg erhalten.
+
 ## Umfang
 
 Der folgende Versuch extrahiert nur `apex_payload.img` aus dem bereits

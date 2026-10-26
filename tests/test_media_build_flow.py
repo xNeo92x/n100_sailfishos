@@ -22,7 +22,7 @@ class MediaBuildFlowTest(unittest.TestCase):
         for name in ("build-hal.sh", "build-packages.sh", "check-droidmedia.py"):
             shutil.copy2(ROOT / "tools" / name, self.port / "tools" / name)
         (self.port / "config/port.env").write_text("")
-        for name in ("n100.py", "fix-webview-link.py", "boot-debug.py"):
+        for name in ("n100.py", "fix-webview-link.py", "boot-debug.py", "check-hal-runtime.py"):
             (self.port / "tools" / name).write_text("# Fixture: upstream checks are outside this orchestration test.\n")
         files = (
             "rpm/droid-hal-billie2.spec",
@@ -71,7 +71,19 @@ class MediaBuildFlowTest(unittest.TestCase):
     def test_default_build_includes_media(self):
         result = self.run_build()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual((self.android / "requested-targets").read_text().strip(), "hybris-hal droidmedia")
+        self.assertEqual((self.android / "requested-targets").read_text().strip(), "hybris-hal droidmedia hwservicemanager logd linkerconfig")
+
+    def test_runtime_build_requests_services_without_boot_or_media_targets(self):
+        result = self.run_build("runtime")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.android / "requested-targets").read_text().strip(), "hwservicemanager logd linkerconfig")
+        self.assertIn("fixture-build", (self.android / "n100-build-logs/runtime.log").read_text())
+        self.assertFalse((self.android / "n100-build-logs/kernel-config-check.log").exists())
+
+    def test_runtime_build_refuses_the_platform_sdk(self):
+        result = self.run_build("runtime", MERSDKUBU="")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((self.android / "requested-targets").exists())
 
     def test_boot_only_build_selects_hybris_boot_and_keeps_its_own_log(self):
         result = self.run_build("boot")
@@ -114,6 +126,27 @@ class MediaBuildFlowTest(unittest.TestCase):
         self.assertEqual(result.returncode, 1, result.stderr)
         self.assertIn("libminisf.so", result.stderr)
         self.assertFalse((self.android / "upstream-was-called").exists())
+
+    def test_hal_rpm_stops_before_packer_when_services_are_missing(self):
+        for name in ('check-hal-runtime.py', 'inspect-android-output.py'):
+            shutil.copy2(ROOT / 'tools' / name, self.port / 'tools' / name)
+        commands = self.base / 'bin'
+        commands.mkdir()
+        for name in ('mb2', 'sdk-assistant'):
+            path = commands / name
+            path.write_text('#!/bin/sh\nexit 0\n')
+            path.chmod(0o755)
+        upstream = self.android / 'rpm/dhd/helpers/build_packages.sh'
+        upstream.parent.mkdir(parents=True)
+        upstream.write_text('#!/bin/sh\ntouch upstream-was-called\n')
+        (self.android / 'out/target/product/billie2/hybris-boot.img').write_bytes(b'fixture')
+        result = subprocess.run(['bash', str(self.port / 'tools/build-packages.sh'), 'hal'],
+                                env=dict(os.environ, ANDROID_ROOT=str(self.android), RELEASE='5.1.0.11',
+                                         PATH=str(commands) + os.pathsep + os.environ['PATH']),
+                                capture_output=True, text=True)
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertIn('system/bin/hwservicemanager', result.stdout)
+        self.assertFalse((self.android / 'upstream-was-called').exists())
 
 
 if __name__ == "__main__":

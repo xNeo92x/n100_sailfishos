@@ -14,8 +14,8 @@
 #define WANT_ADRENO_QUIRKS 1\
 %{nil}
 
-# Sailfish owns root filesystem layout; remove only the four known Android aliases.
-%define custom_install_cmds bash rpm/helpers/remove-android-root-aliases.sh "%{buildroot}"
+# Clean obsolete Android root aliases and stage the explicitly built runtime inputs.
+%define custom_install_cmds bash rpm/helpers/remove-android-root-aliases.sh "%{buildroot}" && bash rpm/helpers/install-android-runtime.sh "%{android_root}" "%{buildroot}"
 
 # Intentionally no installable_zip or automatic partition-update macros yet.
 %include rpm/dhd/droid-hal-device.inc

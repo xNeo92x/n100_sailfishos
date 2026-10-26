@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "source": "validation/runtime-apex-v2-report-user-20261026.json",
+  "source_sha256": "33f46e2d08d09d82e7dda67baed77116e1ab1a52e792fe749a1b26790ef3b60f",
+  "probe_script_matches_repository_template": true,
+  "runtime_linker_help_exit": 0,
+  "static_linkerconfig_help_exit": 0,
+  "servicemanager_dependency_list_exit": 0,
+  "cleanup_failed": false,
+  "sailfish_getprop_present": true,
+  "android_getprop_required_for_next_step": false,
+  "hwservicemanager_missing_from_probed_build_partitions": true,
+  "hwservicemanager_init_missing_from_probed_build_partitions": true,
+  "rootfs_system_ext_and_vendor_mounts_absent_in_probe": true,
+  "logd_missing_from_system_bin_inventory": true,
+  "runtime_apex_persistently_installed": false,
+  "linker_configuration_generated": false,
+  "android_services_started": false,
+  "rootfs_boot_verified": false,
+  "next_step": "Explicit Android service build, validate ABI and init inputs, rebuild HAL RPM with staged runtime assets."
+}

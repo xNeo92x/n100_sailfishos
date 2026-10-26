@@ -151,7 +151,7 @@ bash "$N100_PORT/tools/build-hal.sh"
 This uses the saved `N100_DEVICE_REPORT` to generate a reviewed local physical
 mountpoint override with `n100.py prepare-boot`. Existing custom overrides are
 not overwritten. It checks the configured ccache executable, sources the Android
-environment, selects `billie2`, runs `mka hybris-hal droidmedia` and checks
+environment, selects `billie2`, runs `mka hybris-hal droidmedia hwservicemanager logd linkerconfig` and checks
 the final `.config` and `hybris-boot.img`. If the kernel build uses a different
 object directory, supply its final `.config` explicitly:
 
@@ -281,3 +281,10 @@ Preserve the rootfs archive hash, HAL/image hashes, resolved Android manifest,
 middleware SHAs, SDK release and package manifest with each build. Update
 `status.json` to built only after that stage actually succeeds, and to booted
 only with an actual device log.
+
+### Runtime services after the V2 device probe
+
+The built HAL subset was missing hwservicemanager and logd. Use
+[HAL_RUNTIME_SERVICES.md](HAL_RUNTIME_SERVICES.md) for the explicit Android
+service build and updated HAL RPM staging. This does not activate services on
+the phone or validate full Sailfish boot.

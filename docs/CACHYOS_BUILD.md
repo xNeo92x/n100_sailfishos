@@ -927,3 +927,10 @@ wurde beim ursprünglichen ganzen DTBO-Dateivergleich angehalten. Mit dem
 korrigierten [Packschritt](EARLY_USB_DEBUG.md#bereits-gebaut-packschritt-wiederholen)
 kann der vorhandene Build erneut geprüft werden; tatsächliche Inhaltsänderungen
 erzeugen ein Review-Paket und bleiben gesperrt.
+
+## Fehlende HAL-Dienste nach dem Runtime-Test
+
+Der Runtime-Test V2 bestätigt Linker und statisches linkerconfig. Der nächste
+Schritt ist der gezielte [Dienstebuild und HAL-RPM-Neubau](HAL_RUNTIME_SERVICES.md)
+für hwservicemanager, logd und die Runtime-APEX-Paketierung. Das Telefon bleibt
+währenddessen in der vorhandenen schreibgeschützten Debug-Sitzung.
