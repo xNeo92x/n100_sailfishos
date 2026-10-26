@@ -23,14 +23,16 @@ RAM-Ansicht; auch `linkerconfig --help` und Cleanup sind bestätigt. Die fehlend
 Dienste `hwservicemanager` und `logd` sind inzwischen nachgebaut und strukturell
 geprüft. Auch der korrigierte HAL-RPM-Neubau und die Bibliotheksauflösung aller drei
 Dienste aus diesem RPM sind am Gerät bestätigt; Cleanup erfolgreich. Weiter mit
-der [schreibgeschützten Stock-Vendor-Abhängigkeitsprobe](docs/VENDOR_DEPENDENCY_PROBE.md).
+dem [gezielten GLESv3-Build für den Composer](docs/GRAPHICS_RUNTIME.md).
 Die Host-Konfiguration ist erzeugt. Der native Runtime-Neubau ohne DEX-Unwinding
 ist geprüft und benötigt kein `libdexfile.so` mehr. Auch die geänderte libc ist in dieser Probe geprüft.
 Das neu gebaute RPM ist gegen den Build geprüft; die neue RAM-Geräteprobe ist
 erfolgreich. Die neue Host-Vorschau bestätigt vollständige flache
 Abhängigkeitsketten der drei Dienste. Die generierte Konfiguration ist nun für alle drei
 Systemdienste auch ohne LD_LIBRARY_PATH am Gerät geprüft. Die strenge
-NNAPI-Diagnose, Vendor-Dienste und der vollständige Start bleiben offen.
+NNAPI-Diagnose und der vollständige Start bleiben offen. Die
+Abhängigkeitslisten von Allocator und beiden ausgewählten Sensordiensten sind
+bestätigt; dem Composer fehlt `libGLESv3.so`. Audio bleibt ungeprüft.
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,

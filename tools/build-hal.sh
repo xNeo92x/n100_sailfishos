@@ -55,9 +55,9 @@ if [[ "$mode" == media ]]; then
 elif [[ "$mode" == boot ]]; then
     mka hybris-boot 2>&1 | tee n100-build-logs/boot-debug.log
 elif [[ "$mode" == runtime ]]; then
-    mka hwservicemanager logd linkerconfig 2>&1 | tee n100-build-logs/runtime.log
+    mka hwservicemanager logd linkerconfig libGLESv3 2>&1 | tee n100-build-logs/runtime.log
 else
-    mka hybris-hal droidmedia hwservicemanager logd linkerconfig 2>&1 | tee n100-build-logs/hybris-hal.log
+    mka hybris-hal droidmedia hwservicemanager logd linkerconfig libGLESv3 2>&1 | tee n100-build-logs/hybris-hal.log
 fi
 if [[ "$mode" == all || "$mode" == runtime ]]; then
     python3 "$port_dir/tools/check-hal-runtime.py" --android-root "$ANDROID_ROOT" \

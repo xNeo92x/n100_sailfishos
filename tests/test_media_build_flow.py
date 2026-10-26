@@ -71,12 +71,12 @@ class MediaBuildFlowTest(unittest.TestCase):
     def test_default_build_includes_media(self):
         result = self.run_build()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual((self.android / "requested-targets").read_text().strip(), "hybris-hal droidmedia hwservicemanager logd linkerconfig")
+        self.assertEqual((self.android / "requested-targets").read_text().strip(), "hybris-hal droidmedia hwservicemanager logd linkerconfig libGLESv3")
 
     def test_runtime_build_requests_services_without_boot_or_media_targets(self):
         result = self.run_build("runtime")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual((self.android / "requested-targets").read_text().strip(), "hwservicemanager logd linkerconfig")
+        self.assertEqual((self.android / "requested-targets").read_text().strip(), "hwservicemanager logd linkerconfig libGLESv3")
         self.assertIn("fixture-build", (self.android / "n100-build-logs/runtime.log").read_text())
         self.assertFalse((self.android / "n100-build-logs/kernel-config-check.log").exists())
 

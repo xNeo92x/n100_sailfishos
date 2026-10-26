@@ -1,5 +1,14 @@
 # N100: Stock-Vendor-Abhängigkeiten im RAM prüfen
 
+## Ergebnis der V2-Probe
+
+Der [neue Lauf](../validation/vendor-v2-device-user-20261026.json) bestätigt
+vier ausgewählte AArch64-Programme: Allocator und beide Sensordienste lösen ihre
+Bibliotheken auf; dem Composer fehlt `libGLESv3.so`. Audio wurde übersprungen.
+Alle Systemlisten sowie Cleanup sind erfolgreich. Weiter mit dem
+[gezielten Grafik-Runtime-Build](GRAPHICS_RUNTIME.md). Die folgenden Befehle
+dokumentieren den abgeschlossenen V2-Probeablauf.
+
 ## Korrektur nach dem ersten Nutzerlauf (V2)
 
 Der [erste Vendor-Lauf](../validation/vendor-device-user-20261026.json) hat die

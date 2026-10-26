@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "kind": "stock-vendor-dependency-v2-user",
+  "source_report": "validation/vendor-v2-device-report-user-20261026.json",
+  "source_report_sha256": "2824601b4c79fab7715d7978c5f3c1b3fd38eba8527de440b2143b646d66ff19",
+  "probe_version": 2,
+  "elf_reader_selftest_passed": true,
+  "system_service_dependency_probe_passed": true,
+  "selected_vendor_dependency_probe_passed": false,
+  "selected_program_sha256": {
+    "/vendor/bin/hw/vendor.qti.hardware.display.composer-service": "2e44ffd0a108094c65746f7b450f61896d759679def952c85d9dd895a65d0f74",
+    "/vendor/bin/hw/vendor.qti.hardware.display.allocator-service": "2b4d8cb4505c36132a7f0a80d1405c3c4df91128253fe9b30fd88ab84daa5d61",
+    "/vendor/bin/hw/android.hardware.sensors@2.0-service.multihal": "b953b0471201274c3b656478c4581c1871f353eb59056ebea4842d8d0fd5cf5e",
+    "/vendor/bin/hw/vendor.qti.hardware.sensorscalibrate@1.0-service": "6e962e5dc467f5d9c8362b52f80e066d54c0a03c92a700e05a3d8d202413a84f"
+  },
+  "dependency_exit_codes": {
+    "/vendor/bin/hw/vendor.qti.hardware.display.composer-service": 1,
+    "/vendor/bin/hw/vendor.qti.hardware.display.allocator-service": 0,
+    "/vendor/bin/hw/android.hardware.sensors@2.0-service.multihal": 0,
+    "/vendor/bin/hw/vendor.qti.hardware.sensorscalibrate@1.0-service": 0
+  },
+  "skipped_programs": [
+    "N100_VENDOR_SKIPPED other-ABI-or-format /vendor/bin/hw/android.hardware.audio.service"
+  ],
+  "skipped_abi_details_unclassified": true,
+  "blocker": "Display composer needs libGLESv3.so, absent from the tested HAL system tree",
+  "cleanup": {
+    "exit": 0,
+    "cleanup_failed": 0
+  },
+  "binder_device_nodes_present": false,
+  "android_property_directory_present": false,
+  "nnapi_requirement_resolved": false,
+  "rootfs_boot_tested": false,
+  "android_services_started": false,
+  "hardware_features_validated": false,
+  "flashable_release": false
+}

@@ -391,3 +391,13 @@ Die [V2-Probe](VENDOR_DEPENDENCY_PROBE.md) nutzt portable Oktalbytes und einen
 Reader-Selbsttest; Werkzeugfehler werden nicht mehr als andere ABI behandelt.
 Fehlende Binder-Geräteknoten und Property-Initialisierung sind vor einem späteren
 Dienststart zu klären. Es wurden keine Dienste gestartet.
+
+## V2: Composer benötigt GLESv3 (26.10.2026)
+
+Der [Gerätebericht](../validation/vendor-v2-device-user-20261026.json) bestätigt
+die ELF-Erkennung, vier Vendor-Auswahlen und erfolgreichen Cleanup. Allocator
+und beide Sensordienst-Abhängigkeitslisten sind erfolgreich; Composer scheitert
+an fehlendem `libGLESv3.so`. Die Audio-Datei wurde übersprungen. Weiter mit dem
+[gezielten Build und der Eingabenprüfung](GRAPHICS_RUNTIME.md). Die Bibliotheken
+und deren reale Exporte werden vor einer neuen RAM-Probe geprüft. Kein Grafik-
+oder Sensor-Hauptprozess wurde gestartet und keine Hardwarefunktion bestätigt.
