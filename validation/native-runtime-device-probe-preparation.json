@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "kind": "native-runtime-rpm-device-probe-preparation",
+  "source_manifest_sha256": "035025fe9b3fa586cb09aa20644db9f90e668d36f1770302e346ab37bc636960",
+  "script_sha256": "ac463d77799ac68504a85e86ece83c232096c83b53ac42dc3bf953e3a5a275fb",
+  "payload": {
+    "bytes": 8110080,
+    "sha256": "2077c05b09aa83f466336c9fc6a7340f16bf335c570f10b27ee1b57623c78da0"
+  },
+  "hal_archive_bytes": 24106184,
+  "hal_archive_sha256": "44606fa539bf90a084d764ad0ab926c91393b4cfa1daac824efcda54f7a0a576",
+  "new_core_pins": {
+    "bin/linker": {
+      "bytes": 1311204,
+      "sha256": "b4cc0d3534db2a18ec0828f394657a0aad773137c0127c3ebbe142a65ef16ae2",
+      "elf_class": 1,
+      "elf_machine": 40,
+      "matches_flattened_reference": true,
+      "flattened_reference_bytes": 1311204,
+      "flattened_reference_sha256": "b4cc0d3534db2a18ec0828f394657a0aad773137c0127c3ebbe142a65ef16ae2"
+    },
+    "bin/linker64": {
+      "bytes": 1790304,
+      "sha256": "7edbd7684bba7a53fc5d666ed23fe3f7927adc11ca060d4b079e7f73918f56cc",
+      "elf_class": 2,
+      "elf_machine": 183,
+      "matches_flattened_reference": true,
+      "flattened_reference_bytes": 1790304,
+      "flattened_reference_sha256": "7edbd7684bba7a53fc5d666ed23fe3f7927adc11ca060d4b079e7f73918f56cc"
+    },
+    "lib64/bionic/libc.so": {
+      "bytes": 1020008,
+      "sha256": "65aa28664008ff41d455708a9c63e9c620184d0370e5cba7a982f18f9897a722",
+      "elf_class": 2,
+      "elf_machine": 183,
+      "matches_flattened_reference": false,
+      "flattened_reference_bytes": 1020008,
+      "flattened_reference_sha256": "d109ef03d686bd6b549a602f9ed5d774af2fdccc312f178d2f42b188787a6d3a"
+    },
+    "lib64/bionic/libdl.so": {
+      "bytes": 13728,
+      "sha256": "316c59f9624362bd59f1fb2be6c15bfd32e8d5f47aac3356075811c4bf667e03",
+      "elf_class": 2,
+      "elf_machine": 183,
+      "matches_flattened_reference": true,
+      "flattened_reference_bytes": 13728,
+      "flattened_reference_sha256": "316c59f9624362bd59f1fb2be6c15bfd32e8d5f47aac3356075811c4bf667e03"
+    },
+    "lib64/bionic/libm.so": {
+      "bytes": 225176,
+      "sha256": "d5348e97648de62112f1625a70e87a93771ba641d1ee0c3f61f47e0858dec1e8",
+      "elf_class": 2,
+      "elf_machine": 183,
+      "matches_flattened_reference": true,
+      "flattened_reference_bytes": 225176,
+      "flattened_reference_sha256": "d5348e97648de62112f1625a70e87a93771ba641d1ee0c3f61f47e0858dec1e8"
+    }
+  },
+  "probe_scope": "RAM overlay, read-only userdata/runtime; linker help and three dependency lists only",
+  "host_fixture_tests_passed": true,
+  "device_tested": false,
+  "phone_modified": false,
+  "namespace_configuration_installed": false,
+  "flashable_release": false,
+  "host_tests_passed": 245,
+  "fs_config_compat_tests_passed": 16,
+  "shell_syntax_passed": true,
+  "python_syntax_passed": true,
+  "whitespace_check_passed": true
+}

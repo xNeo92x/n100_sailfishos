@@ -344,3 +344,11 @@ die neue Runtime ohne DEX-Anforderung. Die TLS-Header wurden nicht verändert;
 die neue libc benötigt dennoch eine neue Geräteprüfung. Der nächste Schritt ist
 der [HAL-RPM-Neubau mit Inhaltsprüfung](NATIVE_RUNTIME_RPM.md). NNAPI und der
 vollständige Systemstart bleiben unbestätigt.
+
+## Natives HAL-RPM geprüft (26.10.2026)
+
+Das [Nutzer-Manifest](../validation/native-runtime-rpm-user-20261026.json) stimmt
+mit dem neuen nativen Build überein. Runtime-APEX, libc und libunwindstack sind
+gegenüber dem alten Gerätetest geändert. Weiter mit der
+[an genau dieses Paket gebundenen RAM-Probe](NATIVE_RUNTIME_DEVICE_PROBE.md).
+Die neue libc ist noch nicht auf dem Gerät geprüft; keine Dienste gestartet.

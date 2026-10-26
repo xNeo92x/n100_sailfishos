@@ -83,6 +83,12 @@ Paketkennung und Hashes wird die passende neue RAM-Probe vorbereitet. Es werden
 hier weder ein HTTP-Server gestartet noch Dateien auf dem Telefon installiert.
 Die neue libc ist weiterhin als nicht auf dem Gerät getestet markiert.
 
+## Ergebnis des Nutzerlaufs
+
+Das inzwischen [ausgewertete Manifest](../validation/native-runtime-rpm-user-20261026.json)
+bestätigt den erfolgreichen RPM-Neubau und die neuen Payload-/Bionic-Pins.
+Weiter mit der [RAM-Geräteprüfung für genau dieses neue Paket](NATIVE_RUNTIME_DEVICE_PROBE.md).
+
 `libneuralnetworks.so` und die reguläre Namespace-/Vendor-Integration bleiben
 separat offen. Aus erfolgreicher Paketprüfung folgt kein vollständiger
 Sailfish-/HAL-Start oder installierbares Release.

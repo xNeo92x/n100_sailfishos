@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "kind": "native-runtime-rpm-audit-user",
+  "source": "User-uploaded exact prepare-native-runtime-rpm.py manifest; RPM binaries remain on user PC",
+  "source_manifest": "validation/native-runtime-rpm-manifest-user-20261026.json",
+  "source_manifest_sha256": "035025fe9b3fa586cb09aa20644db9f90e668d36f1770302e346ab37bc636960",
+  "source_rpm": {
+    "name": "droid-hal-billie2",
+    "arch": "aarch64",
+    "version_release": "0.0.6-202610262022",
+    "bytes": 23065994,
+    "sha256": "b6714b06b16f38e25d0298e4efe4e39b63b1b92128678e49c00b49b7fd5a3bc6",
+    "path": "/home/eugen/n100-build/android/droid-local-repo/billie2/droid-hal-billie2-0.0.6-202610262022.aarch64.rpm"
+  },
+  "build_report_pin_matched": true,
+  "new_runtime_payload_matched": true,
+  "new_flat_bionic_matched": true,
+  "regular_files": 260,
+  "unpacked_regular_bytes": 64395841,
+  "changed_since_historical_device_probe": [
+    "apex/com.android.runtime.apex",
+    "lib64/libc.so",
+    "lib64/libunwindstack.so"
+  ],
+  "native_runtime_rpm_rebuilt": true,
+  "native_runtime_device_tested": false,
+  "nnapi_requirement_resolved": false,
+  "flashable_release": false
+}
