@@ -14,6 +14,26 @@ Abhilfe: Das Telefon schreibt das Image in der Initramfs-Debug-Shell selbst übe
 `/dev/sda16` (nicht eingehängt), anschließend Prüfsumme über die vollen 8 GiB
 (`run-full-boot-test.sh serve-image`).
 
+## Stand nach Versuch 1 und Fortsetzung (11.11.2026)
+
+[Gerätebericht](../validation/full-boot-attempt-1-user-20261111.json).
+
+- Userdata ist bit-gleich mit dem Image (8-GiB-Prüfsumme auf dem Gerät), ext4 hängt sauber ein.
+- Der automatische Initramfs-Weg nach `continue` endete zweimal in einer Kernel-Panic
+  (Exit 0x0 bzw. 0x0b). Ursache noch offen.
+- **Der manuelle Weg funktioniert:** früher Debug-Start, dann per `/init-ctl/stdin`
+  `mount_stowaways`, `mount -o remount,sync /data`, `touch /target/init_enter_debug2` und
+  `exec switch_root /target /init-debug`. Danach USB-IP am PC neu setzen und Telnet auf 2323.
+- Nach `continue` läuft `/sbin/preinit` vollständig („Booting to default.target“), dann stirbt
+  systemd als PID 1 mit SIGSEGV, bevor es etwas protokolliert. Als normales Programm startet
+  `systemd --version` fehlerfrei.
+- Verdacht: frühes Laden der SELinux-Richtlinie. `/etc/selinux/config` ist `permissive/minimum`,
+  `policy.30` verweist auf `/vendor/etc/selinux/precompiled_sepolicy`, `/vendor` ist zu dem
+  Zeitpunkt nicht eingehängt.
+- Nächster Test: in der 2323-Shell `SELINUX=disabled` setzen (Sicherung
+  `/etc/selinux/config.n100-orig`) und dann `continue`. Kernel-Log live mitschneiden mit
+  `tools/kmsg-capture.py 192.168.2.15 2323 <Datei>` auf dem PC; pstore gibt es nicht.
+
 ## Ausgangslage
 
 Die RAM-Proben V3–V6 haben gezeigt: Vendor-Abhängigkeiten des Composers sind aufgelöst,

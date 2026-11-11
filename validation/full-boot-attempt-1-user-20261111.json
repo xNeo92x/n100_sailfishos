@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "kind": "full-boot-attempt-device-report",
+  "date": "2026-11-11",
+  "userdata_write": {
+    "method": "phone-side busybox wget | dd of=/dev/sda16 (bootloader sparse flash had dropped blocks >= 3.125 GiB)",
+    "full_8gib_sha256_on_device": "ba6eecd996dd7d729cc25601738fba820592c6bc7612b0734379cf92833f18df",
+    "matches_image": true,
+    "ext4_mount": "mounted filesystem with ordered data mode"
+  },
+  "boot_path": {
+    "initramfs_continue_path": "two kernel panics (exit 0x0 after continue; exit 0x0b at next boot); root cause not yet isolated",
+    "manual_path": "early debug image -> inject mount_stowaways -> remount sync -> inject exec switch_root /target /init-debug: works, halts at /init_enter_debug2 (Telnet 2323)",
+    "after_continue": "init-debug exec /sbin/preinit; preinit completes (BOOTSTATE=USER, Booting to default.target) and execs systemd; PID 1 dies with SIGSEGV (Attempted to kill init! exitcode=0x0000000b) before systemd logs anything; reproduced 3 times"
+  },
+  "systemd_non_pid1": "/usr/lib/systemd/systemd --version works (systemd 238), so loader and libraries are fine",
+  "selinux_config": {
+    "SELINUX": "permissive",
+    "SELINUXTYPE": "minimum",
+    "policy": "/etc/selinux/minimum/policy/policy.30 -> /vendor/etc/selinux/precompiled_sepolicy (vendor not mounted when systemd starts)"
+  },
+  "hypothesis": "systemd PID1 early SELinux policy load (mac_selinux_setup) crashes; untested",
+  "next_test": "set SELINUX=disabled in /etc/selinux/config (backup config.n100-orig) from the 2323 shell, then continue",
+  "rootfs_init_log_tail": [
+    "########################## Beginning inject loop",
+    "+ :",
+    "+ read IN",
+    "+ '[' continue '=' continue ]",
+    "+ break 2",
+    "+ rm -rf /init-ctl",
+    "+ echo '########################## inject loop done'",
+    "########################## inject loop done",
+    "+ rm /dev/block",
+    "+ '[' -x /sbin/preinit ]",
+    "+ INIT=/sbin/preinit",
+    "+ exec /sbin/preinit '--log-level=debug' '--log-target=kmsg'"
+  ],
+  "preinit_stdout": [
+    " ",
+    "mount: /proc: none already mounted on /config.",
+    "       dmesg(1) may have more information after failed mount system call.",
+    "mount: /sys: none already mounted on /config.",
+    "       dmesg(1) may have more information after failed mount system call."
+  ],
+  "kmsg_after_preinit_remount": [
+    "[19700101_01:25:00.309684]@3 EXT4-fs (sda16): re-mounted. Opts: (null)",
+    "[19700101_01:25:00.323041]@2 preinit: (217.72) Welcome to Sailfish OS 5.1.0.11 (Pispala)",
+    "[19700101_01:25:02.001484]@2 preinit: (219.39) set_system_time:  : 0",
+    "[19700101_01:25:02.010231]@2 preinit: (219.40) is_erase_needed: No : 0",
+    "[19700101_01:25:02.032573]@3 preinit: (219.42) late.d/rich-core-preinit:  : 0",
+    "[19700101_01:25:02.048047]@1 preinit: (219.44) get_bootstate: USER : 0",
+    "[19700101_01:25:02.048221]@1 preinit: (219.44) BOOTSTATE = USER",
+    "[19700101_01:25:02.050700]@1 preinit: (219.44) Booting to default.target"
+  ],
+  "other_findings": [
+    "rootfs /init-debug is the unsubstituted hybris-boot template (%DATA_PART%, %DEFAULT_OS%); harmless for the rootfs branch",
+    "after switch_root the rndis gadget is recreated; host must re-add 192.168.2.14 to enp16s0u10",
+    "kernel keeps no pstore/ramoops; kmsg must be captured live over Telnet (tools/kmsg-capture.py)"
+  ],
+  "phone_modified": "userdata rewritten with the image; /etc/selinux/config unchanged so far",
+  "flashable_release": false
+}
