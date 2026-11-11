@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "selinux-contexts-rpm-prepared",
+  "stage": "runtime-service-probe-v4-prepared",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -219,7 +219,7 @@
   "android_runtime_apex_installed": false,
   "runtime_blockers": [
     "Composer, allocator and both selected sensor service dependency lists pass on the N100 with libGLESv3 (probe V3); HAL RPM now ships libGLESv3 (not yet device-tested); 32-bit ARM audio service untested",
-    "servicemanager and hwservicemanager CHECK-fail without /system/etc/selinux/plat_*service_contexts (missing from the HAL RPM); build and packaging prepared",
+    "Platform SELinux contexts are now in the HAL RPM (8af2a764...); servicemanager/hwservicemanager start awaits probe V4",
     "Runtime no longer requires libdexfile.so; strict host NNAPI requirements remain unresolved; limited system namespace device probe passed",
     "Persistent early mapping/mounts, full switch_root and peripherals remain unvalidated",
     "Native no-DEX Runtime/RPM and three service dependency lists are verified; service main functions and systemd have not been started"
@@ -254,7 +254,7 @@
   "linker_namespace_preview_prepared": true,
   "linker_namespace_preview_generated": true,
   "linker_namespace_device_tested": true,
-  "next_step": "Run tools/run-selinux-rpm-build.sh (docs/SELINUX_CONTEXTS.md), then prepare the binderfs/servicemanager RAM probe",
+  "next_step": "Run runtime service probe V4 (docs/RUNTIME_SERVICE_PROBE.md): binderfs plus servicemanager/hwservicemanager briefly in RAM",
   "linker_namespace_preview_documentation": "docs/LINKER_HOST_PREVIEW.md",
   "linker_namespace_preview_preparation_validation": "validation/linker-host-preview-preparation.json",
   "linker_namespace_preview_validation": "validation/linker-host-preview-user-20261026.json",
@@ -347,5 +347,11 @@
   "gles_hal_rpm_device_tested": false,
   "selinux_contexts_packaging_prepared": true,
   "selinux_contexts_documentation": "docs/SELINUX_CONTEXTS.md",
-  "selinux_contexts_in_rpm": false
+  "selinux_contexts_in_rpm": true,
+  "selinux_hal_rpm_validation": "validation/selinux-hal-rpm-user-20261111.json",
+  "selinux_hal_rpm_sha256": "8af2a7640f6b23e54241286ac298f982346a29a2923ebda8fda74c660891b412",
+  "runtime_service_probe_v4_prepared": true,
+  "runtime_service_probe_v4_executed": false,
+  "runtime_service_probe_v4_documentation": "docs/RUNTIME_SERVICE_PROBE.md",
+  "runtime_service_probe_v4_bundle_manifest": "validation/runtime-probe-v4-manifest-user-20261111.json"
 }

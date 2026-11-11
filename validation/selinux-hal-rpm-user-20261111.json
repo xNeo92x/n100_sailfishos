@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "kind": "gles-hal-rpm-comparison",
+  "passed": true,
+  "reference_rpm": {
+    "name": "droid-hal-billie2-0.0.6-202610262022.aarch64.rpm",
+    "sha256": "b6714b06b16f38e25d0298e4efe4e39b63b1b92128678e49c00b49b7fd5a3bc6"
+  },
+  "new_rpm": {
+    "name": "droid-hal-billie2-0.0.6-202611111828.aarch64.rpm",
+    "bytes": 23086373,
+    "sha256": "8af2a7640f6b23e54241286ac298f982346a29a2923ebda8fda74c660891b412",
+    "lead_name": "droid-hal-billie2-0.0.6-202611111828"
+  },
+  "payload_entries": 479,
+  "added": {
+    "./usr/libexec/droid-hybris/system/etc/selinux": {
+      "mode": "0o755",
+      "type": "dir"
+    },
+    "./usr/libexec/droid-hybris/system/etc/selinux/plat_hwservice_contexts": {
+      "mode": "0o644",
+      "type": "file",
+      "bytes": 8750,
+      "sha256": "5eae772c38b35c0538a55a38d337923db67c79960845775e940bd6484a688c50"
+    },
+    "./usr/libexec/droid-hybris/system/etc/selinux/plat_property_contexts": {
+      "mode": "0o644",
+      "type": "file",
+      "bytes": 87362,
+      "sha256": "a58518820edc5f4f9d4ae2ab85d78e117d03424c99c20f76f17984cfad7b108c"
+    },
+    "./usr/libexec/droid-hybris/system/etc/selinux/plat_service_contexts": {
+      "mode": "0o644",
+      "type": "file",
+      "bytes": 31248,
+      "sha256": "51a21e9c200a66fc5b1872d95142a1bcc2d2d1dffd990811d0ed669b4d75441b"
+    },
+    "./usr/libexec/droid-hybris/system/lib/libGLESv3.so": {
+      "mode": "0o644",
+      "type": "file",
+      "bytes": 110432,
+      "sha256": "f2d978f86c7c87f2aa38187101975e6fce518009daabf655e0b93c38b0e6befc"
+    },
+    "./usr/libexec/droid-hybris/system/lib64/libGLESv3.so": {
+      "mode": "0o644",
+      "type": "file",
+      "bytes": 170224,
+      "sha256": "e1efbb5b54f0bac9d770c3c01dbfc39cee9d377fba7c87b7306e7fc2466df958"
+    }
+  },
+  "removed": [],
+  "changed": {},
+  "problems": [],
+  "graphics_report_sha256": "41cde56a39704d60e1ddd30e9f40878558dcfab2de9c568464818bb62a01424b",
+  "selinux_contexts_expected": true,
+  "device_tested": false,
+  "flashable_release": false
+}

@@ -37,3 +37,11 @@ Das Skript baut die Kontextdateien im Ubuntu HABUILD SDK (`build-hal.sh runtime`
 bereits gebaute Ziele bleiben unverändert), baut im Platform SDK das HAL-RPM und
 vergleicht es zurück auf CachyOS Eintrag für Eintrag. Telefon nicht nötig.
 Bericht: `~/n100-build/selinux-hal-rpm-<UTC>/report.json`.
+
+## Ergebnis (11.11.2026)
+
+[Bestanden](../validation/selinux-hal-rpm-user-20261111.json):
+`droid-hal-billie2-0.0.6-202611111828.aarch64.rpm` (SHA-256 `8af2a764…b412`) enthält gegenüber
+dem am Gerät getesteten Paket genau `etc/selinux` mit den drei Dateien und die zwei
+`libGLESv3.so`. `plat_service_contexts` enthält `manager u:object_r:service_manager_service:s0`.
+Weiter mit der [Probe V4](RUNTIME_SERVICE_PROBE.md).
