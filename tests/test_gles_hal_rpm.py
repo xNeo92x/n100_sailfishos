@@ -51,9 +51,21 @@ class GlesHalRpmTests(unittest.TestCase):
         mode = check.parse_cpio(archive(BASE[0], member(P + 'lib64/libEGL.so', 0o100755, b'egl', ino=3), BASE[2], *GLES))
         self.assertTrue(check.compare(old, mode, check.sha(b'gles64'))[3])
 
+    def test_selinux_mode_requires_the_three_context_files_and_their_directory(self):
+        old = check.parse_cpio(archive(*BASE))
+        contexts = [member(P + 'etc/selinux', 0o40755, ino=20)] + [
+            member(name, 0o100644, b'manager u:object_r:x:s0\n', ino=21 + i) for i, name in enumerate(sorted(check.SELINUX))]
+        new = check.parse_cpio(archive(*BASE, *GLES, *contexts))
+        self.assertEqual(check.compare(old, new, check.sha(b'gles64'), selinux=True)[3], [])
+        self.assertTrue(check.compare(old, new, check.sha(b'gles64'), selinux=False)[3])
+        partial = check.parse_cpio(archive(*BASE, *GLES, *contexts[:-1]))
+        self.assertTrue(check.compare(old, partial, check.sha(b'gles64'), selinux=True)[3])
+        empty = check.parse_cpio(archive(*BASE, *GLES, *contexts[:-1], member(sorted(check.SELINUX)[-1], 0o100644, b'', ino=40)))
+        self.assertTrue(check.compare(old, empty, check.sha(b'gles64'), selinux=True)[3])
+
     def test_new_rpm_selection_ignores_subpackages_and_the_reference(self):
         temp = tempfile.TemporaryDirectory(); self.addCleanup(temp.cleanup); base = Path(temp.name)
-        for name in [check.REFERENCE_NAME, 'droid-hal-billie2-devel-0.0.6-202611111900.aarch64.rpm',
+        for name in [check.REFERENCE_NAME, *check.IGNORED, 'droid-hal-billie2-devel-0.0.6-202611111900.aarch64.rpm',
                      'droid-hal-billie2-img-boot-0.0.6-202611111900.aarch64.rpm']:
             (base / name).write_bytes(b'')
         with self.assertRaisesRegex(ValueError, 'none'): check.find_new_rpm(base)
@@ -74,6 +86,11 @@ class GlesHalRpmTests(unittest.TestCase):
         subprocess.run(['bash', '-n', str(script)], check=True)
         text = script.read_text()
         self.assertIn('build-packages.sh" hal', text); self.assertIn('check-gles-hal-rpm.py', text)
+        self.assertNotIn('fastboot', text)
+        selinux = ROOT / 'tools/run-selinux-rpm-build.sh'
+        subprocess.run(['bash', '-n', str(selinux)], check=True)
+        text = selinux.read_text()
+        self.assertIn('build-hal.sh" runtime', text); self.assertIn('--with-selinux-contexts', text)
         self.assertNotIn('fastboot', text)
 
 

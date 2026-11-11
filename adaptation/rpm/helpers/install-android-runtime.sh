@@ -11,7 +11,9 @@ base="$buildroot/usr/libexec/droid-hybris/system"
 }
 inputs=(system/bin/hwservicemanager system/bin/logd system/etc/init/hwservicemanager.rc system/etc/init/logd.rc
         system/apex/com.android.runtime.apex
-        system/etc/sanitizer.libraries.txt system/etc/vndkcorevariant.libraries.txt)
+        system/etc/sanitizer.libraries.txt system/etc/vndkcorevariant.libraries.txt
+        system/etc/selinux/plat_service_contexts system/etc/selinux/plat_hwservice_contexts
+        system/etc/selinux/plat_property_contexts)
 for relative in "${inputs[@]}"; do
     [[ -f "$product/$relative" && ! -L "$product/$relative" ]] || {
         echo "Missing runtime build input: $relative" >&2; exit 1;
@@ -36,7 +38,11 @@ done
 for line in '%dir /usr/libexec/droid-hybris/system/apex' \
     '/usr/libexec/droid-hybris/system/apex/com.android.runtime.apex' \
     '/usr/libexec/droid-hybris/system/etc/sanitizer.libraries.txt' \
-    '/usr/libexec/droid-hybris/system/etc/vndkcorevariant.libraries.txt'; do
+    '/usr/libexec/droid-hybris/system/etc/vndkcorevariant.libraries.txt' \
+    '%dir /usr/libexec/droid-hybris/system/etc/selinux' \
+    '/usr/libexec/droid-hybris/system/etc/selinux/plat_service_contexts' \
+    '/usr/libexec/droid-hybris/system/etc/selinux/plat_hwservice_contexts' \
+    '/usr/libexec/droid-hybris/system/etc/selinux/plat_property_contexts'; do
     grep -Fxq -- "$line" tmp/droid-hal.files || printf '%s\n' "$line" >> tmp/droid-hal.files
 done
-echo 'Staged runtime APEX, HAL services, init declarations and linkerconfig inputs for RPM packaging.'
+echo 'Staged runtime APEX, HAL services, init declarations, linkerconfig inputs and platform SELinux contexts for RPM packaging.'

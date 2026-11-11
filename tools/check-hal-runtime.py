@@ -16,6 +16,9 @@ SPEC.loader.exec_module(inventory)
 SERVICES = ('hwservicemanager', 'logd')
 APEX = 'system/apex/com.android.runtime.apex'
 EXTRA_ETC = ('sanitizer.libraries.txt', 'vndkcorevariant.libraries.txt')
+# servicemanager/hwservicemanager CHECK-fail without platform service contexts; init needs property contexts.
+SELINUX_CONTEXTS = {'plat_service_contexts': 'manager', 'plat_hwservice_contexts': 'android.hidl.manager::IServiceManager',
+                    'plat_property_contexts': 'ro.build.'}
 
 
 def inspect(android_root):
@@ -27,6 +30,7 @@ def inspect(android_root):
                          if (product / p).is_file() and not (product / p).is_symlink()), 'system/bin/linkerconfig')
     required += [linkerconfig]
     required += ['system/etc/' + n for n in EXTRA_ETC]
+    required += ['system/etc/selinux/' + n for n in SELINUX_CONTEXTS]
     for relative in required:
         path = product / relative
         if not inventory.within(path, product) or path.is_symlink() or not path.is_file():
@@ -51,6 +55,14 @@ def inspect(android_root):
             expected = r'^service\s+' + re.escape(service) + r'\s+/(?:system/bin|usr/libexec/droid-hybris/system/bin)/' + re.escape(service) + r'(?:\s|$)'
             if not re.search(expected, text, re.M):
                 errors.append('Missing expected service declaration: ' + relative)
+        elif relative.startswith('system/etc/selinux/'):
+            key = SELINUX_CONTEXTS[relative.rsplit('/', 1)[1]]
+            text = data.decode('utf-8', errors='replace')
+            entries = [line.split() for line in text.splitlines() if line.strip() and not line.lstrip().startswith('#')]
+            if not entries or not all(len(e) >= 2 and e[1].startswith('u:object_r:') for e in entries):
+                errors.append('Unexpected SELinux contexts format: ' + relative)
+            elif not any(e[0] == key or e[0].startswith(key) for e in entries):
+                errors.append('Expected SELinux context entry missing: ' + relative)
         elif relative == APEX:
             try:
                 with zipfile.ZipFile(path) as archive:

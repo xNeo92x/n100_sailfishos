@@ -32,6 +32,10 @@ class HalRuntimeBuildTests(unittest.TestCase):
         (self.product / 'system/bin/linkerconfig').write_bytes(executable())
         for name in runtime.EXTRA_ETC:
             (self.product / 'system/etc' / name).write_bytes(b'fixture' if name.endswith('.pb') else b'')
+        for name, key in runtime.SELINUX_CONTEXTS.items():
+            path = self.product / 'system/etc/selinux' / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('# fixture\n{} u:object_r:fixture_service:s0\n'.format(key + ('x' if key.endswith('.') else '')))
         apex = self.product / runtime.APEX
         apex.parent.mkdir(parents=True)
         with zipfile.ZipFile(apex, 'w') as archive:
@@ -64,7 +68,22 @@ class HalRuntimeBuildTests(unittest.TestCase):
         lines = (self.work / 'tmp/droid-hal.files').read_text().splitlines()
         self.assertEqual(len(lines), len(set(lines)))
         self.assertIn('/usr/libexec/droid-hybris/system/apex/com.android.runtime.apex', lines)
+        self.assertIn('%dir /usr/libexec/droid-hybris/system/etc/selinux', lines)
+        for name in runtime.SELINUX_CONTEXTS:
+            self.assertEqual((base / 'etc/selinux' / name).read_bytes(),
+                             (self.product / 'system/etc/selinux' / name).read_bytes())
+            self.assertIn('/usr/libexec/droid-hybris/system/etc/selinux/' + name, lines)
         self.assertFalse((self.buildroot / 'apex').exists())  # no activation here
+
+    def test_missing_or_malformed_selinux_contexts_stop_before_packaging(self):
+        path = self.product / 'system/etc/selinux/plat_service_contexts'
+        path.write_text('other u:object_r:x:s0\n')
+        self.assertFalse(runtime.inspect(self.android)['passed'])
+        path.write_text('manager garbage\n')
+        self.assertFalse(runtime.inspect(self.android)['passed'])
+        path.unlink()
+        self.assertFalse(runtime.inspect(self.android)['passed'])
+        self.assertNotEqual(self.run_helper().returncode, 0)
 
     def test_missing_service_and_wrong_abi_stop_before_packaging(self):
         (self.product / 'system/bin/hwservicemanager').unlink()
