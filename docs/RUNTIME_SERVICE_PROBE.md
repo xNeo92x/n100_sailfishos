@@ -17,6 +17,20 @@ Vendor-Abhängigkeitslisten sowie Cleanup bestanden; binderfs (`stats=global`) m
 - Beide melden `ioctl 40046210 returned -22`: `BINDER_ENABLE_ONEWAY_SPAM_DETECTION` kennt der
   4.19-Kernel nicht; libbinder behandelt das als Warnung.
 
+## Ergebnis V5 (11.11.2026)
+
+[Bestanden](../validation/runtime-v5-device-report-user-20261111.json): **servicemanager und
+hwservicemanager laufen beide** (3 s/6 s aktiv, je ein Binder-FD, sauber per TERM beendet).
+`binder_logs/state` zeigt je einen Kontextmanager-Knoten (`u0000000000000000`) für `binder`
+und `hwbinder`. Cleanup 0, System- und Vendor-Listen bestanden.
+
+Einschränkung: selinuxfs meldet ohne Richtlinie `deny_unknown=1`. libselinux lehnt dann die
+unbekannte Klasse `service_manager` ab (`checkAccess.c`), servicemanager dürfte also
+Registrierungen verweigern. Das ist mit einem echten Client noch zu prüfen.
+Referenz-Ports (z. B. [droid-config-sony-nile](https://github.com/mer-hybris/droid-config-sony-nile))
+laden für hw-/vndservicemanager `libselinux_stubs.so` per `LD_PRELOAD`; die Stub-Bibliothek
+enthält aber kein `selinux_android_service_context_handle`.
+
 ## Probe V5
 
 V5 ist V4 plus genau einen Schritt vor dem Dienststart: selinuxfs wird nur in der
