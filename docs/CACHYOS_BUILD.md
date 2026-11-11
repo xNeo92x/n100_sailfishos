@@ -809,6 +809,19 @@ Paketauflösung und weitere Middleware-Anpassungen sind noch nicht erprobt.
 Das Rootfs muss bereits die billie2-Anpassung und die AArch64-Laufzeit enthalten;
 ein generisches Sailfish-Archiv genügt nicht.
 
+## 4a. Rootfs und Image mit einem Befehl neu bauen (ab 11.11.2026)
+
+Nach dem [HAL-RPM mit Stub-Vorladung](SELINUX_CONTEXTS.md) baut **auf CachyOS**
+
+```bash
+bash ~/n100_sailfishos/tools/run-rootfs-image-build.sh
+```
+
+das Rootfs im Platform SDK (`build-packages.sh rootfs`, neuer `EXTRA_NAME`), prüft Archiv-
+Prüfsumme und dass die Paketliste genau `droid-hal-billie2.aarch64 0.0.6-202611111916`
+enthält, und erzeugt dann mit `make-userdata-image.py` (sudo) ein neues 8-GiB-`userdata.img`
+unter `~/n100-build/images/billie2-<UTC>`. Auf das Telefon wird nichts geschrieben.
+
 ## 5. Experimentelle Image-Dateien erzeugen
 
 Der neue MIC-Lauf meldete am 25. Oktober 2026 um 15:58:53 UTC `Finished`

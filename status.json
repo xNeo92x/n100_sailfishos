@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "stub-preload-hal-rpm-built",
+  "stage": "rootfs-image-rebuild-prepared",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -254,7 +254,7 @@
   "linker_namespace_preview_prepared": true,
   "linker_namespace_preview_generated": true,
   "linker_namespace_device_tested": true,
-  "next_step": "Rebuild the Sailfish rootfs and userdata image with the new HAL RPM (step 2), then plan the first full boot",
+  "next_step": "Run tools/run-rootfs-image-build.sh: rebuild the Sailfish rootfs with HAL RPM 0.0.6-202611111916 and create a new userdata.img (nothing written to the phone)",
   "linker_namespace_preview_documentation": "docs/LINKER_HOST_PREVIEW.md",
   "linker_namespace_preview_preparation_validation": "validation/linker-host-preview-preparation.json",
   "linker_namespace_preview_validation": "validation/linker-host-preview-user-20261026.json",

@@ -124,6 +124,12 @@ class GlesHalRpmTests(unittest.TestCase):
         text = preload.read_text()
         self.assertIn('build-packages.sh" hal', text); self.assertIn('--with-stub-preload --with-service-tool', text)
         self.assertNotIn('ubu-chroot', text); self.assertNotIn('fastboot', text)
+        image = ROOT / 'tools/run-rootfs-image-build.sh'
+        subprocess.run(['bash', '-n', str(image)], check=True)
+        text = image.read_text()
+        self.assertIn('build-packages.sh" rootfs', text); self.assertIn('make-userdata-image.py', text)
+        self.assertIn('droid-hal-billie2.aarch64 $hal_version', text)
+        self.assertNotIn('fastboot', text); self.assertNotIn('dd if=', text)
 
 
 if __name__ == '__main__': unittest.main()
