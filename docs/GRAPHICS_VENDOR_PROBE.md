@@ -15,7 +15,7 @@ Der [gezielte Build](../validation/graphics-runtime-build-user-20261111.json) ha
 echte Android-13-Bibliothek `libGLESv3.so` erzeugt (AArch64, SHA-256
 `e1efbb5b…f958`). Alle Abhängigkeiten sind identisch mit dem bereits am Gerät getesteten
 HAL-Stand; Runtime-APEX und Bionic sind unverändert. Neu ist ausschließlich diese
-eine Datei. Ein Gerätetest steht noch aus.
+eine Datei.
 
 ## Was V3 macht
 
