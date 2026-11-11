@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "runtime-probe-v6-prepared",
+  "stage": "runtime-v6-servicemanager-functional-with-selinux-stubs",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -219,7 +219,7 @@
   "android_runtime_apex_installed": false,
   "runtime_blockers": [
     "Composer, allocator and both selected sensor service dependency lists pass on the N100 with libGLESv3 (probe V3); HAL RPM now ships libGLESv3 (not yet device-tested); 32-bit ARM audio service untested",
-    "servicemanager and hwservicemanager both run on the N100 (V5, selinuxfs without policy); with deny_unknown=1 libselinux denies unknown classes, so registrations are expected to be refused; functional client test pending",
+    "servicemanager answers clients (service list/check) only with LD_PRELOAD=/system/lib64/libselinux_stubs.so (V6); without it every registration is denied (deny_unknown=1). Packaged rc files do not yet set the preload",
     "Runtime no longer requires libdexfile.so; strict host NNAPI requirements remain unresolved; limited system namespace device probe passed",
     "Persistent early mapping/mounts, full switch_root and peripherals remain unvalidated",
     "Native no-DEX Runtime/RPM and three service dependency lists are verified; service main functions and systemd have not been started"
@@ -254,7 +254,7 @@
   "linker_namespace_preview_prepared": true,
   "linker_namespace_preview_generated": true,
   "linker_namespace_device_tested": true,
-  "next_step": "Run runtime probe V6 (docs/RUNTIME_SERVICE_PROBE.md): service list/check against servicemanager, selinuxfs-only versus libselinux_stubs preload",
+  "next_step": "Make the stub preload permanent for servicemanager/hwservicemanager/vndservicemanager in the packaged init declarations, then plan the first full Sailfish boot (new HAL RPM in a new userdata image)",
   "linker_namespace_preview_documentation": "docs/LINKER_HOST_PREVIEW.md",
   "linker_namespace_preview_preparation_validation": "validation/linker-host-preview-preparation.json",
   "linker_namespace_preview_validation": "validation/linker-host-preview-user-20261026.json",
@@ -371,6 +371,11 @@
   "service_client_tool_built": true,
   "service_client_tool_validation": "validation/service-tool-user-20261111.json",
   "runtime_service_probe_v6_prepared": true,
-  "runtime_service_probe_v6_executed": false,
-  "runtime_service_probe_v6_bundle_manifest": "validation/runtime-probe-v6-manifest-user-20261111.json"
+  "runtime_service_probe_v6_executed": true,
+  "runtime_service_probe_v6_bundle_manifest": "validation/runtime-probe-v6-manifest-user-20261111.json",
+  "runtime_service_probe_v6_passed": true,
+  "runtime_service_probe_v6_validation": "validation/runtime-v6-device-report-user-20261111.json",
+  "servicemanager_functional_on_device": true,
+  "servicemanager_functional_configuration": "selinuxfs mounted (no policy) plus LD_PRELOAD=/system/lib64/libselinux_stubs.so; preload confirmed in /proc/<pid>/maps",
+  "servicemanager_without_stubs_result": "runs, but service list shows 0 services and check manager is not found"
 }

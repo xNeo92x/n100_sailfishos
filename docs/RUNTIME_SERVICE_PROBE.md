@@ -31,6 +31,22 @@ Referenz-Ports (z. B. [droid-config-sony-nile](https://github.com/mer-hybris/dro
 laden für hw-/vndservicemanager `libselinux_stubs.so` per `LD_PRELOAD`; die Stub-Bibliothek
 enthält aber kein `selinux_android_service_context_handle`.
 
+## Ergebnis V6 (11.11.2026)
+
+[Bestanden](../validation/runtime-v6-device-report-user-20261111.json), funktionsfähig ist
+die Phase **stubs**:
+
+| Phase | `service list` | `service check manager` | Stub geladen |
+| --- | --- | --- | --- |
+| selinuxfs | `Found 0 services:` | `not found` | – |
+| stubs | `Found 1 services:` / `0 manager: [android.os.IServiceManager]` | `found` | ja (`/proc/<pid>/maps`) |
+
+Beide Manager laufen in beiden Phasen und überstehen die Abfragen; Cleanup 0; System- und
+Vendor-Listen bestanden. Damit ist belegt: Ohne Richtlinie verweigert die echte libselinux
+jede Registrierung (`deny_unknown=1`); mit `LD_PRELOAD=/system/lib64/libselinux_stubs.so`
+(Pfad im Default-Namespace erlaubt) funktioniert servicemanager. Diese Vorladung fehlt noch
+in den paketierten `.rc`-Dateien.
+
 ## Probe V6
 
 V6 baut auf V5 auf (selinuxfs ohne Richtlinie) und prüft erstmals, ob servicemanager
