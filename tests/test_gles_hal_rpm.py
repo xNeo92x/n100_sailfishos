@@ -4,6 +4,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+import unittest.mock
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location('gles_hal_rpm', ROOT / 'tools/check-gles-hal-rpm.py')
@@ -79,6 +80,16 @@ class GlesHalRpmTests(unittest.TestCase):
         extra = [new_rc[0], member(P + 'etc/init/hwservicemanager.rc', 0o100644, rc('hwservicemanager', True) + b'    oneshot\n', ino=51)]
         self.assertTrue(check.compare(old, check.parse_cpio(archive(*BASE, *GLES, *extra)), check.sha(b'gles64'), preload=True)[3])
 
+    def test_service_tool_mode_allows_only_the_device_tested_client(self):
+        old = check.parse_cpio(archive(*BASE))
+        good = b'fixture client'
+        with unittest.mock.patch.object(check, 'SERVICE_TOOL', (P + 'bin/service', check.sha(good))):
+            new = check.parse_cpio(archive(*BASE, *GLES, member(P + 'bin/service', 0o100755, good, ino=60)))
+            self.assertEqual(check.compare(old, new, check.sha(b'gles64'), service_tool=True)[3], [])
+            self.assertTrue(check.compare(old, new, check.sha(b'gles64'))[3])
+            other = check.parse_cpio(archive(*BASE, *GLES, member(P + 'bin/service', 0o100755, b'other', ino=60)))
+            self.assertTrue(check.compare(old, other, check.sha(b'gles64'), service_tool=True)[3])
+
     def test_new_rpm_selection_ignores_subpackages_and_the_reference(self):
         temp = tempfile.TemporaryDirectory(); self.addCleanup(temp.cleanup); base = Path(temp.name)
         for name in [check.REFERENCE_NAME, *check.IGNORED, 'droid-hal-billie2-devel-0.0.6-202611111900.aarch64.rpm',
@@ -111,7 +122,7 @@ class GlesHalRpmTests(unittest.TestCase):
         preload = ROOT / 'tools/run-preload-rpm-build.sh'
         subprocess.run(['bash', '-n', str(preload)], check=True)
         text = preload.read_text()
-        self.assertIn('build-packages.sh" hal', text); self.assertIn('--with-stub-preload', text)
+        self.assertIn('build-packages.sh" hal', text); self.assertIn('--with-stub-preload --with-service-tool', text)
         self.assertNotIn('ubu-chroot', text); self.assertNotIn('fastboot', text)
 
 

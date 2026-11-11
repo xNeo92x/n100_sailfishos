@@ -62,3 +62,12 @@ bash ~/n100_sailfishos/tools/run-preload-rpm-build.sh
 Nur Paketierung im Platform SDK, kein Android-Neubau. Der Vergleich
 (`check-gles-hal-rpm.py --with-selinux-contexts --with-stub-preload`) erlaubt gegenüber dem
 am Gerät getesteten RPM zusätzlich genau diese eine Zeile in den zwei `.rc`-Dateien.
+
+### Ergebnis (11.11.2026)
+
+[Bestanden](../validation/preload-hal-rpm-user-20261111.json):
+`droid-hal-billie2-0.0.6-202611111916.aarch64.rpm` (SHA-256 `2945e82e…da04`). Beide `.rc`-Dateien
+enthalten direkt nach der `service`-Zeile die Vorladung. Zusätzlich enthält das Paket
+`bin/service`: DHD paketiert ganz `system/bin`, und das Werkzeug liegt seit seinem Bau für V6
+dort. Es ist bit-gleich mit dem am Gerät getesteten Client (`e10206a2…595b`) und wird bewusst
+behalten (`--with-service-tool`), weil `service list` beim ersten Komplettstart hilft.

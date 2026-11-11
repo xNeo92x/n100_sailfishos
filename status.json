@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "stub-preload-rpm-prepared",
+  "stage": "stub-preload-hal-rpm-built",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -219,7 +219,7 @@
   "android_runtime_apex_installed": false,
   "runtime_blockers": [
     "Composer, allocator and both selected sensor service dependency lists pass on the N100 with libGLESv3 (probe V3); HAL RPM now ships libGLESv3 (not yet device-tested); 32-bit ARM audio service untested",
-    "servicemanager answers clients (service list/check) only with LD_PRELOAD=/system/lib64/libselinux_stubs.so (V6); without it every registration is denied (deny_unknown=1). Packaged rc files do not yet set the preload",
+    "HAL RPM 2945e82e... ships the libselinux_stubs preload for servicemanager/hwservicemanager (device-tested config of V6); not yet in a userdata image",
     "Runtime no longer requires libdexfile.so; strict host NNAPI requirements remain unresolved; limited system namespace device probe passed",
     "Persistent early mapping/mounts, full switch_root and peripherals remain unvalidated",
     "Native no-DEX Runtime/RPM and three service dependency lists are verified; service main functions and systemd have not been started"
@@ -254,7 +254,7 @@
   "linker_namespace_preview_prepared": true,
   "linker_namespace_preview_generated": true,
   "linker_namespace_device_tested": true,
-  "next_step": "Run tools/run-preload-rpm-build.sh (docs/SELINUX_CONTEXTS.md, stub preload): repackage the HAL RPM with the libselinux_stubs preload and compare it",
+  "next_step": "Rebuild the Sailfish rootfs and userdata image with the new HAL RPM (step 2), then plan the first full boot",
   "linker_namespace_preview_documentation": "docs/LINKER_HOST_PREVIEW.md",
   "linker_namespace_preview_preparation_validation": "validation/linker-host-preview-preparation.json",
   "linker_namespace_preview_validation": "validation/linker-host-preview-user-20261026.json",
@@ -379,6 +379,9 @@
   "servicemanager_functional_configuration": "selinuxfs mounted (no policy) plus LD_PRELOAD=/system/lib64/libselinux_stubs.so; preload confirmed in /proc/<pid>/maps",
   "servicemanager_without_stubs_result": "runs, but service list shows 0 services and check manager is not found",
   "stub_preload_packaging_prepared": true,
-  "stub_preload_in_rpm": false,
-  "stub_preload_scope": "servicemanager.rc and hwservicemanager.rc (device-tested in V6); vndservicemanager from stock vendor not yet tested"
+  "stub_preload_in_rpm": true,
+  "stub_preload_scope": "servicemanager.rc and hwservicemanager.rc (device-tested in V6); vndservicemanager from stock vendor not yet tested",
+  "preload_hal_rpm_validation": "validation/preload-hal-rpm-user-20261111.json",
+  "preload_hal_rpm_sha256": "2945e82ef2777b4edd74ade19033c68a001dfc8114492cf512a27ccbf9fada04",
+  "service_client_in_rpm": true
 }

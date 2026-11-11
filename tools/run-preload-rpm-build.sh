@@ -34,7 +34,7 @@ case "$stage" in
     fi
     echo "[CachyOS] RPM gebaut. Vergleiche mit dem am Telefon getesteten Paket ..."
     set +e
-    python3 "$port_dir/tools/check-gles-hal-rpm.py" --with-selinux-contexts --with-stub-preload \
+    python3 "$port_dir/tools/check-gles-hal-rpm.py" --with-selinux-contexts --with-stub-preload --with-service-tool \
       --reference "$reference" --repo "$repo" \
       --output-dir "$HOME/n100-build/preload-hal-rpm-$stamp" 2>&1 | tee -a "$log"
     rc=${PIPESTATUS[0]}

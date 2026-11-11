@@ -22,6 +22,8 @@ GRAPHICS_REPORT = ROOT / 'validation/graphics-runtime-build-user-20261111.json'
 GRAPHICS_REPORT_SHA = '41cde56a39704d60e1ddd30e9f40878558dcfab2de9c568464818bb62a01424b'
 PREFIX = './usr/libexec/droid-hybris/system/'
 ADDED = {PREFIX + 'lib64/libGLESv3.so', PREFIX + 'lib/libGLESv3.so'}
+# AOSP `service` client: built for probe V6 and device-tested there; DHD packages all of system/bin.
+SERVICE_TOOL = (PREFIX + 'bin/service', 'e10206a26a1f9798e30091e933edd89da4231650fa4ac9598beb0efe3cf3595b')
 PRELOAD_RC = {PREFIX + 'etc/init/' + n + '.rc': n for n in ('servicemanager', 'hwservicemanager')}
 PRELOAD_LINE = '    setenv LD_PRELOAD /system/lib64/libselinux_stubs.so'
 SELINUX = {PREFIX + 'etc/selinux/' + name for name in
@@ -124,8 +126,8 @@ def preload_problems(old, new):
     return problems
 
 
-def compare(old, new, lib64_sha, selinux=False, preload=False):
-    expected = ADDED | (SELINUX | {PREFIX + 'etc/selinux'} if selinux else set())
+def compare(old, new, lib64_sha, selinux=False, preload=False, service_tool=False):
+    expected = ADDED | (SELINUX | {PREFIX + 'etc/selinux'} if selinux else set()) | ({SERVICE_TOOL[0]} if service_tool else set())
     added = sorted(set(new) - set(old)); removed = sorted(set(old) - set(new))
     changed = sorted(name for name in set(old) & set(new) if old[name] != new[name])
     problems = []
@@ -137,6 +139,8 @@ def compare(old, new, lib64_sha, selinux=False, preload=False):
     if set(added) != expected: problems.append('added entries differ: ' + ', '.join(sorted(set(added) ^ expected)[:20]))
     for name in (ADDED | (SELINUX if selinux else set())) & set(new):
         if new[name]['type'] != 'file' or not new[name]['bytes']: problems.append(name + ' is not a non-empty regular file')
+    if service_tool and SERVICE_TOOL[0] in new and new[SERVICE_TOOL[0]].get('sha256') != SERVICE_TOOL[1]:
+        problems.append('bin/service differs from the device-tested client')
     if selinux and PREFIX + 'etc/selinux' in new and new[PREFIX + 'etc/selinux']['type'] != 'dir':
         problems.append('etc/selinux is not a directory')
     if PREFIX + 'lib64/libGLESv3.so' in new and new[PREFIX + 'lib64/libGLESv3.so'].get('sha256') != lib64_sha:
@@ -144,7 +148,7 @@ def compare(old, new, lib64_sha, selinux=False, preload=False):
     return added, removed, changed, problems
 
 
-def check(reference, new_rpm, output_dir, selinux=False, preload=False):
+def check(reference, new_rpm, output_dir, selinux=False, preload=False, service_tool=False):
     graphics = json.loads(GRAPHICS_REPORT.read_bytes())
     require(sha(GRAPHICS_REPORT.read_bytes()) == GRAPHICS_REPORT_SHA, 'Reviewed graphics report changed')
     lib64_sha = graphics['files']['libGLESv3.so']['sha256']
@@ -152,7 +156,7 @@ def check(reference, new_rpm, output_dir, selinux=False, preload=False):
     require(rpm_name(new_rpm).startswith('droid-hal-billie2-'), 'New RPM is not droid-hal-billie2')
     require(not output_dir.exists(), 'Output directory exists; choose a new one')
     old, new = parse_cpio(payload(reference)), parse_cpio(payload(new_rpm))
-    added, removed, changed, problems = compare(old, new, lib64_sha, selinux, preload)
+    added, removed, changed, problems = compare(old, new, lib64_sha, selinux, preload, service_tool)
     output_dir.mkdir(parents=True)
     report = {'schema': 1, 'kind': 'gles-hal-rpm-comparison', 'passed': not problems,
               'reference_rpm': {'name': reference.name, 'sha256': REFERENCE_SHA},
@@ -160,7 +164,7 @@ def check(reference, new_rpm, output_dir, selinux=False, preload=False):
                           'lead_name': rpm_name(new_rpm)},
               'payload_entries': len(new), 'added': {n: new[n] for n in added}, 'removed': removed,
               'changed': {n: {'old': old[n], 'new': new[n]} for n in changed}, 'problems': problems,
-              'graphics_report_sha256': GRAPHICS_REPORT_SHA, 'selinux_contexts_expected': selinux, 'stub_preload_expected': preload, 'device_tested': False, 'flashable_release': False}
+              'graphics_report_sha256': GRAPHICS_REPORT_SHA, 'selinux_contexts_expected': selinux, 'stub_preload_expected': preload, 'service_tool_expected': service_tool, 'device_tested': False, 'flashable_release': False}
     (output_dir / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
     return report
 
@@ -175,10 +179,12 @@ def main():
                         help='also expect the three platform SELinux context files')
     parser.add_argument('--with-stub-preload', action='store_true',
                         help='also expect the libselinux_stubs preload line in servicemanager/hwservicemanager.rc')
+    parser.add_argument('--with-service-tool', action='store_true',
+                        help='also allow the device-tested AOSP service client in bin/')
     args = parser.parse_args()
     try:
         new_rpm = args.rpm or find_new_rpm(args.repo)
-        report = check(args.reference, new_rpm, args.output_dir, args.with_selinux_contexts, args.with_stub_preload)
+        report = check(args.reference, new_rpm, args.output_dir, args.with_selinux_contexts, args.with_stub_preload, args.with_service_tool)
     except (OSError, ValueError, KeyError, subprocess.SubprocessError) as exc:
         parser.exit(1, 'GLES HAL RPM check failed: {}\n'.format(exc))
     print('Report: ' + str(args.output_dir / 'report.json'))
