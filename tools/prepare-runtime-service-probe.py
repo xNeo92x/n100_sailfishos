@@ -3,7 +3,9 @@
 SELinux/GLES RPM, plus a bounded binderfs + servicemanager/hwservicemanager start in RAM.
 
 V4 (device-run 2026-11-11): servicemanager aborted because selinux_status_open() fails
-without selinuxfs. V5 additionally mounts selinuxfs in the view without loading a policy."""
+without selinuxfs. V5 additionally mounts selinuxfs in the view without loading a policy;
+both managers then run. V6 adds the AOSP `service` client and compares two phases: plain
+(selinuxfs only) and with LD_PRELOAD of hybris libselinux_stubs.so."""
 import argparse
 import importlib.util
 import json
@@ -32,7 +34,11 @@ sha = vp.sha
 RPM_REPORT = ROOT / 'validation/selinux-hal-rpm-user-20261111.json'
 RPM_REPORT_SHA = '397f215f0a6e193a64da0bd65cdd99dba8b8cb6cd992fa40da62d365fb1ae000'
 V2_SCRIPT_SHA = '1aff4719a18e0d6294aceb2d683fb505f5c4c1b0a2cbb267b7553ecfb8a37df6'
-VERSION = 5
+VERSION = 6
+SERVICE_TOOL_REPORT = ROOT / 'validation/service-tool-user-20261111.json'
+SERVICE_TOOL_REPORT_SHA = '5f9a7955919441fd194164ccd2bc3083359a2fd372a372cf1bb26fb97d384388'
+STUBS = '/system/lib64/libselinux_stubs.so'
+PHASES = ('selinuxfs', 'stubs')
 
 
 def script_name(version):
@@ -55,6 +61,14 @@ def rpm_pins():
     added = {name[len(compare.PREFIX):]: entry for name, entry in report['added'].items()}
     require(all(name in added and added[name]['type'] == 'file' for name in NEW_FILES), 'Unexpected RPM additions')
     return report['new_rpm'], {name: {'bytes': added[name]['bytes'], 'sha256': added[name]['sha256']} for name in NEW_FILES}
+
+
+def service_tool():
+    raw = SERVICE_TOOL_REPORT.read_bytes()
+    require(sha(raw) == SERVICE_TOOL_REPORT_SHA, 'Reviewed service tool report changed')
+    report = json.loads(raw)
+    require(report['passed'] is True and not report['problems'], 'service tool check did not pass')
+    return {'bytes': report['binary']['bytes'], 'sha256': report['binary']['sha256'], 'report_sha256': SERVICE_TOOL_REPORT_SHA}
 
 
 def build_hal(rpm_path, v2_archive, output):
@@ -81,7 +95,7 @@ def replace_once(text, old, new):
     return text.replace(old, new)
 
 
-RUNTIME = r'''
+RUNTIME_PRE = r'''
 echo '=== Android runtime service start probe (RAM only) ==='
 echo '--- Context files in the temporary view ---'
 ls -l "$P/system/etc/selinux" "$P/vendor/etc/selinux" 2>&1 || :
@@ -107,7 +121,9 @@ for leaf in binder hwbinder vndbinder; do
 done
 echo 'N100_RUNTIME_BINDER_NODES_READY'
 @SELINUXFS@dmesg | grep -i binder | tail -n 10 || :
-for name in servicemanager hwservicemanager; do
+'''
+
+RUNTIME_SERVICES_V4 = r'''for name in servicemanager hwservicemanager; do
     chroot "$P" /bin/sh -c 'unset LD_LIBRARY_PATH LD_PRELOAD LD_CONFIG_FILE; exec "$1"' n100-svc "/system/bin/$name" \
         > "$work/$name.out" 2>&1 &
     pid=$!
@@ -149,9 +165,101 @@ for name in servicemanager hwservicemanager; do
     echo "--- $name output ---"
     head -c 8192 "$work/$name.out" || :
 done
-dmesg | grep -iE 'binder|servicemanager' | tail -n 20 || :
+'''
+
+RUNTIME_POST = r'''dmesg | grep -iE 'binder|servicemanager' | tail -n 20 || :
 echo 'N100_RUNTIME_SECTION_END'
 '''
+
+RUNTIME = RUNTIME_PRE + RUNTIME_SERVICES_V4 + RUNTIME_POST
+
+# V6: two phases, each starts both managers, queries servicemanager with the client and stops them.
+RUNTIME_SERVICES_V6 = r"""n100_start() {
+    if [ -n "$2" ]; then
+        chroot "$P" /bin/sh -c 'unset LD_LIBRARY_PATH LD_CONFIG_FILE; LD_PRELOAD=$2; export LD_PRELOAD; exec "$1"' \
+            n100-svc "/system/bin/$1" "$2" > "$work/$1-$phase.out" 2>&1 &
+    else
+        chroot "$P" /bin/sh -c 'unset LD_LIBRARY_PATH LD_PRELOAD LD_CONFIG_FILE; exec "$1"' \
+            n100-svc "/system/bin/$1" > "$work/$1-$phase.out" 2>&1 &
+    fi
+    pid=$!
+    started_pids="$pid $started_pids"
+    eval "pid_$1=$pid"
+    echo "N100_RUNTIME_STARTED $phase $1"
+}
+n100_stop() {
+    eval "pid=\$pid_$1"
+    if n100_alive "$pid"; then
+        kill -TERM "$pid" 2>/dev/null || :
+        n=0
+        while n100_alive "$pid" && [ "$n" -lt 5 ]; do sleep 1; n=$((n + 1)); done
+        if n100_alive "$pid"; then kill -KILL "$pid" 2>/dev/null || :; sleep 1; fi
+    fi
+    if n100_alive "$pid"; then
+        echo "N100_RUNTIME_STOP_FAILED $phase $1"
+    else
+        if wait "$pid"; then code=0; else code=$?; fi
+        echo "N100_RUNTIME_EXIT $phase $1 $code"
+    fi
+    echo "--- $phase $1 output ---"
+    head -c 4096 "$work/$1-$phase.out" || :
+}
+n100_client() {
+    label=$1
+    shift
+    if timeout 10 chroot "$P" /bin/sh -c 'unset LD_LIBRARY_PATH LD_PRELOAD LD_CONFIG_FILE; exec /system/bin/service "$@"' \
+        n100-client "$@" > "$work/client.out" 2>&1; then code=0; else code=$?; fi
+    echo "--- client $phase $label ---"
+    head -c 4096 "$work/client.out" || :
+    echo "N100_RUNTIME_CLIENT $phase $label $code"
+}
+for phase in selinuxfs stubs; do
+    if [ "$phase" = stubs ]; then preload=/system/lib64/libselinux_stubs.so; else preload=; fi
+    echo "N100_RUNTIME_PHASE $phase"
+    n100_start servicemanager "$preload"
+    sleep 2
+    n100_start hwservicemanager "$preload"
+    sleep 3
+    for name in servicemanager hwservicemanager; do
+        eval "pid=\$pid_$name"
+        if n100_alive "$pid"; then state=1; else state=0; fi
+        echo "N100_RUNTIME_ALIVE $phase $name $state"
+        if [ "$state" = 1 ] && [ -n "$preload" ]; then
+            if grep -q libselinux_stubs "/proc/$pid/maps"; then mapped=1; else mapped=0; fi
+            echo "N100_RUNTIME_PRELOAD_MAPPED $phase $name $mapped"
+        fi
+    done
+    n100_client list list
+    n100_client check-manager check manager
+    for name in servicemanager hwservicemanager; do
+        eval "pid=\$pid_$name"
+        if n100_alive "$pid"; then state=1; else state=0; fi
+        echo "N100_RUNTIME_ALIVE_AFTER_CLIENT $phase $name $state"
+    done
+    if [ -r "$P/dev/binderfs/binder_logs/state" ]; then
+        echo "--- $phase binder_logs/state (first 80 lines) ---"
+        head -n 80 "$P/dev/binderfs/binder_logs/state" || :
+    fi
+    n100_stop hwservicemanager
+    n100_stop servicemanager
+done
+"""
+
+CLIENT_OVERLAY = r"""
+echo '=== Download, verify and add the service client (RAM copy only) ==='
+wget -O "$work/service-tool" http://192.168.2.14:8081/service
+[ "$(wc -c < "$work/service-tool")" -eq "$TOOL_BYTES" ] || die 'service client size mismatch'
+actual=$(sha256sum "$work/service-tool"); actual=${actual%% *}
+[ "$actual" = "$TOOL_SHA" ] || die 'service client hash mismatch'
+[ ! -e "$work/hal/bin/service" ] && [ ! -L "$work/hal/bin/service" ] || die 'service client already in HAL tree'
+[ -f "$work/hal/lib64/libselinux_stubs.so" ] || die 'libselinux_stubs.so missing from HAL tree'
+cp "$work/service-tool" "$work/hal/bin/service"
+chmod 0755 "$work/hal/bin/service"
+actual=$(sha256sum "$work/hal/bin/service"); actual=${actual%% *}
+[ "$actual" = "$TOOL_SHA" ] || die 'Copied service client hash mismatch'
+echo "N100_RUNTIME_CLIENT_READY $actual"
+"""
+
 
 # V5: servicemanager CHECKs selinux_status_open(), which needs a mounted selinuxfs. Without a
 # loaded policy the kernel maps every context to "kernel" and allows every access.
@@ -209,8 +317,16 @@ def render(report, manifest, hal, version=VERSION):
         "        echo \"N100_VENDOR_SKIPPED_IDENTITY $path $identity\"\n")
     script = replace_once(script,
         "echo 'Only linker help, linkerconfig help and dependency listing were requested; no HAL services started.'\n",
-        RUNTIME.lstrip('\n').replace('@SELINUXFS@', SELINUXFS if version >= 5 else '') +
+        (RUNTIME_PRE + (RUNTIME_SERVICES_V6 if version >= 6 else RUNTIME_SERVICES_V4) + RUNTIME_POST
+         ).lstrip('\n').replace('@SELINUXFS@', SELINUXFS if version >= 5 else '') +
         "echo 'Only servicemanager and hwservicemanager were started, as root, for a few seconds; no vendor HAL started.'\n")
+    if version >= 6:
+        tool = service_tool()
+        script = replace_once(script, "VNDK_BYTES={}\n".format(report['apexes']['com.android.vndk.v30']['payload']['bytes']),
+            "VNDK_BYTES={}\nTOOL_SHA='{}'\nTOOL_BYTES={}\n".format(
+                report['apexes']['com.android.vndk.v30']['payload']['bytes'], tool['sha256'], tool['bytes']))
+        script = replace_once(script, "echo 'Verified every regular file in the selected HAL RPM system tree.'\n",
+            "echo 'Verified every regular file in the selected HAL RPM system tree.'\n" + CLIENT_OVERLAY)
     require(not re.search(r'@[A-Z_]+@', script), 'Unresolved template token')
     return script
 
@@ -221,6 +337,7 @@ def bundle_manifest(report, manifest, hal, version=VERSION):
                   source_vendor_v2_script_sha256=V2_SCRIPT_SHA, hal_archive_bytes=hal['bytes'],
                   hal_archive_sha256=hal['sha256'], hal_tree=hal, script_sha256=sha(render(report, manifest, hal, version).encode()),
                   source_rpm_report_sha256=RPM_REPORT_SHA,
+                  **({'service_client': service_tool(), 'phases': list(PHASES), 'stubs_preload': STUBS} if version >= 6 else {}),
                   scope='V2 view with the new HAL tree; binderfs' + (' and selinuxfs (no policy)' if version >= 5 else '') +
                         ' in RAM; servicemanager and hwservicemanager '
                         'started as root for about ten seconds; no vendor HAL, logd, init or systemd')
@@ -237,12 +354,14 @@ def verify_bundle(directory, report, manifest):
     for name, pin in bundle['configuration_files'].items():
         vp.ns.native.verify_file(directory / 'linkerconfig' / name, pin['bytes'], pin['sha256'])
     vp.ns.native.verify_file(directory / 'hal-system.tar.gz', hal['bytes'], hal['sha256'])
+    if version >= 6:
+        vp.ns.native.verify_file(directory / 'service', bundle['service_client']['bytes'], bundle['service_client']['sha256'])
     script = render(report, manifest, hal, version).encode()
     vp.ns.native.verify_file(directory / script_name(version), len(script), sha(script))
     return bundle
 
 
-def prepare(v2_bundle, rpm_path, output, version=VERSION):
+def prepare(v2_bundle, rpm_path, output, version=VERSION, client=None):
     report, manifest = vp.reference()
     require(not output.exists() and not output.is_symlink(), 'Output exists; choose a new V4 probe directory')
     vp.verify_bundle(v2_bundle, report, manifest)
@@ -253,6 +372,11 @@ def prepare(v2_bundle, rpm_path, output, version=VERSION):
         for name in ['apex_payload.img', 'vndk_payload.img'] + ['linkerconfig/' + n for n in report['generated']['files']]:
             target = staging / name; target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(v2_bundle / name, target)
+        if version >= 6:
+            require(client is not None, 'V6 needs --service-client')
+            pin = service_tool()
+            vp.ns.native.verify_file(client, pin['bytes'], pin['sha256'])
+            shutil.copyfile(client, staging / 'service')
         script = render(report, manifest, hal, version)
         subprocess.run(['sh', '-n'], input=script, text=True, check=True)
         name = script_name(version)
@@ -284,10 +408,13 @@ def classify(log, report, manifest, version=VERSION):
         base_log = log
     base_log = base_log.replace('N100_VENDOR_PROBE_VERSION {}'.format(version), 'N100_VENDOR_PROBE_VERSION 2')
     base_log = '\n'.join(l for l in base_log.splitlines()
-                         if not l.startswith(('N100_VENDOR_SKIPPED_IDENTITY ', 'N100_RUNTIME_CLEANUP_STUCK'))) + '\n'
+                         if not l.startswith(('N100_VENDOR_SKIPPED_IDENTITY ', 'N100_RUNTIME_CLEANUP_STUCK',
+                                              'N100_RUNTIME_CLIENT_READY '))) + '\n'
     base = vp.classify(base_log, report, manifest)
     runtime = {'section_complete': section is not None, 'binderfs_mounted': None, 'binder_nodes_ready': False,
                'selinuxfs_mounted': None, 'services': {}}
+    if version >= 6:
+        return classify_v6(log, lines, section, base, runtime)
     if section is not None:
         rlines = section.splitlines()
         mounted = [l for l in rlines if l.startswith('N100_RUNTIME_BINDERFS_MOUNTED ')]
@@ -325,6 +452,67 @@ def classify(log, report, manifest, version=VERSION):
                      'logd, vendor HAL, droid-hal-init or systemd. Staying up is not proof of full function.'}
 
 
+def client_output(section, phase, label):
+    marker = '--- client {} {} ---\n'.format(phase, label)
+    if marker not in section: return None
+    return section.split(marker, 1)[1].split('N100_RUNTIME_CLIENT {} {} '.format(phase, label), 1)[0]
+
+
+def classify_v6(log, lines, section, base, runtime):
+    rlines = section.splitlines() if section is not None else []
+    if section is not None:
+        mounted = [l for l in rlines if l.startswith('N100_RUNTIME_BINDERFS_MOUNTED ')]
+        runtime['binderfs_mounted'] = mounted[0].split(' ', 1)[1] if len(mounted) == 1 else None
+        runtime['binder_nodes_ready'] = rlines.count('N100_RUNTIME_BINDER_NODES_READY') == 1
+        selinuxfs = [l for l in rlines if l.startswith('N100_RUNTIME_SELINUXFS_MOUNTED ')]
+        runtime['selinuxfs_mounted'] = selinuxfs[0].split(' ', 1)[1] if len(selinuxfs) == 1 else None
+
+    def value(prefix):
+        found = [l for l in rlines if l.startswith(prefix + ' ')]
+        return found[0][len(prefix) + 1:] if len(found) == 1 else None
+
+    phases = {}
+    for phase in PHASES:
+        info = {'started': rlines.count('N100_RUNTIME_PHASE ' + phase) == 1, 'services': {}, 'clients': {}}
+        for name in SERVICES:
+            exit_code = value('N100_RUNTIME_EXIT {} {}'.format(phase, name))
+            info['services'][name] = {
+                'alive': value('N100_RUNTIME_ALIVE {} {}'.format(phase, name)) == '1',
+                'alive_after_client': value('N100_RUNTIME_ALIVE_AFTER_CLIENT {} {}'.format(phase, name)) == '1',
+                'preload_mapped': value('N100_RUNTIME_PRELOAD_MAPPED {} {}'.format(phase, name)),
+                'exit_code': int(exit_code) if exit_code and exit_code.isdigit() else None,
+                'stop_failed': 'N100_RUNTIME_STOP_FAILED {} {}'.format(phase, name) in rlines}
+        for label in ('list', 'check-manager'):
+            code = value('N100_RUNTIME_CLIENT {} {}'.format(phase, label))
+            info['clients'][label] = {'exit_code': int(code) if code and code.isdigit() else None,
+                                      'output': (client_output(section or '', phase, label) or '')[:2000]}
+        listing = info['clients']['list']['output']; check = info['clients']['check-manager']['output']
+        info['manager_listed'] = info['clients']['list']['exit_code'] == 0 and re.search(r'^\s*\d+\s+manager:', listing, re.M) is not None
+        info['manager_found'] = info['clients']['check-manager']['exit_code'] == 0 and 'Service manager: found' in check
+        info['functional'] = bool(info['started'] and info['services']['servicemanager']['alive'] and
+                                  info['services']['servicemanager']['alive_after_client'] and
+                                  info['manager_listed'] and info['manager_found'])
+        phases[phase] = info
+    runtime['phases'] = phases
+    stuck = [l for l in lines if l.startswith('N100_RUNTIME_CLEANUP_STUCK')]
+    cleanup_ok = any(re.fullmatch(r'N100_VENDOR_PROBE_RESULT exit=[0-9]{1,3} cleanup_failed=0', l) for l in lines) and not stuck
+    client_ready = sum(l.startswith('N100_RUNTIME_CLIENT_READY ') for l in lines) == 1
+    functional = [p for p in PHASES if phases[p]['functional']]
+    passed = (section is not None and runtime['binderfs_mounted'] is not None and runtime['binder_nodes_ready'] and
+              runtime['selinuxfs_mounted'] is not None and client_ready and cleanup_ok and
+              lines.count('N100_VENDOR_PROBE_VERSION 6') == 1 and bool(functional))
+    return {'runtime_service_start_passed': passed, 'functional_phases': functional, 'cleanup_ok': cleanup_ok,
+            'client_ready': client_ready, 'runtime': runtime, 'probe_version': 6,
+            'version_marker_present': lines.count('N100_VENDOR_PROBE_VERSION 6') == 1,
+            'system_service_dependency_probe_passed': base['system_service_dependency_probe_passed'],
+            'selected_vendor_dependency_probe_passed': base['selected_vendor_dependency_probe_passed'],
+            'vendor_dependency_exit_codes': base['vendor_dependency_exit_codes'],
+            'skipped_program_identities': [l for l in lines if l.startswith('N100_VENDOR_SKIPPED_IDENTITY ')],
+            'base_assessment': base,
+            'scope': 'servicemanager queried by the AOSP service client in two phases (selinuxfs only; '
+                     'libselinux_stubs preload); no property service, logd, vendor HAL, init or systemd.'}
+
+
 def collect(bundle_dir, log_path, output):
     report, manifest = vp.reference(); bundle = verify_bundle(bundle_dir, report, manifest)
     require(log_path.is_file() and 0 < log_path.stat().st_size <= 2 * 1024 * 1024, 'Expected a bounded probe log')
@@ -336,7 +524,11 @@ def collect(bundle_dir, log_path, output):
     with output.open('x') as stream: stream.write(json.dumps(result, indent=2) + '\n')
     a = result['assessment']
     print('Report: ' + str(output))
-    print('Service managers stayed up: ' + str(a['runtime_service_start_passed']))
+    print('Runtime probe passed: ' + str(a['runtime_service_start_passed']))
+    for phase, info in a['runtime'].get('phases', {}).items():
+        print('  Phase {}: servicemanager answers={} (list={}, check={}), services={}'.format(
+            phase, info['functional'], info['manager_listed'], info['manager_found'],
+            {n: (s['alive'], s['exit_code']) for n, s in info['services'].items()}))
     for name, info in a['runtime']['services'].items():
         print('  {}: started={} alive_3s={} alive_6s={} binder_fds={} exit={}'.format(
             name, info['started'], info['alive_3s'], info['alive_6s'], info['binder_fds'], info['exit_code']))
@@ -353,14 +545,15 @@ def main():
     prep.add_argument('--v2-bundle', type=Path, required=True)
     prep.add_argument('--rpm', type=Path, required=True)
     prep.add_argument('--output-dir', type=Path, required=True)
-    prep.add_argument('--version', type=int, choices=(4, 5), default=VERSION)
+    prep.add_argument('--version', type=int, choices=(4, 5, 6), default=VERSION)
+    prep.add_argument('--service-client', type=Path)
     capture = commands.add_parser('report')
     capture.add_argument('--bundle-dir', type=Path, required=True)
     capture.add_argument('--probe-log', type=Path, required=True)
     capture.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     try:
-        if args.mode == 'prepare': prepare(args.v2_bundle, args.rpm, args.output_dir.absolute(), args.version)
+        if args.mode == 'prepare': prepare(args.v2_bundle, args.rpm, args.output_dir.absolute(), args.version, args.service_client)
         else: collect(args.bundle_dir, args.probe_log, args.output)
     except (OSError, ValueError, KeyError, tarfile.TarError, subprocess.SubprocessError) as exc:
         parser.exit(1, 'Runtime service probe preparation/report failed: {}\n'.format(exc))

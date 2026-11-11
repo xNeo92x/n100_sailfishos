@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "runtime-v5-both-service-managers-up",
+  "stage": "runtime-probe-v6-prepared",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -254,7 +254,7 @@
   "linker_namespace_preview_prepared": true,
   "linker_namespace_preview_generated": true,
   "linker_namespace_device_tested": true,
-  "next_step": "Build the AOSP service client tool, then probe V6: functional servicemanager test (service list/check) with selinuxfs-only versus libselinux_stubs preload",
+  "next_step": "Run runtime probe V6 (docs/RUNTIME_SERVICE_PROBE.md): service list/check against servicemanager, selinuxfs-only versus libselinux_stubs preload",
   "linker_namespace_preview_documentation": "docs/LINKER_HOST_PREVIEW.md",
   "linker_namespace_preview_preparation_validation": "validation/linker-host-preview-preparation.json",
   "linker_namespace_preview_validation": "validation/linker-host-preview-user-20261026.json",
@@ -367,5 +367,10 @@
   "runtime_service_probe_v5_passed": true,
   "runtime_service_probe_v5_validation": "validation/runtime-v5-device-report-user-20261111.json",
   "service_manager_access_expected_denied_without_policy": "selinuxfs deny_unknown=1; selinux_check_access returns -1 for the unknown service_manager class",
-  "hybris_reference_selinux_stub_preload": "mer-hybris/droid-config-sony-nile: hwservicemanager.rc and vndservicemanager.rc set LD_PRELOAD /usr/libexec/droid-hybris/system/lib64/libselinux_stubs.so"
+  "hybris_reference_selinux_stub_preload": "mer-hybris/droid-config-sony-nile: hwservicemanager.rc and vndservicemanager.rc set LD_PRELOAD /usr/libexec/droid-hybris/system/lib64/libselinux_stubs.so",
+  "service_client_tool_built": true,
+  "service_client_tool_validation": "validation/service-tool-user-20261111.json",
+  "runtime_service_probe_v6_prepared": true,
+  "runtime_service_probe_v6_executed": false,
+  "runtime_service_probe_v6_bundle_manifest": "validation/runtime-probe-v6-manifest-user-20261111.json"
 }

@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "kind": "service-client-tool-build",
+  "passed": true,
+  "problems": [],
+  "binary": {
+    "bytes": 37360,
+    "sha256": "e10206a26a1f9798e30091e933edd89da4231650fa4ac9598beb0efe3cf3595b",
+    "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/bin/service"
+  },
+  "elf": {
+    "class64": true,
+    "aarch64": true,
+    "type_dyn": true,
+    "interpreter": "/system/bin/linker64",
+    "needed": [
+      "libcutils.so",
+      "libutils.so",
+      "libbinder.so",
+      "libc++.so",
+      "libc.so",
+      "libm.so",
+      "libdl.so"
+    ]
+  },
+  "hal_archive_sha256": "c89eab243c050883a38489dcc96b4d12551530dd12796ffe614800da30b15391",
+  "packaged_in_rpm": false,
+  "device_tested": false
+}

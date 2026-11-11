@@ -99,7 +99,7 @@ class RuntimeServiceProbeTests(unittest.TestCase):
         section = out.split(probe.BANNER, 1)[1]
         log = self.v2.log().replace('N100_VENDOR_PROBE_VERSION 2', 'N100_VENDOR_PROBE_VERSION 5').replace(
             'N100_VENDOR_PROBE_RESULT', probe.BANNER + section.split('PIDS ')[0] + 'N100_VENDOR_PROBE_RESULT')
-        result = probe.classify(log, self.v2.report, self.v2.manifest)
+        result = probe.classify(log, self.v2.report, self.v2.manifest, 5)
         self.assertTrue(result['runtime']['section_complete'])
         self.assertTrue(result['runtime']['services']['servicemanager']['stayed_up'])
         self.assertFalse(result['runtime']['services']['hwservicemanager']['stayed_up'])
@@ -114,7 +114,7 @@ class RuntimeServiceProbeTests(unittest.TestCase):
         section = result.stdout.split(probe.BANNER, 1)[1].split('PIDS ')[0]
         log = self.v2.log().replace('N100_VENDOR_PROBE_VERSION 2', 'N100_VENDOR_PROBE_VERSION 5').replace(
             'N100_VENDOR_PROBE_RESULT', probe.BANNER + section + 'N100_VENDOR_PROBE_RESULT')
-        good = probe.classify(log, self.v2.report, self.v2.manifest)
+        good = probe.classify(log, self.v2.report, self.v2.manifest, 5)
         self.assertTrue(good['runtime_service_start_passed'], good['runtime'])
         for bad in [log.replace('cleanup_failed=0', 'cleanup_failed=1'),
                     log.replace('N100_RUNTIME_SECTION_END', ''),
@@ -122,7 +122,7 @@ class RuntimeServiceProbeTests(unittest.TestCase):
                     log + 'N100_RUNTIME_CLEANUP_STUCK 123\n',
                     log.replace('N100_RUNTIME_SELINUXFS_MOUNTED', 'selinuxfs-missing'),
                     log.replace('N100_VENDOR_PROBE_VERSION 5', 'N100_VENDOR_PROBE_VERSION 4')]:
-            self.assertFalse(probe.classify(bad, self.v2.report, self.v2.manifest)['runtime_service_start_passed'])
+            self.assertFalse(probe.classify(bad, self.v2.report, self.v2.manifest, 5)['runtime_service_start_passed'])
 
     def test_existing_binder_nodes_stop_the_probe(self):
         fake = self.fake; (fake / 'dev').mkdir(parents=True)
@@ -155,6 +155,12 @@ class RuntimeServiceProbeTests(unittest.TestCase):
         subprocess.run(['bash', '-n', str(ROOT / 'tools/run-runtime-v5-probe.sh')], check=True)
         helper = (ROOT / 'tools/run-runtime-v5-probe.sh').read_text()
         self.assertIn('runtime-probe-v5.txt', helper); self.assertIn('--version 5', helper)
+        v6 = json.loads((ROOT / 'validation/runtime-probe-v6-manifest-user-20261111.json').read_text())
+        self.assertEqual(v6, probe.bundle_manifest(report, manifest, v6['hal_tree'], 6))
+        self.assertIn("echo '" + v6['script_sha256'] + "  /tmp/n100-runtime-probe-v6.sh' | sha256sum -c -", doc)
+        subprocess.run(['bash', '-n', str(ROOT / 'tools/run-runtime-v6-probe.sh')], check=True)
+        helper = (ROOT / 'tools/run-runtime-v6-probe.sh').read_text()
+        self.assertIn('runtime-probe-v6.txt', helper); self.assertIn('--version 6 --service-client', helper)
 
     def test_real_v4_device_log_shows_servicemanager_abort_and_running_hwservicemanager(self):
         import json
@@ -166,6 +172,76 @@ class RuntimeServiceProbeTests(unittest.TestCase):
         self.assertTrue(services['hwservicemanager']['stayed_up'])
         self.assertTrue(result['cleanup_ok']); self.assertTrue(result['system_service_dependency_probe_passed'])
         self.assertFalse(probe.classify(raw['device_probe_log'], report, manifest, 5)['runtime_service_start_passed'])
+
+
+    def test_v6_keeps_v5_and_adds_client_overlay_and_two_phases(self):
+        report, manifest = probe.vp.reference()
+        v5, v6 = probe.render(report, manifest, HAL, 5), probe.render(report, manifest, HAL, 6)
+        subprocess.run(['sh', '-n'], input=v6, text=True, check=True)
+        self.assertLess(v6.index('N100_RUNTIME_CLIENT_READY'), v6.index('mount --bind "$work/hal" "$P/system"'))
+        self.assertLess(v6.index('mount -t selinuxfs'), v6.index('N100_RUNTIME_PHASE $phase'))
+        self.assertIn('for phase in selinuxfs stubs; do', v6)
+        self.assertIn('preload=/system/lib64/libselinux_stubs.so', v6)
+        self.assertIn('exec /system/bin/service "$@"', v6)
+        # Everything V5 did before the service start is unchanged.
+        prefix = v5.split('N100_RUNTIME_SELINUXFS_MOUNTED', 1)[0]
+        self.assertTrue(v6.replace(probe.CLIENT_OVERLAY, '').split('N100_RUNTIME_SELINUXFS_MOUNTED', 1)[0]
+                        .replace("TOOL_SHA='{}'\nTOOL_BYTES={}\n".format(probe.service_tool()['sha256'], probe.service_tool()['bytes']), '')
+                        .replace('VERSION 6', 'VERSION 5').replace('runtime-probe-v6.sh', 'runtime-probe-v5.sh')
+                        .replace('# V6:', '# V5:') == prefix)
+
+    def simulate_v6(self, functional_phase):
+        fake = self.fake; P = fake / 'P'
+        for path in (fake / 'dev', P / 'dev', P / 'sys/fs/selinux', P / 'system/etc/selinux', P / 'vendor/etc/selinux', fake / 'bin'):
+            path.mkdir(parents=True, exist_ok=True)
+        (fake / 'filesystems').write_text('nodev\tbinder\n'); (fake / 'binder').write_text('')
+        stubs = {
+            'mount': 'last=; for a; do last=$a; done; mkdir -p "$last"; for n in binder hwbinder vndbinder; do : > "$last/$n"; done',
+            'dmesg': 'echo "[1.0] binder: fixture"',
+            'timeout': 'shift; exec "$@"',
+            'chroot': 'if [ "$5" = n100-client ]; then\n'
+                      '  if [ -e "$N100_FAKE/functional" ]; then\n'
+                      '    if [ "$6" = list ]; then printf "Found 1 services:\\n0\\tmanager: [android.os.IServiceManager]\\n"; else echo "Service manager: found"; fi\n'
+                      '  else if [ "$6" = list ]; then echo "Found 0 services:"; else echo "Service manager: not found"; fi; fi\n'
+                      '  exit 0\nfi\n'
+                      'if [ -n "$7" ] && [ "$N100_FUNCTIONAL" = stubs ]; then : > "$N100_FAKE/functional"; fi\n'
+                      'if [ -z "$7" ] && [ "$N100_FUNCTIONAL" = selinuxfs ]; then : > "$N100_FAKE/functional"; fi\n'
+                      'if [ -z "$7" ] && [ "$N100_FUNCTIONAL" = stubs ]; then rm -f "$N100_FAKE/functional"; fi\n'
+                      'exec 3<"$N100_FAKE/binder"; exec sleep 30',
+        }
+        for name, body in stubs.items():
+            (fake / 'bin' / name).write_text('#!/bin/sh\n' + body + '\n'); (fake / 'bin' / name).chmod(0o755)
+        section = (probe.RUNTIME_PRE + probe.RUNTIME_SERVICES_V6 + probe.RUNTIME_POST).replace('@SELINUXFS@', probe.SELINUXFS)
+        section = re.sub(r'(?<!\$P)/dev/', '$N100_FAKE/dev/', section).replace('/proc/filesystems', '$N100_FAKE/filesystems')
+        section = section.replace('[ -c "$P/dev/binderfs/$leaf" ]', '[ -e "$P/dev/binderfs/$leaf" ]')
+        head = ('set -eu\ndie() { echo "STOP: $*" >&2; exit 1; }\nmounted() { return 1; }\n'
+                "n100_alive() { [ -n \"$1\" ] && [ -r \"/proc/$1/status\" ] && ! grep -q '^State:[[:space:]]*Z' \"/proc/$1/status\"; }\n"
+                'work=$N100_FAKE; P=$N100_FAKE/P; mounts=; started_pids=; dev_links=; binderfs_dir=\n')
+        env = dict(os.environ, PATH=str(fake / 'bin') + ':' + os.environ['PATH'], N100_FAKE=str(fake),
+                   N100_FUNCTIONAL=functional_phase)
+        result = subprocess.run(['sh', '-c', head + section], capture_output=True, text=True, env=env, timeout=120)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        body = result.stdout.split(probe.BANNER, 1)[1]
+        log = self.v2.log().replace('N100_VENDOR_PROBE_VERSION 2', 'N100_VENDOR_PROBE_VERSION 6').replace(
+            'N100_VENDOR_PROBE_RESULT', 'N100_RUNTIME_CLIENT_READY ' + 'a' * 64 + '\n' + probe.BANNER + body + 'N100_VENDOR_PROBE_RESULT')
+        return probe.classify(log, self.v2.report, self.v2.manifest, 6), log
+
+    def test_v6_simulation_identifies_the_working_phase(self):
+        result, log = self.simulate_v6('stubs')
+        self.assertEqual(result['functional_phases'], ['stubs'], result['runtime']['phases'])
+        self.assertTrue(result['runtime_service_start_passed'])
+        self.assertFalse(result['runtime']['phases']['selinuxfs']['manager_listed'])
+        self.assertTrue(result['runtime']['phases']['stubs']['manager_found'])
+        self.assertTrue(result['system_service_dependency_probe_passed'])
+        for bad in [log.replace('cleanup_failed=0', 'cleanup_failed=1'), log.replace('N100_RUNTIME_CLIENT_READY', 'x'),
+                    log.replace('N100_VENDOR_PROBE_VERSION 6', 'N100_VENDOR_PROBE_VERSION 5')]:
+            self.assertFalse(probe.classify(bad, self.v2.report, self.v2.manifest, 6)['runtime_service_start_passed'])
+
+    def test_v6_simulation_without_any_working_phase_fails(self):
+        result, _ = self.simulate_v6('none')
+        self.assertEqual(result['functional_phases'], [])
+        self.assertFalse(result['runtime_service_start_passed'])
+        self.assertTrue(result['runtime']['phases']['selinuxfs']['services']['servicemanager']['alive'])
 
 
 if __name__ == '__main__': unittest.main()

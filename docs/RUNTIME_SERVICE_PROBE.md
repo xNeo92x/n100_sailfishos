@@ -31,6 +31,37 @@ Referenz-Ports (z. B. [droid-config-sony-nile](https://github.com/mer-hybris/dro
 laden für hw-/vndservicemanager `libselinux_stubs.so` per `LD_PRELOAD`; die Stub-Bibliothek
 enthält aber kein `selinux_android_service_context_handle`.
 
+## Probe V6
+
+V6 baut auf V5 auf (selinuxfs ohne Richtlinie) und prüft erstmals, ob servicemanager
+**antwortet**. Das AOSP-Werkzeug `service`
+([Build-Bericht](../validation/service-tool-user-20261111.json), SHA-256 `e10206a2…595b`)
+wird nur in die RAM-Kopie des HAL-Baums gelegt. Zwei Phasen nacheinander, jeweils mit
+Start beider Manager, `service list`, `service check manager` und Stopp:
+
+1. `selinuxfs`: wie V5, ohne Vorladen.
+2. `stubs`: beide Manager mit `LD_PRELOAD=/system/lib64/libselinux_stubs.so` wie in
+   Referenz-Ports; ob die Stub-Bibliothek wirklich geladen ist, zeigt `/proc/<pid>/maps`.
+
+Funktionsfähig ist eine Phase, wenn servicemanager läuft, nach den Abfragen noch läuft,
+`service list` den Eintrag `manager` zeigt und `service check manager` „found“ meldet.
+Bestanden ist V6, wenn mindestens eine Phase funktioniert; der Bericht nennt welche.
+
+SHA-256 von `runtime-probe-v6.sh`:
+`90c32dc6f3cbc058dfacaac1792533b569f61922e88fdc809ad0ed713905d27c`
+(Bundle `~/n100-build/runtime-probe-v6-20261111`,
+[Manifest](../validation/runtime-probe-v6-manifest-user-20261111.json)).
+Ablauf wie unten, mit `run-runtime-v6-probe.sh` und diesem Telefon-Block:
+
+```sh
+mkdir -p /tmp/n100-super
+grep -q ' /data ' /proc/mounts || { grep -qx 'PARTNAME=userdata' /sys/class/block/sda16/uevent && mkdir -p /data && mount -t ext4 -o ro,noload /dev/sda16 /data; }
+/bin/busybox wget -O /tmp/n100-runtime-probe-v6.sh http://192.168.2.14:8081/runtime-probe-v6.sh &&
+echo '90c32dc6f3cbc058dfacaac1792533b569f61922e88fdc809ad0ed713905d27c  /tmp/n100-runtime-probe-v6.sh' | sha256sum -c - &&
+/bin/sh /tmp/n100-runtime-probe-v6.sh run 2>&1 | tee /tmp/n100-super/runtime-probe-v6.txt
+/bin/busybox httpd -p 192.168.2.15:8080 -h /tmp/n100-super 2>/dev/null; echo N100_READY_FOR_COLLECT
+```
+
 ## Probe V5
 
 V5 ist V4 plus genau einen Schritt vor dem Dienststart: selinuxfs wird nur in der
