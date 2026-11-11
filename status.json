@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "graphics-runtime-built-vendor-probe-v3-prepared",
+  "stage": "vendor-v3-composer-dependencies-resolved",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -218,7 +218,7 @@
   "android_mount_probe_plan": "docs/ANDROID_MOUNT_PROBE.md",
   "android_runtime_apex_installed": false,
   "runtime_blockers": [
-    "System services, stock display allocator and both selected sensor service dependency lists pass; real libGLESv3.so is built for the composer and awaits the V3 device probe; audio file remains untested",
+    "Composer, allocator and both selected sensor service dependency lists pass on the N100 with RAM-only libGLESv3 (probe V3); libGLESv3 not yet in the HAL RPM; 32-bit ARM audio service untested",
     "Runtime no longer requires libdexfile.so; strict host NNAPI requirements remain unresolved; limited system namespace device probe passed",
     "Persistent early mapping/mounts, full switch_root and peripherals remain unvalidated",
     "Native no-DEX Runtime/RPM and three service dependency lists are verified; service main functions and systemd have not been started"
@@ -253,7 +253,7 @@
   "linker_namespace_preview_prepared": true,
   "linker_namespace_preview_generated": true,
   "linker_namespace_device_tested": true,
-  "next_step": "Run vendor probe V3 (docs/GRAPHICS_VENDOR_PROBE.md): RAM-only libGLESv3 overlay and composer dependency list on the N100",
+  "next_step": "Rebuild the HAL RPM so it ships libGLESv3.so, then prepare a controlled RAM test of Android runtime initialisation (binderfs, properties, servicemanager)",
   "linker_namespace_preview_documentation": "docs/LINKER_HOST_PREVIEW.md",
   "linker_namespace_preview_preparation_validation": "validation/linker-host-preview-preparation.json",
   "linker_namespace_preview_validation": "validation/linker-host-preview-user-20261026.json",
@@ -302,24 +302,22 @@
   "vendor_dependency_probe_executed": true,
   "vendor_dependency_probe_documentation": "docs/VENDOR_DEPENDENCY_PROBE.md",
   "vendor_dependency_probe_preparation_validation": "validation/vendor-dependency-probe-v2-preparation.json",
-  "vendor_dependency_probe_validation": "validation/vendor-v2-device-user-20261026.json",
+  "vendor_dependency_probe_validation": "validation/vendor-v3-device-user-20261111.json",
   "vendor_dependency_programs_executed": 4,
-  "vendor_dependency_probe_passed": false,
-  "vendor_dependency_probe_version": 2,
+  "vendor_dependency_probe_passed": true,
+  "vendor_dependency_probe_version": 3,
   "vendor_dependency_probe_v2_executed": true,
   "binder_device_nodes_observed_present": false,
   "android_property_directory_observed_present": false,
   "vendor_dependency_probe_v2_bundle_reported_prepared": true,
   "vendor_dependency_probe_v2_bundle_manifest": "validation/vendor-probe-v2-manifest-user-20261026.json",
   "vendor_dependency_exit_codes": {
-    "/vendor/bin/hw/vendor.qti.hardware.display.composer-service": 1,
+    "/vendor/bin/hw/vendor.qti.hardware.display.composer-service": 0,
     "/vendor/bin/hw/vendor.qti.hardware.display.allocator-service": 0,
     "/vendor/bin/hw/android.hardware.sensors@2.0-service.multihal": 0,
     "/vendor/bin/hw/vendor.qti.hardware.sensorscalibrate@1.0-service": 0
   },
-  "vendor_missing_libraries": [
-    "libGLESv3.so"
-  ],
+  "vendor_missing_libraries": [],
   "graphics_runtime_build_prepared": true,
   "graphics_runtime_built": true,
   "graphics_runtime_build_documentation": "docs/GRAPHICS_RUNTIME.md",
@@ -328,7 +326,12 @@
   "graphics_runtime_library_sha256": "e1efbb5b54f0bac9d770c3c01dbfc39cee9d377fba7c87b7306e7fc2466df958",
   "graphics_runtime_in_rpm": false,
   "vendor_dependency_probe_v3_prepared": true,
-  "vendor_dependency_probe_v3_executed": false,
+  "vendor_dependency_probe_v3_executed": true,
   "vendor_dependency_probe_v3_documentation": "docs/GRAPHICS_VENDOR_PROBE.md",
-  "vendor_dependency_probe_v3_bundle_manifest": "validation/vendor-probe-v3-manifest-user-20261111.json"
+  "vendor_dependency_probe_v3_bundle_manifest": "validation/vendor-probe-v3-manifest-user-20261111.json",
+  "vendor_dependency_probe_v3_passed": true,
+  "vendor_dependency_probe_v3_validation": "validation/vendor-v3-device-user-20261111.json",
+  "composer_libglesv3_resolved_on_device": true,
+  "audio_service_abi": "ELF32 ARM (32-bit); needs the 32-bit linker/namespace, not covered by the AArch64 probes",
+  "binder_device_nodes_explanation": "Kernel has CONFIG_ANDROID_BINDERFS=y, so binder creates no misc nodes; Android init.rc mounts binderfs and symlinks /dev/binder*. /dev/__properties__ is created by Android init. Absence in the early shell is expected."
 }

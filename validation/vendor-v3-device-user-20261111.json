@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "kind": "stock-vendor-graphics-dependency-device-summary",
+  "date": "2026-11-11",
+  "raw_report": "validation/vendor-v3-device-report-user-20261111.json",
+  "raw_report_sha256": "7864ee25d06bb4504c8f8c0b1b0e096b99b3b0e8d8b8bb4ccb216bdf0c2d5d7c",
+  "probe_version": 3,
+  "script_sha256": "668d4b27b3702e2ede6ccc22cb452a28199ca3a12838b7680213606d69277d59",
+  "passed": true,
+  "system_service_dependency_probe_passed": true,
+  "vendor_dependency_exit_codes": {
+    "/vendor/bin/hw/vendor.qti.hardware.display.composer-service": 0,
+    "/vendor/bin/hw/vendor.qti.hardware.display.allocator-service": 0,
+    "/vendor/bin/hw/android.hardware.sensors@2.0-service.multihal": 0,
+    "/vendor/bin/hw/vendor.qti.hardware.sensorscalibrate@1.0-service": 0
+  },
+  "composer_resolved": "libGLESv3.so => /system/lib64/libGLESv3.so",
+  "cleanup": "N100_VENDOR_PROBE_RESULT exit=0 cleanup_failed=0",
+  "skipped": {
+    "/vendor/bin/hw/android.hardware.audio.service": "ELF32 little-endian, e_machine 40 (ARM): 32-bit service"
+  },
+  "binder_nodes_absent_expected": "CONFIG_ANDROID_BINDERFS=y; Android init.rc mounts binderfs (system/core/rootdir/init.rc:243-251)",
+  "not_validated": [
+    "service main functions",
+    "32-bit services",
+    "NNAPI",
+    "libGLESv3 inside the HAL RPM",
+    "switch_root/systemd",
+    "display output"
+  ],
+  "phone_modified": false,
+  "flashable_release": false
+}

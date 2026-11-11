@@ -34,7 +34,8 @@ NNAPI-Diagnose und der vollständige Start bleiben offen. Die
 Abhängigkeitslisten von Allocator und beiden ausgewählten Sensordiensten sind
 bestätigt; dem Composer fehlte `libGLESv3.so`. Audio bleibt ungeprüft.
 Die echte `libGLESv3.so` ist inzwischen [gezielt gebaut und geprüft](validation/graphics-runtime-build-user-20261111.json);
-weiter mit der [Vendor-Probe V3](docs/GRAPHICS_VENDOR_PROBE.md).
+die [Vendor-Probe V3](docs/GRAPHICS_VENDOR_PROBE.md) ist am Gerät bestanden: Der Composer
+löst nun alle Bibliotheken auf ([Ergebnis](validation/vendor-v3-device-user-20261111.json)). Der Audio-Dienst ist ein 32-Bit-Programm.
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,

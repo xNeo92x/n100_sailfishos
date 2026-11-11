@@ -1,5 +1,14 @@
 # N100: Vendor-Probe V3 mit gebautem libGLESv3
 
+## Ergebnis (11.11.2026)
+
+[Bestanden](../validation/vendor-v3-device-user-20261111.json). Alle vier ausgewählten
+Vendor-Programme lösen ihre Bibliotheken auf; der Composer lädt
+`libGLESv3.so => /system/lib64/libGLESv3.so`. Systemlisten und Cleanup sind 0.
+Der Audio-Dienst ist ELF32/ARM (32 Bit) und braucht eine eigene 32-Bit-Prüfung.
+Fehlende `/dev/binder*` sind erwartet: Der Kernel nutzt binderfs, das erst Android-Init
+einhängt. Dienste wurden nicht gestartet; die Bibliothek steckt noch nicht im HAL-RPM.
+
 ## Ausgangslage
 
 Der [gezielte Build](../validation/graphics-runtime-build-user-20261111.json) hat die
