@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "kind": "rootfs-userdata-image-build",
+  "date": "2026-11-11",
+  "passed": true,
+  "rootfs_archive": "sfe-billie2-5.1.0.11-rootfs-20261111T192343Z.tar.bz2",
+  "rootfs_archive_sha256": "7944cd7a1eb5307ce585ed50c8077c44f9f17aa77059073bc4310fc4d582d60b",
+  "hal_rpm": "droid-hal-billie2.aarch64 0.0.6-202611111916",
+  "userdata_img_sha256": "ba6eecd996dd7d729cc25601738fba820592c6bc7612b0734379cf92833f18df",
+  "userdata_img_bytes": 8589934592,
+  "hybris_boot_img_sha256": "85f4021b9ffa5fbae8e4122ace52339807a59033b97765e78fd428cb509742d0",
+  "e2fsck": "clean: 33271/524288 inodes, 401548/2097152 blocks",
+  "verified_in_archive": [
+    "servicemanager.rc and hwservicemanager.rc contain setenv LD_PRELOAD /system/lib64/libselinux_stubs.so",
+    "etc/selinux/plat_{service,hwservice,property}_contexts",
+    "lib64/libGLESv3.so",
+    "usr/lib/systemd/system/dev-binderfs.mount"
+  ],
+  "image_manifest": {
+    "schema": 1,
+    "device": "billie2",
+    "model": "BE2013",
+    "kind": "experimental-userdata-ext4",
+    "root_path": "/data/.stowaways/sailfishos",
+    "rootfs_input_sha256": "7944cd7a1eb5307ce585ed50c8077c44f9f17aa77059073bc4310fc4d582d60b",
+    "rootfs_inspection": {
+      "unpacked_file_bytes": 1462318337,
+      "members": 34954,
+      "runtime_binaries": [
+        "usr/lib/systemd/systemd",
+        "sbin/droid-hal-init"
+      ],
+      "scope": "identity, archive paths and binary headers; not a runtime validation"
+    },
+    "boot_inspection": {
+      "header_version": 2,
+      "page_size": 4096,
+      "bytes": 45064192,
+      "kernel_bytes": 42947072,
+      "ramdisk_bytes": 1824597,
+      "dtb_bytes": 279793,
+      "cmdline": "earlycon=msm_geni_serial,0x4a90000 androidboot.hardware=qcom androidboot.memcg=1 lpm_levels.sleep_disabled=1 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=2048 loop.max_part=7 selinux=1 androidboot.selinux=permissive",
+      "assessment": "structural-check-only-not-boot-validation"
+    },
+    "first_boot_debug": true,
+    "boot_tested": false,
+    "flashable_release": false,
+    "replaces_android_userdata": true,
+    "deployment_blockers": [
+      "Confirm actual userdata partition capacity and stock boot/DTBO compatibility",
+      "Validate Android HAL payload, dynamic partitions, AVB and recovery/restore procedure",
+      "Complete first boot and hardware validation on the handset"
+    ],
+    "files": [
+      {
+        "name": "userdata.img",
+        "bytes": 8589934592,
+        "sha256": "ba6eecd996dd7d729cc25601738fba820592c6bc7612b0734379cf92833f18df"
+      },
+      {
+        "name": "hybris-boot.img",
+        "bytes": 45064192,
+        "sha256": "85f4021b9ffa5fbae8e4122ace52339807a59033b97765e78fd428cb509742d0"
+      }
+    ]
+  },
+  "phone_modified": false,
+  "device_tested": false,
+  "flashable_release": false
+}
