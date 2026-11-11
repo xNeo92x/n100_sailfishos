@@ -26,7 +26,7 @@ class RuntimeServiceProbeTests(unittest.TestCase):
     def test_real_v4_script_is_v2_plus_marked_runtime_section(self):
         report, manifest = probe.vp.reference()
         v2 = probe.vp.render(report, manifest)
-        script = probe.render(report, manifest, HAL)
+        script = probe.render(report, manifest, HAL, 4)
         subprocess.run(['sh', '-n'], input=script, text=True, check=True)
         removed = set(v2.splitlines()) - set(script.splitlines())
         self.assertEqual(removed, {
@@ -41,11 +41,23 @@ class RuntimeServiceProbeTests(unittest.TestCase):
         self.assertGreater(script.index(probe.BANNER), script.index('N100_VENDOR_PROGRAM_COUNT'))
         self.assertNotIn('vendor/bin/hw/" &', script)
         self.assertNotIn('mount -o remount', script)
+        self.assertNotIn('selinuxfs', script)
+
+    def test_v5_adds_only_the_selinuxfs_view_mount_before_the_services(self):
+        report, manifest = probe.vp.reference()
+        v4, v5 = probe.render(report, manifest, HAL, 4), probe.render(report, manifest, HAL, 5)
+        subprocess.run(['sh', '-n'], input=v5, text=True, check=True)
+        added = [l for l in v5.splitlines() if l not in set(v4.splitlines())]
+        self.assertEqual(len(added), len(probe.SELINUXFS.strip().splitlines()) + 3)  # + header, usage, version
+        self.assertLess(v5.index('mount -t selinuxfs selinuxfs "$P/sys/fs/selinux"'), v5.index('N100_RUNTIME_STARTED $name'))
+        self.assertIn('mounts="$P/sys/fs/selinux $mounts"', v5)
+        self.assertNotIn('load_policy', v5); self.assertNotIn('/sys/fs/selinux/load', v5)
+        self.assertIn("echo 'N100_VENDOR_PROBE_VERSION 5'", v5)
 
     def simulate(self, crash=False):
         """Run the runtime section with stubs and a fake /dev; never touches the host /dev."""
         fake = self.fake; P = fake / 'P'
-        for path in (fake / 'dev', P / 'dev', P / 'system/etc/selinux', P / 'vendor/etc/selinux', fake / 'bin'):
+        for path in (fake / 'dev', P / 'dev', P / 'sys/fs/selinux', P / 'system/etc/selinux', P / 'vendor/etc/selinux', fake / 'bin'):
             path.mkdir(parents=True, exist_ok=True)
         (fake / 'filesystems').write_text('nodev\tbinder\n')
         (fake / 'binder').write_text('')
@@ -58,7 +70,7 @@ class RuntimeServiceProbeTests(unittest.TestCase):
         for name, body in stubs.items():
             (fake / 'bin' / name).write_text('#!/bin/sh\n' + body + '\n'); (fake / 'bin' / name).chmod(0o755)
         # The fake root has no spaces, so unquoted substitutions stay single words.
-        section = re.sub(r'(?<!\$P)/dev/', '$N100_FAKE/dev/', probe.RUNTIME).replace('/proc/filesystems', '$N100_FAKE/filesystems')
+        section = re.sub(r'(?<!\$P)/dev/', '$N100_FAKE/dev/', probe.RUNTIME.replace('@SELINUXFS@', probe.SELINUXFS)).replace('/proc/filesystems', '$N100_FAKE/filesystems')
         section = section.replace('[ -c "$P/dev/binderfs/$leaf" ]', '[ -e "$P/dev/binderfs/$leaf" ]')
         head = ('set -eu\ndie() { echo "STOP: $*" >&2; exit 1; }\n'
                 'mounted() { return 1; }\n'
@@ -76,6 +88,7 @@ class RuntimeServiceProbeTests(unittest.TestCase):
         out = result.stdout
         self.assertIn('N100_RUNTIME_BINDERFS_MOUNTED stats=global', out)
         self.assertIn('N100_RUNTIME_BINDER_NODES_READY', out)
+        self.assertIn('N100_RUNTIME_SELINUXFS_MOUNTED enforce=unknown', out)
         self.assertIn('N100_RUNTIME_ALIVE servicemanager 6s 1', out)
         self.assertIn('N100_RUNTIME_ALIVE hwservicemanager 3s 0', out)
         self.assertIn('N100_RUNTIME_EXIT hwservicemanager 134', out)
@@ -84,7 +97,7 @@ class RuntimeServiceProbeTests(unittest.TestCase):
         self.assertTrue((fake / 'dev/binder').is_symlink())
         self.assertTrue(out.rstrip().splitlines()[-3:][0].startswith('N100_RUNTIME_SECTION_END'))
         section = out.split(probe.BANNER, 1)[1]
-        log = self.v2.log().replace('N100_VENDOR_PROBE_VERSION 2', 'N100_VENDOR_PROBE_VERSION 4').replace(
+        log = self.v2.log().replace('N100_VENDOR_PROBE_VERSION 2', 'N100_VENDOR_PROBE_VERSION 5').replace(
             'N100_VENDOR_PROBE_RESULT', probe.BANNER + section.split('PIDS ')[0] + 'N100_VENDOR_PROBE_RESULT')
         result = probe.classify(log, self.v2.report, self.v2.manifest)
         self.assertTrue(result['runtime']['section_complete'])
@@ -99,14 +112,16 @@ class RuntimeServiceProbeTests(unittest.TestCase):
         result, _ = self.simulate()
         self.assertEqual(result.returncode, 0, result.stderr)
         section = result.stdout.split(probe.BANNER, 1)[1].split('PIDS ')[0]
-        log = self.v2.log().replace('N100_VENDOR_PROBE_VERSION 2', 'N100_VENDOR_PROBE_VERSION 4').replace(
+        log = self.v2.log().replace('N100_VENDOR_PROBE_VERSION 2', 'N100_VENDOR_PROBE_VERSION 5').replace(
             'N100_VENDOR_PROBE_RESULT', probe.BANNER + section + 'N100_VENDOR_PROBE_RESULT')
         good = probe.classify(log, self.v2.report, self.v2.manifest)
         self.assertTrue(good['runtime_service_start_passed'], good['runtime'])
         for bad in [log.replace('cleanup_failed=0', 'cleanup_failed=1'),
                     log.replace('N100_RUNTIME_SECTION_END', ''),
                     log.replace('N100_RUNTIME_ALIVE hwservicemanager 6s 1', 'N100_RUNTIME_ALIVE hwservicemanager 6s 0'),
-                    log + 'N100_RUNTIME_CLEANUP_STUCK 123\n']:
+                    log + 'N100_RUNTIME_CLEANUP_STUCK 123\n',
+                    log.replace('N100_RUNTIME_SELINUXFS_MOUNTED', 'selinuxfs-missing'),
+                    log.replace('N100_VENDOR_PROBE_VERSION 5', 'N100_VENDOR_PROBE_VERSION 4')]:
             self.assertFalse(probe.classify(bad, self.v2.report, self.v2.manifest)['runtime_service_start_passed'])
 
     def test_existing_binder_nodes_stop_the_probe(self):
@@ -127,12 +142,30 @@ class RuntimeServiceProbeTests(unittest.TestCase):
         import json
         archived = json.loads((ROOT / 'validation/runtime-probe-v4-manifest-user-20261111.json').read_text())
         report, manifest = probe.vp.reference()
-        self.assertEqual(archived, probe.bundle_manifest(report, manifest, archived['hal_tree']))
+        self.assertEqual(archived, probe.bundle_manifest(report, manifest, archived['hal_tree'], archived['probe_version']))
         doc = (ROOT / 'docs/RUNTIME_SERVICE_PROBE.md').read_text()
         self.assertIn("echo '" + archived['script_sha256'] + "  /tmp/n100-runtime-probe-v4.sh' | sha256sum -c -", doc)
         subprocess.run(['bash', '-n', str(ROOT / 'tools/run-runtime-v4-probe.sh')], check=True)
         helper = (ROOT / 'tools/run-runtime-v4-probe.sh').read_text()
         self.assertIn('runtime-probe-v4.txt', helper); self.assertNotIn('fastboot flash', helper)
+        v5 = json.loads((ROOT / 'validation/runtime-probe-v5-manifest-user-20261111.json').read_text())
+        self.assertEqual(v5['probe_version'], 5)
+        self.assertEqual(v5, probe.bundle_manifest(report, manifest, v5['hal_tree'], 5))
+        self.assertIn("echo '" + v5['script_sha256'] + "  /tmp/n100-runtime-probe-v5.sh' | sha256sum -c -", doc)
+        subprocess.run(['bash', '-n', str(ROOT / 'tools/run-runtime-v5-probe.sh')], check=True)
+        helper = (ROOT / 'tools/run-runtime-v5-probe.sh').read_text()
+        self.assertIn('runtime-probe-v5.txt', helper); self.assertIn('--version 5', helper)
+
+    def test_real_v4_device_log_shows_servicemanager_abort_and_running_hwservicemanager(self):
+        import json
+        raw = json.loads((ROOT / 'validation/runtime-v4-device-report-user-20261111.json').read_text())
+        report, manifest = probe.vp.reference()
+        result = probe.classify(raw['device_probe_log'], report, manifest, 4)
+        services = result['runtime']['services']
+        self.assertEqual(services['servicemanager']['exit_code'], 134)
+        self.assertTrue(services['hwservicemanager']['stayed_up'])
+        self.assertTrue(result['cleanup_ok']); self.assertTrue(result['system_service_dependency_probe_passed'])
+        self.assertFalse(probe.classify(raw['device_probe_log'], report, manifest, 5)['runtime_service_start_passed'])
 
 
 if __name__ == '__main__': unittest.main()

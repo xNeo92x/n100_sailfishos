@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-"""Prepare probe V4: the device-tested V2 view with the HAL tree of the new SELinux/GLES RPM,
-plus a bounded binderfs + servicemanager/hwservicemanager start in RAM."""
+"""Prepare runtime service probes: the device-tested V2 view with the HAL tree of the new
+SELinux/GLES RPM, plus a bounded binderfs + servicemanager/hwservicemanager start in RAM.
+
+V4 (device-run 2026-11-11): servicemanager aborted because selinux_status_open() fails
+without selinuxfs. V5 additionally mounts selinuxfs in the view without loading a policy."""
 import argparse
 import importlib.util
 import json
@@ -29,7 +32,13 @@ sha = vp.sha
 RPM_REPORT = ROOT / 'validation/selinux-hal-rpm-user-20261111.json'
 RPM_REPORT_SHA = '397f215f0a6e193a64da0bd65cdd99dba8b8cb6cd992fa40da62d365fb1ae000'
 V2_SCRIPT_SHA = '1aff4719a18e0d6294aceb2d683fb505f5c4c1b0a2cbb267b7553ecfb8a37df6'
-SCRIPT = 'runtime-probe-v4.sh'
+VERSION = 5
+
+
+def script_name(version):
+    return 'runtime-probe-v{}.sh'.format(version)
+
+
 NEW_FILES = ('lib64/libGLESv3.so', 'etc/selinux/plat_service_contexts',
              'etc/selinux/plat_hwservice_contexts', 'etc/selinux/plat_property_contexts')
 SERVICES = ('servicemanager', 'hwservicemanager')
@@ -97,7 +106,7 @@ for leaf in binder hwbinder vndbinder; do
     dev_links="/dev/$leaf $dev_links"
 done
 echo 'N100_RUNTIME_BINDER_NODES_READY'
-dmesg | grep -i binder | tail -n 10 || :
+@SELINUXFS@dmesg | grep -i binder | tail -n 10 || :
 for name in servicemanager hwservicemanager; do
     chroot "$P" /bin/sh -c 'unset LD_LIBRARY_PATH LD_PRELOAD LD_CONFIG_FILE; exec "$1"' n100-svc "/system/bin/$name" \
         > "$work/$name.out" 2>&1 &
@@ -144,6 +153,17 @@ dmesg | grep -iE 'binder|servicemanager' | tail -n 20 || :
 echo 'N100_RUNTIME_SECTION_END'
 '''
 
+# V5: servicemanager CHECKs selinux_status_open(), which needs a mounted selinuxfs. Without a
+# loaded policy the kernel maps every context to "kernel" and allows every access.
+SELINUXFS = r'''[ -d "$P/sys/fs/selinux" ] || die 'Kernel offers no /sys/fs/selinux mount point'
+! mounted "$P/sys/fs/selinux" || die 'selinuxfs is already mounted in the view'
+if grep -q ' /sys/fs/selinux ' /proc/mounts; then echo 'N100_RUNTIME_HOST_SELINUXFS_PRESENT'; fi
+mounts="$P/sys/fs/selinux $mounts"
+mount -t selinuxfs selinuxfs "$P/sys/fs/selinux"
+[ ! -e "$P/sys/fs/selinux/class/binder" ] || die 'An SELinux policy is already loaded; this probe assumes none'
+echo "N100_RUNTIME_SELINUXFS_MOUNTED enforce=$(cat "$P/sys/fs/selinux/enforce" 2>/dev/null || echo unknown) deny_unknown=$(cat "$P/sys/fs/selinux/deny_unknown" 2>/dev/null || echo unknown)"
+'''
+
 CLEANUP = r'''    failed=0
     # Stop services started by this probe before any view is unmounted.
     for pid in $started_pids; do
@@ -167,15 +187,15 @@ LINKS = r'''    for link in $dev_links; do
 '''
 
 
-def render(report, manifest, hal):
+def render(report, manifest, hal, version=VERSION):
     script = vp.render(report, manifest)
     require(sha(script.encode()) == V2_SCRIPT_SHA, 'Device-tested V2 script changed')
     script = replace_once(script, "# MIT. Render with prepare-vendor-probe.py; temporary RAM view only.\n",
         "# MIT. Rendered by prepare-runtime-service-probe.py from the device-tested V2 probe.\n"
-        "# V4: HAL tree of the SELinux/GLES RPM; starts servicemanager/hwservicemanager in RAM only.\n")
+        "# V{}: HAL tree of the SELinux/GLES RPM; starts servicemanager/hwservicemanager in RAM only.\n".format(version))
     script = replace_once(script, "HAL_SHA='{}'\nHAL_BYTES={}\n".format(manifest['hal_archive_sha256'], manifest['hal_archive_bytes']),
                           "HAL_SHA='{}'\nHAL_BYTES={}\n".format(hal['sha256'], hal['bytes']))
-    script = replace_once(script, "Usage: vendor-probe.sh --plan", "Usage: runtime-probe-v4.sh --plan")
+    script = replace_once(script, "Usage: vendor-probe.sh --plan", "Usage: {} --plan".format(script_name(version)))
     script = replace_once(script, 'mounted() { grep -F " $1 " /proc/mounts >/dev/null; }\n',
         'mounted() { grep -F " $1 " /proc/mounts >/dev/null; }\n'
         "n100_alive() { [ -n \"$1\" ] && [ -r \"/proc/$1/status\" ] && ! grep -q '^State:[[:space:]]*Z' \"/proc/$1/status\"; }\n")
@@ -183,45 +203,46 @@ def render(report, manifest, hal):
                           "vendor_mounts=\nvendor_map=\nstarted_pids=\ndev_links=\nbinderfs_dir=\n")
     script = replace_once(script, "    failed=0\n    # DM removal still needs", CLEANUP + "    # DM removal still needs")
     script = replace_once(script, '    if [ "$failed" = 0 ]; then\n        rm -rf "$work/hal"\n', LINKS + '        rm -rf "$work/hal"\n')
-    script = replace_once(script, "echo 'N100_VENDOR_PROBE_VERSION 2'\n", "echo 'N100_VENDOR_PROBE_VERSION 4'\n")
+    script = replace_once(script, "echo 'N100_VENDOR_PROBE_VERSION 2'\n", "echo 'N100_VENDOR_PROBE_VERSION {}'\n".format(version))
     script = replace_once(script, "        echo \"N100_VENDOR_SKIPPED other-ABI-or-format $path\"\n",
         "        echo \"N100_VENDOR_SKIPPED other-ABI-or-format $path\"\n"
         "        echo \"N100_VENDOR_SKIPPED_IDENTITY $path $identity\"\n")
     script = replace_once(script,
         "echo 'Only linker help, linkerconfig help and dependency listing were requested; no HAL services started.'\n",
-        RUNTIME.lstrip('\n') +
+        RUNTIME.lstrip('\n').replace('@SELINUXFS@', SELINUXFS if version >= 5 else '') +
         "echo 'Only servicemanager and hwservicemanager were started, as root, for a few seconds; no vendor HAL started.'\n")
     require(not re.search(r'@[A-Z_]+@', script), 'Unresolved template token')
     return script
 
 
-def bundle_manifest(report, manifest, hal):
+def bundle_manifest(report, manifest, hal, version=VERSION):
     bundle = vp.bundle_manifest(report, manifest)
-    bundle.update(kind='temporary-runtime-service-start-probe', probe_version=4, script=SCRIPT,
+    bundle.update(kind='temporary-runtime-service-start-probe', probe_version=version, script=script_name(version),
                   source_vendor_v2_script_sha256=V2_SCRIPT_SHA, hal_archive_bytes=hal['bytes'],
-                  hal_archive_sha256=hal['sha256'], hal_tree=hal, script_sha256=sha(render(report, manifest, hal).encode()),
+                  hal_archive_sha256=hal['sha256'], hal_tree=hal, script_sha256=sha(render(report, manifest, hal, version).encode()),
                   source_rpm_report_sha256=RPM_REPORT_SHA,
-                  scope='V2 view with the new HAL tree; binderfs in RAM; servicemanager and hwservicemanager '
+                  scope='V2 view with the new HAL tree; binderfs' + (' and selinuxfs (no policy)' if version >= 5 else '') +
+                        ' in RAM; servicemanager and hwservicemanager '
                         'started as root for about ten seconds; no vendor HAL, logd, init or systemd')
     return bundle
 
 
 def verify_bundle(directory, report, manifest):
     saved = json.loads((directory / 'manifest.json').read_text())
-    hal = saved['hal_tree']
-    bundle = bundle_manifest(report, manifest, hal)
+    hal, version = saved['hal_tree'], saved['probe_version']
+    bundle = bundle_manifest(report, manifest, hal, version)
     require(saved == bundle, 'V4 probe manifest changed')
     vp.ns.native.verify_file(directory / 'apex_payload.img', manifest['payload']['bytes'], manifest['payload']['sha256'])
     pin = bundle['vndk_payload']; vp.ns.native.verify_file(directory / 'vndk_payload.img', pin['bytes'], pin['sha256'])
     for name, pin in bundle['configuration_files'].items():
         vp.ns.native.verify_file(directory / 'linkerconfig' / name, pin['bytes'], pin['sha256'])
     vp.ns.native.verify_file(directory / 'hal-system.tar.gz', hal['bytes'], hal['sha256'])
-    script = render(report, manifest, hal).encode()
-    vp.ns.native.verify_file(directory / SCRIPT, len(script), sha(script))
+    script = render(report, manifest, hal, version).encode()
+    vp.ns.native.verify_file(directory / script_name(version), len(script), sha(script))
     return bundle
 
 
-def prepare(v2_bundle, rpm_path, output):
+def prepare(v2_bundle, rpm_path, output, version=VERSION):
     report, manifest = vp.reference()
     require(not output.exists() and not output.is_symlink(), 'Output exists; choose a new V4 probe directory')
     vp.verify_bundle(v2_bundle, report, manifest)
@@ -232,17 +253,18 @@ def prepare(v2_bundle, rpm_path, output):
         for name in ['apex_payload.img', 'vndk_payload.img'] + ['linkerconfig/' + n for n in report['generated']['files']]:
             target = staging / name; target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(v2_bundle / name, target)
-        script = render(report, manifest, hal)
+        script = render(report, manifest, hal, version)
         subprocess.run(['sh', '-n'], input=script, text=True, check=True)
-        (staging / SCRIPT).write_text(script); (staging / SCRIPT).chmod(0o755)
-        bundle = bundle_manifest(report, manifest, hal)
+        name = script_name(version)
+        (staging / name).write_text(script); (staging / name).chmod(0o755)
+        bundle = bundle_manifest(report, manifest, hal, version)
         (staging / 'manifest.json').write_text(json.dumps(bundle, indent=2) + '\n')
         verify_bundle(staging, report, manifest)
         staging.rename(output)
     finally:
         if staging.exists(): shutil.rmtree(staging)
-    print('Prepared runtime service probe V4: ' + str(output))
-    print(SCRIPT + ' SHA-256: ' + bundle['script_sha256'])
+    print('Prepared runtime service probe V{}: {}'.format(version, output))
+    print(bundle['script'] + ' SHA-256: ' + bundle['script_sha256'])
     return bundle
 
 
@@ -251,7 +273,7 @@ def runtime_section(log):
     return log.split(BANNER, 1)[1].split(END, 1)[0]
 
 
-def classify(log, report, manifest):
+def classify(log, report, manifest, version=VERSION):
     lines = log.splitlines()
     section = runtime_section(log)
     # The repeated system and vendor dependency parts are judged by the reviewed V2 classifier.
@@ -260,17 +282,19 @@ def classify(log, report, manifest):
         base_log = before + after
     else:
         base_log = log
-    base_log = base_log.replace('N100_VENDOR_PROBE_VERSION 4', 'N100_VENDOR_PROBE_VERSION 2')
+    base_log = base_log.replace('N100_VENDOR_PROBE_VERSION {}'.format(version), 'N100_VENDOR_PROBE_VERSION 2')
     base_log = '\n'.join(l for l in base_log.splitlines()
                          if not l.startswith(('N100_VENDOR_SKIPPED_IDENTITY ', 'N100_RUNTIME_CLEANUP_STUCK'))) + '\n'
     base = vp.classify(base_log, report, manifest)
     runtime = {'section_complete': section is not None, 'binderfs_mounted': None, 'binder_nodes_ready': False,
-               'services': {}}
+               'selinuxfs_mounted': None, 'services': {}}
     if section is not None:
         rlines = section.splitlines()
         mounted = [l for l in rlines if l.startswith('N100_RUNTIME_BINDERFS_MOUNTED ')]
         runtime['binderfs_mounted'] = mounted[0].split(' ', 1)[1] if len(mounted) == 1 else None
         runtime['binder_nodes_ready'] = rlines.count('N100_RUNTIME_BINDER_NODES_READY') == 1
+        selinuxfs = [l for l in rlines if l.startswith('N100_RUNTIME_SELINUXFS_MOUNTED ')]
+        runtime['selinuxfs_mounted'] = selinuxfs[0].split(' ', 1)[1] if len(selinuxfs) == 1 else None
         for name in SERVICES:
             info = {'started': rlines.count('N100_RUNTIME_STARTED ' + name) == 1}
             for check in ('3s', '6s'):
@@ -287,9 +311,11 @@ def classify(log, report, manifest):
     stuck = [l for l in lines if l.startswith('N100_RUNTIME_CLEANUP_STUCK')]
     cleanup_ok = any(re.fullmatch(r'N100_VENDOR_PROBE_RESULT exit=[0-9]{1,3} cleanup_failed=0', l) for l in lines) and not stuck
     service_passed = (runtime['binderfs_mounted'] is not None and runtime['binder_nodes_ready'] and cleanup_ok and
+                      (version < 5 or runtime['selinuxfs_mounted'] is not None) and
+                      lines.count('N100_VENDOR_PROBE_VERSION {}'.format(version)) == 1 and
                       all(runtime['services'].get(n, {}).get('stayed_up') for n in SERVICES))
     return {'runtime_service_start_passed': service_passed, 'cleanup_ok': cleanup_ok, 'runtime': runtime,
-            'version_marker_present': lines.count('N100_VENDOR_PROBE_VERSION 4') == 1,
+            'probe_version': version, 'version_marker_present': lines.count('N100_VENDOR_PROBE_VERSION {}'.format(version)) == 1,
             'system_service_dependency_probe_passed': base['system_service_dependency_probe_passed'],
             'selected_vendor_dependency_probe_passed': base['selected_vendor_dependency_probe_passed'],
             'vendor_dependency_exit_codes': base['vendor_dependency_exit_codes'],
@@ -304,7 +330,8 @@ def collect(bundle_dir, log_path, output):
     require(log_path.is_file() and 0 < log_path.stat().st_size <= 2 * 1024 * 1024, 'Expected a bounded probe log')
     log = log_path.read_text(errors='replace')
     result = {'schema': 1, 'kind': 'runtime-service-start-device-probe-report', 'bundle': bundle,
-              'bundle_integrity_rechecked': True, 'device_probe_log': log, 'assessment': classify(log, report, manifest),
+              'bundle_integrity_rechecked': True, 'device_probe_log': log,
+              'assessment': classify(log, report, manifest, bundle['probe_version']),
               'rootfs_boot_tested': False, 'flashable_release': False}
     with output.open('x') as stream: stream.write(json.dumps(result, indent=2) + '\n')
     a = result['assessment']
@@ -326,16 +353,17 @@ def main():
     prep.add_argument('--v2-bundle', type=Path, required=True)
     prep.add_argument('--rpm', type=Path, required=True)
     prep.add_argument('--output-dir', type=Path, required=True)
+    prep.add_argument('--version', type=int, choices=(4, 5), default=VERSION)
     capture = commands.add_parser('report')
     capture.add_argument('--bundle-dir', type=Path, required=True)
     capture.add_argument('--probe-log', type=Path, required=True)
     capture.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     try:
-        if args.mode == 'prepare': prepare(args.v2_bundle, args.rpm, args.output_dir.absolute())
+        if args.mode == 'prepare': prepare(args.v2_bundle, args.rpm, args.output_dir.absolute(), args.version)
         else: collect(args.bundle_dir, args.probe_log, args.output)
     except (OSError, ValueError, KeyError, tarfile.TarError, subprocess.SubprocessError) as exc:
-        parser.exit(1, 'Runtime service probe V4 preparation/report failed: {}\n'.format(exc))
+        parser.exit(1, 'Runtime service probe preparation/report failed: {}\n'.format(exc))
 
 
 if __name__ == '__main__': main()

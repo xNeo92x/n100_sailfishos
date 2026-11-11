@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "runtime-service-probe-v4-prepared",
+  "stage": "runtime-v4-hwservicemanager-up-v5-prepared",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -219,7 +219,7 @@
   "android_runtime_apex_installed": false,
   "runtime_blockers": [
     "Composer, allocator and both selected sensor service dependency lists pass on the N100 with libGLESv3 (probe V3); HAL RPM now ships libGLESv3 (not yet device-tested); 32-bit ARM audio service untested",
-    "Platform SELinux contexts are now in the HAL RPM (8af2a764...); servicemanager/hwservicemanager start awaits probe V4",
+    "hwservicemanager runs on the N100 and owns hwbinder (V4); servicemanager aborts without selinuxfs (selinux_status_open CHECK); V5 mounts selinuxfs in the view",
     "Runtime no longer requires libdexfile.so; strict host NNAPI requirements remain unresolved; limited system namespace device probe passed",
     "Persistent early mapping/mounts, full switch_root and peripherals remain unvalidated",
     "Native no-DEX Runtime/RPM and three service dependency lists are verified; service main functions and systemd have not been started"
@@ -254,7 +254,7 @@
   "linker_namespace_preview_prepared": true,
   "linker_namespace_preview_generated": true,
   "linker_namespace_device_tested": true,
-  "next_step": "Run runtime service probe V4 (docs/RUNTIME_SERVICE_PROBE.md): binderfs plus servicemanager/hwservicemanager briefly in RAM",
+  "next_step": "Run runtime probe V5 (selinuxfs view mount, no policy) to start servicemanager; see docs/RUNTIME_SERVICE_PROBE.md",
   "linker_namespace_preview_documentation": "docs/LINKER_HOST_PREVIEW.md",
   "linker_namespace_preview_preparation_validation": "validation/linker-host-preview-preparation.json",
   "linker_namespace_preview_validation": "validation/linker-host-preview-user-20261026.json",
@@ -351,7 +351,16 @@
   "selinux_hal_rpm_validation": "validation/selinux-hal-rpm-user-20261111.json",
   "selinux_hal_rpm_sha256": "8af2a7640f6b23e54241286ac298f982346a29a2923ebda8fda74c660891b412",
   "runtime_service_probe_v4_prepared": true,
-  "runtime_service_probe_v4_executed": false,
+  "runtime_service_probe_v4_executed": true,
   "runtime_service_probe_v4_documentation": "docs/RUNTIME_SERVICE_PROBE.md",
-  "runtime_service_probe_v4_bundle_manifest": "validation/runtime-probe-v4-manifest-user-20261111.json"
+  "runtime_service_probe_v4_bundle_manifest": "validation/runtime-probe-v4-manifest-user-20261111.json",
+  "runtime_service_probe_v4_passed": false,
+  "runtime_service_probe_v4_validation": "validation/runtime-v4-device-report-user-20261111.json",
+  "hwservicemanager_started_on_device": true,
+  "servicemanager_started_on_device": false,
+  "servicemanager_abort_cause": "selinux_status_open() returns -1 without mounted selinuxfs; Access.cpp CHECKs it",
+  "binderfs_verified_on_device": true,
+  "binder_oneway_spam_detection_ioctl_unsupported": true,
+  "runtime_service_probe_v5_prepared": true,
+  "runtime_service_probe_v5_bundle_manifest": "validation/runtime-probe-v5-manifest-user-20261111.json"
 }
