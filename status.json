@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "vendor-v3-composer-dependencies-resolved",
+  "stage": "gles-hal-rpm-rebuild-prepared",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -253,7 +253,7 @@
   "linker_namespace_preview_prepared": true,
   "linker_namespace_preview_generated": true,
   "linker_namespace_device_tested": true,
-  "next_step": "Rebuild the HAL RPM so it ships libGLESv3.so, then prepare a controlled RAM test of Android runtime initialisation (binderfs, properties, servicemanager)",
+  "next_step": "Run tools/run-hal-rpm-build.sh (docs/GLES_HAL_RPM.md): rebuild droid-hal-billie2 with libGLESv3 and compare it with the device-tested RPM",
   "linker_namespace_preview_documentation": "docs/LINKER_HOST_PREVIEW.md",
   "linker_namespace_preview_preparation_validation": "validation/linker-host-preview-preparation.json",
   "linker_namespace_preview_validation": "validation/linker-host-preview-user-20261026.json",
@@ -333,5 +333,11 @@
   "vendor_dependency_probe_v3_validation": "validation/vendor-v3-device-user-20261111.json",
   "composer_libglesv3_resolved_on_device": true,
   "audio_service_abi": "ELF32 ARM (32-bit); needs the 32-bit linker/namespace, not covered by the AArch64 probes",
-  "binder_device_nodes_explanation": "Kernel has CONFIG_ANDROID_BINDERFS=y, so binder creates no misc nodes; Android init.rc mounts binderfs and symlinks /dev/binder*. /dev/__properties__ is created by Android init. Absence in the early shell is expected."
+  "binder_device_nodes_explanation": "Kernel has CONFIG_ANDROID_BINDERFS=y, so binder creates no misc nodes; Android init.rc mounts binderfs and symlinks /dev/binder*. /dev/__properties__ is created by Android init. Absence in the early shell is expected.",
+  "gles_hal_rpm_rebuild_prepared": true,
+  "gles_hal_rpm_documentation": "docs/GLES_HAL_RPM.md",
+  "gles_hal_rpm_expected_additions": [
+    "system/lib64/libGLESv3.so",
+    "system/lib/libGLESv3.so"
+  ]
 }
