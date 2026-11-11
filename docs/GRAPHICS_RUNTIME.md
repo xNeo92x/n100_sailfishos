@@ -15,7 +15,20 @@ Implementierung muss vorhanden sein. Als Primärvergleich dient die
 Es wird weder eine Dummy-Datei erzeugt noch ein Stock-Android-11-GLES-Wrapper
 in den gebauten Android-13-Systemteil kopiert.
 
-## SDK-Umgebungen
+## Einfachster Weg: ein Befehl auf CachyOS
+
+**Auf CachyOS** in einem normalen Terminal:
+
+```bash
+bash ~/n100_sailfishos/tools/run-graphics-build.sh
+```
+
+Das Skript betritt nacheinander Platform SDK und Ubuntu HABUILD SDK, führt dort
+den unten beschriebenen Build aus und schreibt die gesamte Ausgabe zusätzlich nach
+`~/n100-build/graphics-console-<UTC>.log`. Am Ende steht `FERTIG` oder
+`FEHLGESCHLAGEN`. Die manuellen Schritte unten bleiben als Alternative gültig.
+
+## SDK-Umgebungen (manuell)
 
 Falls bereits Ubuntu mit `MERSDKUBU=1` läuft, direkt zum Build-Abschnitt.
 Andernfalls in einem neuen **CachyOS-Terminal**:
