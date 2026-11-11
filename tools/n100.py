@@ -942,6 +942,10 @@ def prepare_rpm_spec(args):
         {names[0]: "18bc255d335bd5f813957d3142e8e95173cf3bcd",
          names[1]: "554019209560cca2338abdd03d64a5bb07af15f3",
          names[2]: "6b3fb2556d337c12c6c936b9dfa7358dc86603a4"},
+        # Deployed SELinux-contexts HAL RPM state (2026-11-11), before the stub preload.
+        {names[0]: "18bc255d335bd5f813957d3142e8e95173cf3bcd",
+         names[1]: "554019209560cca2338abdd03d64a5bb07af15f3",
+         names[2]: "fd0bb03e03427c7e12a35dd55c3bef7a48e2b05d"},
     )
     current = {name: git_blob_identity((destination / name).read_bytes()) for name in installed["files"]}
     if current not in predecessors:

@@ -22,11 +22,13 @@ GRAPHICS_REPORT = ROOT / 'validation/graphics-runtime-build-user-20261111.json'
 GRAPHICS_REPORT_SHA = '41cde56a39704d60e1ddd30e9f40878558dcfab2de9c568464818bb62a01424b'
 PREFIX = './usr/libexec/droid-hybris/system/'
 ADDED = {PREFIX + 'lib64/libGLESv3.so', PREFIX + 'lib/libGLESv3.so'}
+PRELOAD_RC = {PREFIX + 'etc/init/' + n + '.rc': n for n in ('servicemanager', 'hwservicemanager')}
+PRELOAD_LINE = '    setenv LD_PRELOAD /system/lib64/libselinux_stubs.so'
 SELINUX = {PREFIX + 'etc/selinux/' + name for name in
            ('plat_service_contexts', 'plat_hwservice_contexts', 'plat_property_contexts')}
 LIMIT = 512 * 1024 * 1024
 # Earlier, already compared rebuilds that may still be in the local repo.
-IGNORED = ('droid-hal-billie2-0.0.6-202611111819.aarch64.rpm',)
+IGNORED = ('droid-hal-billie2-0.0.6-202611111819.aarch64.rpm', 'droid-hal-billie2-0.0.6-202611111828.aarch64.rpm')
 RPM_NAME = re.compile(r'droid-hal-billie2-(\d[\w.]*)-(\d{12})\.aarch64\.rpm')
 
 
@@ -71,6 +73,7 @@ def parse_cpio(data):
         entry = {'mode': oct(stat.S_IMODE(mode))}
         if kind == stat.S_IFREG:
             entry.update(type='file', bytes=size, sha256=sha(body))
+            if name in PRELOAD_RC: entry['text'] = body.decode('utf-8', errors='replace')
             if nlink > 1:
                 links.setdefault(ino, []).append(name)
                 if size: links[ino].append(entry)
@@ -107,11 +110,28 @@ def find_new_rpm(repo):
     return candidates[0]
 
 
-def compare(old, new, lib64_sha, selinux=False):
+def preload_problems(old, new):
+    problems = []
+    for name, service in PRELOAD_RC.items():
+        if name not in old or name not in new: problems.append(name + ' missing'); continue
+        before, after = old[name].get('text', '').splitlines(), new[name].get('text', '').splitlines()
+        header = 'service {} /system/bin/{}'.format(service, service)
+        if before.count(header) != 1 or any('LD_PRELOAD' in l for l in before):
+            problems.append(name + ' reference declaration unexpected'); continue
+        index = before.index(header) + 1
+        if after != before[:index] + [PRELOAD_LINE] + before[index:] or old[name]['mode'] != new[name]['mode']:
+            problems.append(name + ' differs by more than the stub preload line')
+    return problems
+
+
+def compare(old, new, lib64_sha, selinux=False, preload=False):
     expected = ADDED | (SELINUX | {PREFIX + 'etc/selinux'} if selinux else set())
     added = sorted(set(new) - set(old)); removed = sorted(set(old) - set(new))
     changed = sorted(name for name in set(old) & set(new) if old[name] != new[name])
     problems = []
+    if preload:
+        problems += preload_problems(old, new)
+        changed = [name for name in changed if name not in PRELOAD_RC]
     if removed: problems.append('removed entries: ' + ', '.join(removed[:20]))
     if changed: problems.append('changed entries: ' + ', '.join(changed[:20]))
     if set(added) != expected: problems.append('added entries differ: ' + ', '.join(sorted(set(added) ^ expected)[:20]))
@@ -124,7 +144,7 @@ def compare(old, new, lib64_sha, selinux=False):
     return added, removed, changed, problems
 
 
-def check(reference, new_rpm, output_dir, selinux=False):
+def check(reference, new_rpm, output_dir, selinux=False, preload=False):
     graphics = json.loads(GRAPHICS_REPORT.read_bytes())
     require(sha(GRAPHICS_REPORT.read_bytes()) == GRAPHICS_REPORT_SHA, 'Reviewed graphics report changed')
     lib64_sha = graphics['files']['libGLESv3.so']['sha256']
@@ -132,7 +152,7 @@ def check(reference, new_rpm, output_dir, selinux=False):
     require(rpm_name(new_rpm).startswith('droid-hal-billie2-'), 'New RPM is not droid-hal-billie2')
     require(not output_dir.exists(), 'Output directory exists; choose a new one')
     old, new = parse_cpio(payload(reference)), parse_cpio(payload(new_rpm))
-    added, removed, changed, problems = compare(old, new, lib64_sha, selinux)
+    added, removed, changed, problems = compare(old, new, lib64_sha, selinux, preload)
     output_dir.mkdir(parents=True)
     report = {'schema': 1, 'kind': 'gles-hal-rpm-comparison', 'passed': not problems,
               'reference_rpm': {'name': reference.name, 'sha256': REFERENCE_SHA},
@@ -140,7 +160,7 @@ def check(reference, new_rpm, output_dir, selinux=False):
                           'lead_name': rpm_name(new_rpm)},
               'payload_entries': len(new), 'added': {n: new[n] for n in added}, 'removed': removed,
               'changed': {n: {'old': old[n], 'new': new[n]} for n in changed}, 'problems': problems,
-              'graphics_report_sha256': GRAPHICS_REPORT_SHA, 'selinux_contexts_expected': selinux, 'device_tested': False, 'flashable_release': False}
+              'graphics_report_sha256': GRAPHICS_REPORT_SHA, 'selinux_contexts_expected': selinux, 'stub_preload_expected': preload, 'device_tested': False, 'flashable_release': False}
     (output_dir / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
     return report
 
@@ -153,10 +173,12 @@ def main():
     parser.add_argument('--output-dir', type=Path, required=True)
     parser.add_argument('--with-selinux-contexts', action='store_true',
                         help='also expect the three platform SELinux context files')
+    parser.add_argument('--with-stub-preload', action='store_true',
+                        help='also expect the libselinux_stubs preload line in servicemanager/hwservicemanager.rc')
     args = parser.parse_args()
     try:
         new_rpm = args.rpm or find_new_rpm(args.repo)
-        report = check(args.reference, new_rpm, args.output_dir, args.with_selinux_contexts)
+        report = check(args.reference, new_rpm, args.output_dir, args.with_selinux_contexts, args.with_stub_preload)
     except (OSError, ValueError, KeyError, subprocess.SubprocessError) as exc:
         parser.exit(1, 'GLES HAL RPM check failed: {}\n'.format(exc))
     print('Report: ' + str(args.output_dir / 'report.json'))

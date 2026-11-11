@@ -63,6 +63,22 @@ class GlesHalRpmTests(unittest.TestCase):
         empty = check.parse_cpio(archive(*BASE, *GLES, *contexts[:-1], member(sorted(check.SELINUX)[-1], 0o100644, b'', ino=40)))
         self.assertTrue(check.compare(old, empty, check.sha(b'gles64'), selinux=True)[3])
 
+    def test_stub_preload_mode_allows_exactly_one_inserted_line(self):
+        def rc(name, preload):
+            text = 'service {0} /system/bin/{0}\n'.format(name) + (check.PRELOAD_LINE + '\n' if preload else '') + '    user system\n'
+            return text.encode()
+        old_rc = [member(P + 'etc/init/servicemanager.rc', 0o100644, rc('servicemanager', False), ino=50),
+                  member(P + 'etc/init/hwservicemanager.rc', 0o100644, rc('hwservicemanager', False), ino=51)]
+        new_rc = [member(P + 'etc/init/servicemanager.rc', 0o100644, rc('servicemanager', True), ino=50),
+                  member(P + 'etc/init/hwservicemanager.rc', 0o100644, rc('hwservicemanager', True), ino=51)]
+        old = check.parse_cpio(archive(*BASE, *old_rc)); new = check.parse_cpio(archive(*BASE, *GLES, *new_rc))
+        self.assertEqual(check.compare(old, new, check.sha(b'gles64'), preload=True)[3], [])
+        self.assertTrue(check.compare(old, new, check.sha(b'gles64'), preload=False)[3])
+        unchanged = check.parse_cpio(archive(*BASE, *GLES, *old_rc))
+        self.assertTrue(check.compare(old, unchanged, check.sha(b'gles64'), preload=True)[3])
+        extra = [new_rc[0], member(P + 'etc/init/hwservicemanager.rc', 0o100644, rc('hwservicemanager', True) + b'    oneshot\n', ino=51)]
+        self.assertTrue(check.compare(old, check.parse_cpio(archive(*BASE, *GLES, *extra)), check.sha(b'gles64'), preload=True)[3])
+
     def test_new_rpm_selection_ignores_subpackages_and_the_reference(self):
         temp = tempfile.TemporaryDirectory(); self.addCleanup(temp.cleanup); base = Path(temp.name)
         for name in [check.REFERENCE_NAME, *check.IGNORED, 'droid-hal-billie2-devel-0.0.6-202611111900.aarch64.rpm',
@@ -92,6 +108,11 @@ class GlesHalRpmTests(unittest.TestCase):
         text = selinux.read_text()
         self.assertIn('build-hal.sh" runtime', text); self.assertIn('--with-selinux-contexts', text)
         self.assertNotIn('fastboot', text)
+        preload = ROOT / 'tools/run-preload-rpm-build.sh'
+        subprocess.run(['bash', '-n', str(preload)], check=True)
+        text = preload.read_text()
+        self.assertIn('build-packages.sh" hal', text); self.assertIn('--with-stub-preload', text)
+        self.assertNotIn('ubu-chroot', text); self.assertNotIn('fastboot', text)
 
 
 if __name__ == '__main__': unittest.main()

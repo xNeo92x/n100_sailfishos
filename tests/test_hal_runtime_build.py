@@ -43,7 +43,13 @@ class HalRuntimeBuildTests(unittest.TestCase):
         self.buildroot = self.root / 'staged'
         (self.buildroot / 'sbin').mkdir(parents=True)
         (self.buildroot / 'sbin/droid-hal-init').write_text('staged marker')
-        (self.buildroot / 'usr/libexec/droid-hybris/system').mkdir(parents=True)
+        staged = self.buildroot / 'usr/libexec/droid-hybris/system'
+        (staged / 'etc/init').mkdir(parents=True)
+        (staged / 'lib64').mkdir()
+        (staged / 'lib64/libselinux_stubs.so').write_bytes(b'stub fixture')
+        # DHD stages servicemanager.rc itself before the custom install commands run.
+        (staged / 'etc/init/servicemanager.rc').write_text(
+            'service servicemanager /system/bin/servicemanager\n    class core animation\n    user system\n')
         self.work = self.root / 'rpm-work'
         (self.work / 'tmp').mkdir(parents=True)
         (self.work / 'tmp/droid-hal.files').write_text('/usr/libexec/droid-hybris/system/etc/init/*.rc\n')
@@ -69,11 +75,28 @@ class HalRuntimeBuildTests(unittest.TestCase):
         self.assertEqual(len(lines), len(set(lines)))
         self.assertIn('/usr/libexec/droid-hybris/system/apex/com.android.runtime.apex', lines)
         self.assertIn('%dir /usr/libexec/droid-hybris/system/etc/selinux', lines)
+        for name in ('servicemanager', 'hwservicemanager'):
+            rc = (base / 'etc/init' / (name + '.rc')).read_text().splitlines()
+            self.assertEqual(rc[0], 'service {} /system/bin/{}'.format(name, name))
+            self.assertEqual(rc[1], '    setenv LD_PRELOAD /system/lib64/libselinux_stubs.so')
+            self.assertEqual(sum('LD_PRELOAD' in line for line in rc), 1)  # idempotent over two runs
         for name in runtime.SELINUX_CONTEXTS:
             self.assertEqual((base / 'etc/selinux' / name).read_bytes(),
                              (self.product / 'system/etc/selinux' / name).read_bytes())
             self.assertIn('/usr/libexec/droid-hybris/system/etc/selinux/' + name, lines)
         self.assertFalse((self.buildroot / 'apex').exists())  # no activation here
+
+    def test_stub_preload_needs_the_stub_and_a_single_expected_declaration(self):
+        staged = self.buildroot / 'usr/libexec/droid-hybris/system'
+        (staged / 'lib64/libselinux_stubs.so').unlink()
+        self.assertNotEqual(self.run_helper().returncode, 0)
+        (staged / 'lib64/libselinux_stubs.so').write_bytes(b'stub fixture')
+        rc = staged / 'etc/init/servicemanager.rc'
+        rc.write_text('service servicemanager /system/bin/servicemanager\n    setenv LD_PRELOAD /other.so\n')
+        result = self.run_helper()
+        self.assertNotEqual(result.returncode, 0); self.assertIn('Unexpected LD_PRELOAD', result.stderr)
+        rc.write_text('service other /system/bin/other\n')
+        self.assertNotEqual(self.run_helper().returncode, 0)
 
     def test_missing_or_malformed_selinux_contexts_stop_before_packaging(self):
         path = self.product / 'system/etc/selinux/plat_service_contexts'

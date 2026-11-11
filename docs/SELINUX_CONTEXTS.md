@@ -45,3 +45,20 @@ Bericht: `~/n100-build/selinux-hal-rpm-<UTC>/report.json`.
 dem am Gerät getesteten Paket genau `etc/selinux` mit den drei Dateien und die zwei
 `libGLESv3.so`. `plat_service_contexts` enthält `manager u:object_r:service_manager_service:s0`.
 Weiter mit der [Probe V4](RUNTIME_SERVICE_PROBE.md).
+
+## Stub-Vorladung für die Service-Manager
+
+[Probe V6](RUNTIME_SERVICE_PROBE.md) zeigte: servicemanager beantwortet Clients nur mit
+`LD_PRELOAD=/system/lib64/libselinux_stubs.so`. `install-android-runtime.sh` fügt deshalb in
+`servicemanager.rc` (von DHD bereitgestellt) und `hwservicemanager.rc` direkt nach der
+`service`-Zeile genau `setenv LD_PRELOAD /system/lib64/libselinux_stubs.so` ein (idempotent;
+ein abweichendes `LD_PRELOAD` bricht ab). vndservicemanager stammt aus der Stock-Vendor-
+Partition, ist nicht getestet und wird noch nicht verändert.
+
+```bash
+bash ~/n100_sailfishos/tools/run-preload-rpm-build.sh
+```
+
+Nur Paketierung im Platform SDK, kein Android-Neubau. Der Vergleich
+(`check-gles-hal-rpm.py --with-selinux-contexts --with-stub-preload`) erlaubt gegenüber dem
+am Gerät getesteten RPM zusätzlich genau diese eine Zeile in den zwei `.rc`-Dateien.
