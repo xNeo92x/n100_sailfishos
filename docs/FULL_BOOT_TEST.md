@@ -1,5 +1,19 @@
 # N100: erster vollständiger Sailfish-Start (Versuch 1)
 
+## Befund Versuch 1 (11.11.2026)
+
+`fastboot -S 512M flash userdata` meldete dreimal `OKAY`, aber `/dev/sda16` ließ sich nicht
+einhängen: `JBD2: no valid journal superblock found`. Ein Abschnittsvergleich (16 × 512 MiB)
+zeigte: Die ersten 2,5 GiB sind bit-gleich mit dem Image; die kleinen Metadatenblöcke ab
+3,125 GiB (Sicherungs-Superblöcke, Journal-Superblock bei 4,125 GiB) wurden **nicht
+geschrieben** (Block 819200 ist auf dem Gerät null, der Journal-Superblock enthält Altdaten).
+Auch frühere Tests mit `ro,noload` haben das nicht bemerkt. Nullbereiche werden bei Sparse-
+Übertragung ohnehin nicht geschrieben.
+
+Abhilfe: Das Telefon schreibt das Image in der Initramfs-Debug-Shell selbst über USB-Netz auf
+`/dev/sda16` (nicht eingehängt), anschließend Prüfsumme über die vollen 8 GiB
+(`run-full-boot-test.sh serve-image`).
+
 ## Ausgangslage
 
 Die RAM-Proben V3–V6 haben gezeigt: Vendor-Abhängigkeiten des Composers sind aufgelöst,

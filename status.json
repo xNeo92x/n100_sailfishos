@@ -1,7 +1,7 @@
 {
   "device": "OnePlus Nord N100",
   "codename": "billie2",
-  "stage": "first-full-boot-prepared",
+  "stage": "full-boot-attempt-1-userdata-transfer-incomplete",
   "android_base": "hybris-20.0 / Android 13 HAL / stock Android 11 firmware candidate",
   "sailfish_release_validated": null,
   "hal_built": true,
@@ -254,7 +254,7 @@
   "linker_namespace_preview_prepared": true,
   "linker_namespace_preview_generated": true,
   "linker_namespace_device_tested": true,
-  "next_step": "With explicit user consent: flash the new userdata.img and RAM-boot full-debug-boot.img (docs/FULL_BOOT_TEST.md)",
+  "next_step": "Write userdata.img from the phone debug shell over USB network, verify the full 8 GiB SHA-256, then mount_stowaways and continue the boot",
   "linker_namespace_preview_documentation": "docs/LINKER_HOST_PREVIEW.md",
   "linker_namespace_preview_preparation_validation": "validation/linker-host-preview-preparation.json",
   "linker_namespace_preview_validation": "validation/linker-host-preview-user-20261026.json",
@@ -389,5 +389,7 @@
   "rootfs_image_20261111_on_device": false,
   "full_debug_boot_image_sha256": "74d16a51cb4a79c6f67ae7c84ff3cb17722cc6b0cfafee2d543fe2bb8fce84fd",
   "full_boot_test_documentation": "docs/FULL_BOOT_TEST.md",
-  "full_boot_attempted": false
+  "full_boot_attempted": true,
+  "fastboot_sparse_userdata_flash_reliable": false,
+  "fastboot_sparse_userdata_flash_finding": "All three sparse parts reported OKAY, but blocks at >= 3.125 GiB (backup superblocks, journal superblock) were not written; first 2.5 GiB identical"
 }
