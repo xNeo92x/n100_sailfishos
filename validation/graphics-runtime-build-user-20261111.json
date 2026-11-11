@@ -1,0 +1,1177 @@
+{
+  "schema": 1,
+  "kind": "android-graphics-runtime-build",
+  "passed": true,
+  "source_vendor_report_sha256": "2824601b4c79fab7715d7978c5f3c1b3fd38eba8527de440b2143b646d66ff19",
+  "source_rpm": {
+    "name": "droid-hal-billie2",
+    "arch": "aarch64",
+    "version_release": "0.0.6-202610262022",
+    "bytes": 23065994,
+    "sha256": "b6714b06b16f38e25d0298e4efe4e39b63b1b92128678e49c00b49b7fd5a3bc6",
+    "path": "/home/eugen/n100-build/android/droid-local-repo/billie2/droid-hal-billie2-0.0.6-202610262022.aarch64.rpm"
+  },
+  "source": {
+    "bytes": 6690,
+    "sha256": "ef63c0ea5dedf17fcd74cda9d671f338bc23799f6db2e1f517afb03986b18efe",
+    "path": "/home/eugen/n100-build/android/frameworks/native/opengl/libs/Android.bp",
+    "revision": "ee0a9e1a17de16d062d3491a11915a07258b362e",
+    "module": "libGLESv3",
+    "implementation_source": "GLES2/gl2.cpp"
+  },
+  "library": "libGLESv3.so",
+  "files": {
+    "libGLESv3.so": {
+      "bytes": 170224,
+      "sha256": "e1efbb5b54f0bac9d770c3c01dbfc39cee9d377fba7c87b7306e7fc2466df958",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libGLESv3.so",
+      "logical_source": "/system/lib64/libGLESv3.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libcutils.so",
+        "liblog.so",
+        "libEGL.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libGLESv3.so",
+      "matches_device_tested_hal": false,
+      "previous_hal_sha256": null
+    },
+    "libdl.so": {
+      "bytes": 13728,
+      "sha256": "316c59f9624362bd59f1fb2be6c15bfd32e8d5f47aac3356075811c4bf667e03",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/apex/com.android.runtime/lib64/bionic/libdl.so",
+      "logical_source": "/apex/com.android.runtime/lib64/bionic/libdl.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "ld-android.so"
+      ],
+      "soname": "libdl.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "316c59f9624362bd59f1fb2be6c15bfd32e8d5f47aac3356075811c4bf667e03"
+    },
+    "ld-android.so": {
+      "bytes": 9392,
+      "sha256": "ab12fc8404801c62bb0ecf72fed491f6516b2c772f41db7da4fcb8406321e5da",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/ld-android.so",
+      "logical_source": "/system/lib64/ld-android.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [],
+      "soname": "ld-android.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "ab12fc8404801c62bb0ecf72fed491f6516b2c772f41db7da4fcb8406321e5da"
+    },
+    "libm.so": {
+      "bytes": 225176,
+      "sha256": "d5348e97648de62112f1625a70e87a93771ba641d1ee0c3f61f47e0858dec1e8",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/apex/com.android.runtime/lib64/bionic/libm.so",
+      "logical_source": "/apex/com.android.runtime/lib64/bionic/libm.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libc.so"
+      ],
+      "soname": "libm.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "d5348e97648de62112f1625a70e87a93771ba641d1ee0c3f61f47e0858dec1e8"
+    },
+    "libc.so": {
+      "bytes": 1020008,
+      "sha256": "65aa28664008ff41d455708a9c63e9c620184d0370e5cba7a982f18f9897a722",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/apex/com.android.runtime/lib64/bionic/libc.so",
+      "logical_source": "/apex/com.android.runtime/lib64/bionic/libc.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "ld-android.so",
+        "libdl.so"
+      ],
+      "soname": "libc.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "65aa28664008ff41d455708a9c63e9c620184d0370e5cba7a982f18f9897a722"
+    },
+    "libc++.so": {
+      "bytes": 704528,
+      "sha256": "b0f265a92dd13a5a13c129fb729d0b76069e905f09116c6f73fd22acd2d4f023",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libc++.so",
+      "logical_source": "/system/lib64/libc++.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libc++.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "b0f265a92dd13a5a13c129fb729d0b76069e905f09116c6f73fd22acd2d4f023"
+    },
+    "libEGL.so": {
+      "bytes": 203376,
+      "sha256": "1ed62a728df621fc56ce26b4f73811349abc49a5eefc5b536d76d276cb699399",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libEGL.so",
+      "logical_source": "/system/lib64/libEGL.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libcutils.so",
+        "liblog.so",
+        "libgraphicsenv.so",
+        "libnativewindow.so",
+        "libbacktrace.so",
+        "libvndksupport.so",
+        "android.hardware.configstore@1.0.so",
+        "android.hardware.configstore-utils.so",
+        "libbase.so",
+        "libhidlbase.so",
+        "libnativebridge_lazy.so",
+        "libnativeloader_lazy.so",
+        "libutils.so",
+        "libSurfaceFlingerProp.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libEGL.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "1ed62a728df621fc56ce26b4f73811349abc49a5eefc5b536d76d276cb699399"
+    },
+    "libSurfaceFlingerProp.so": {
+      "bytes": 83936,
+      "sha256": "ef740fc546e7d5c779708afb170eebf59c10cf639470fe2289a6bfde7c97c8f8",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libSurfaceFlingerProp.so",
+      "logical_source": "/system/lib64/libSurfaceFlingerProp.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.configstore-utils.so",
+        "android.hardware.configstore@1.0.so",
+        "android.hardware.configstore@1.1.so",
+        "android.hardware.graphics.common@1.2.so",
+        "libhidlbase.so",
+        "libui.so",
+        "libutils.so",
+        "liblog.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libSurfaceFlingerProp.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "ef740fc546e7d5c779708afb170eebf59c10cf639470fe2289a6bfde7c97c8f8"
+    },
+    "liblog.so": {
+      "bytes": 62272,
+      "sha256": "5e64cc8eb3069567ebd5b6126205f5bcc3e421fe22eaac1a957ad971db043fde",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/liblog.so",
+      "logical_source": "/system/lib64/liblog.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "liblog.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "5e64cc8eb3069567ebd5b6126205f5bcc3e421fe22eaac1a957ad971db043fde"
+    },
+    "libutils.so": {
+      "bytes": 116624,
+      "sha256": "0936b14332a9248d0995399f5b8ae840c2bf49cc1ac312cb0913aa7511d755c6",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libutils.so",
+      "logical_source": "/system/lib64/libutils.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libcutils.so",
+        "liblog.so",
+        "libvndksupport.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libutils.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "0936b14332a9248d0995399f5b8ae840c2bf49cc1ac312cb0913aa7511d755c6"
+    },
+    "libvndksupport.so": {
+      "bytes": 10776,
+      "sha256": "3685551a17238c2da52c47a98332382862635eb1f7688e7ad19ee0cee4c528e4",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libvndksupport.so",
+      "logical_source": "/system/lib64/libvndksupport.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libdl_android.so",
+        "liblog.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libvndksupport.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "3685551a17238c2da52c47a98332382862635eb1f7688e7ad19ee0cee4c528e4"
+    },
+    "libdl_android.so": {
+      "bytes": 9928,
+      "sha256": "534173708a2ba6166cd76b30ec96b5eb534a6e10e7c457b202959425abd40407",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/apex/com.android.runtime/lib64/bionic/libdl_android.so",
+      "logical_source": "/apex/com.android.runtime/lib64/bionic/libdl_android.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "ld-android.so"
+      ],
+      "soname": "libdl_android.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "534173708a2ba6166cd76b30ec96b5eb534a6e10e7c457b202959425abd40407"
+    },
+    "libcutils.so": {
+      "bytes": 91112,
+      "sha256": "6eada61a4a356a78892ec9750ca20f2b2e7a47cff47ad09c39d608cd7a5e965e",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libcutils.so",
+      "logical_source": "/system/lib64/libcutils.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "liblog.so",
+        "libbase.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libcutils.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "6eada61a4a356a78892ec9750ca20f2b2e7a47cff47ad09c39d608cd7a5e965e"
+    },
+    "libbase.so": {
+      "bytes": 251152,
+      "sha256": "7e09734a6d0edbe0ad65995a9be903a0e84b22a5fe5aeecab507d640c305e902",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libbase.so",
+      "logical_source": "/system/lib64/libbase.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "liblog.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libbase.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "7e09734a6d0edbe0ad65995a9be903a0e84b22a5fe5aeecab507d640c305e902"
+    },
+    "libui.so": {
+      "bytes": 328440,
+      "sha256": "0f0ff7c9649a7c88db6e24c452aafa049a2a90e1303cec34003f88dbfce876f8",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libui.so",
+      "logical_source": "/system/lib64/libui.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.graphics.allocator@2.0.so",
+        "android.hardware.graphics.allocator@3.0.so",
+        "android.hardware.graphics.allocator@4.0.so",
+        "android.hardware.graphics.allocator-V1-ndk.so",
+        "android.hardware.graphics.common-V3-ndk.so",
+        "android.hardware.graphics.common@1.2.so",
+        "android.hardware.graphics.mapper@2.0.so",
+        "android.hardware.graphics.mapper@2.1.so",
+        "android.hardware.graphics.mapper@3.0.so",
+        "android.hardware.graphics.mapper@4.0.so",
+        "libbase.so",
+        "libbinder_ndk.so",
+        "libcutils.so",
+        "libgralloctypes.so",
+        "libhidlbase.so",
+        "libsync.so",
+        "libutils.so",
+        "liblog.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libui.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "0f0ff7c9649a7c88db6e24c452aafa049a2a90e1303cec34003f88dbfce876f8"
+    },
+    "libsync.so": {
+      "bytes": 10624,
+      "sha256": "212f7c50101e6601cde281b7f2d078b6e2fe2f13878b636dab4b8980e898ea82",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libsync.so",
+      "logical_source": "/system/lib64/libsync.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libsync.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "212f7c50101e6601cde281b7f2d078b6e2fe2f13878b636dab4b8980e898ea82"
+    },
+    "libhidlbase.so": {
+      "bytes": 728800,
+      "sha256": "448fe29f714ba9f8c5882d5eaab99532ea4b6e08850c43bd1dff2771e922b7d6",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libhidlbase.so",
+      "logical_source": "/system/lib64/libhidlbase.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libbase.so",
+        "liblog.so",
+        "libutils.so",
+        "libcutils.so",
+        "libvndksupport.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libhidlbase.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "448fe29f714ba9f8c5882d5eaab99532ea4b6e08850c43bd1dff2771e922b7d6"
+    },
+    "libgralloctypes.so": {
+      "bytes": 77800,
+      "sha256": "7e9b204b2d43bd3d7b3946f7132a318cfcac2825167ed52540b56a5d8ce1a467",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libgralloctypes.so",
+      "logical_source": "/system/lib64/libgralloctypes.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.graphics.common-V3-ndk.so",
+        "android.hardware.graphics.mapper@4.0.so",
+        "libhidlbase.so",
+        "liblog.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libgralloctypes.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "7e9b204b2d43bd3d7b3946f7132a318cfcac2825167ed52540b56a5d8ce1a467"
+    },
+    "android.hardware.graphics.mapper@4.0.so": {
+      "bytes": 150976,
+      "sha256": "69baffb37736db156aef5a232ae3ed0c6cfbbba3c44085de6168b779dccf4a7f",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.graphics.mapper@4.0.so",
+      "logical_source": "/system/lib64/android.hardware.graphics.mapper@4.0.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.graphics.common@1.0.so",
+        "android.hardware.graphics.common@1.1.so",
+        "android.hardware.graphics.common@1.2.so",
+        "libhidlbase.so",
+        "liblog.so",
+        "libutils.so",
+        "libcutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.graphics.mapper@4.0.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "69baffb37736db156aef5a232ae3ed0c6cfbbba3c44085de6168b779dccf4a7f"
+    },
+    "android.hardware.graphics.common@1.2.so": {
+      "bytes": 10520,
+      "sha256": "c50164a6dcb871977e65b61b69e0799f4568901a5ef7c7f7e448a84bc38e1a36",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.graphics.common@1.2.so",
+      "logical_source": "/system/lib64/android.hardware.graphics.common@1.2.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.graphics.common@1.0.so",
+        "android.hardware.graphics.common@1.1.so",
+        "libhidlbase.so",
+        "liblog.so",
+        "libutils.so",
+        "libcutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.graphics.common@1.2.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "c50164a6dcb871977e65b61b69e0799f4568901a5ef7c7f7e448a84bc38e1a36"
+    },
+    "android.hardware.graphics.common@1.1.so": {
+      "bytes": 10488,
+      "sha256": "6d5c2a64f1b7e997058c1c3f29dae905296d395991a724692fca7e5ff43cd2c9",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.graphics.common@1.1.so",
+      "logical_source": "/system/lib64/android.hardware.graphics.common@1.1.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.graphics.common@1.0.so",
+        "libhidlbase.so",
+        "liblog.so",
+        "libutils.so",
+        "libcutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.graphics.common@1.1.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "6d5c2a64f1b7e997058c1c3f29dae905296d395991a724692fca7e5ff43cd2c9"
+    },
+    "android.hardware.graphics.common@1.0.so": {
+      "bytes": 10472,
+      "sha256": "36db94a70358da3ab960a93a747ed1f53a69826694ad6bf39292f155e7c8772a",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.graphics.common@1.0.so",
+      "logical_source": "/system/lib64/android.hardware.graphics.common@1.0.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libhidlbase.so",
+        "liblog.so",
+        "libutils.so",
+        "libcutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.graphics.common@1.0.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "36db94a70358da3ab960a93a747ed1f53a69826694ad6bf39292f155e7c8772a"
+    },
+    "android.hardware.graphics.common-V3-ndk.so": {
+      "bytes": 23640,
+      "sha256": "e69c836335bc9d9d48298255d12a608662ee84a9b80c16d4253eae0e4106a94b",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.graphics.common-V3-ndk.so",
+      "logical_source": "/system/lib64/android.hardware.graphics.common-V3-ndk.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libbinder_ndk.so",
+        "android.hardware.common-V2-ndk.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.graphics.common-V3-ndk.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "e69c836335bc9d9d48298255d12a608662ee84a9b80c16d4253eae0e4106a94b"
+    },
+    "android.hardware.common-V2-ndk.so": {
+      "bytes": 15080,
+      "sha256": "c87a2ccccbd8a25606665b6e5ab22aadb59904b3e1c2686feadb09f6a2ecf7d8",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.common-V2-ndk.so",
+      "logical_source": "/system/lib64/android.hardware.common-V2-ndk.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libbinder_ndk.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.common-V2-ndk.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "c87a2ccccbd8a25606665b6e5ab22aadb59904b3e1c2686feadb09f6a2ecf7d8"
+    },
+    "libbinder_ndk.so": {
+      "bytes": 90296,
+      "sha256": "6f101d17def48c1cc4fce0e844e01cbf78019e731a2494ace6904e708f649929",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libbinder_ndk.so",
+      "logical_source": "/system/lib64/libbinder_ndk.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libandroid_runtime_lazy.so",
+        "libbase.so",
+        "libbinder.so",
+        "libutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libbinder_ndk.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "6f101d17def48c1cc4fce0e844e01cbf78019e731a2494ace6904e708f649929"
+    },
+    "libbinder.so": {
+      "bytes": 762136,
+      "sha256": "e57004e25b60394e544163f52b4e9f2afd64643933d827de8d35aa14d9290f49",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libbinder.so",
+      "logical_source": "/system/lib64/libbinder.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "liblog.so",
+        "libcutils.so",
+        "libutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libbinder.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "e57004e25b60394e544163f52b4e9f2afd64643933d827de8d35aa14d9290f49"
+    },
+    "libandroid_runtime_lazy.so": {
+      "bytes": 10712,
+      "sha256": "421671adf1339960db32be35463763e31d3d81c04bd031bdcd4efee6abfdcc8c",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libandroid_runtime_lazy.so",
+      "logical_source": "/system/lib64/libandroid_runtime_lazy.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "liblog.so",
+        "libutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libandroid_runtime_lazy.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "421671adf1339960db32be35463763e31d3d81c04bd031bdcd4efee6abfdcc8c"
+    },
+    "android.hardware.graphics.mapper@3.0.so": {
+      "bytes": 115328,
+      "sha256": "a41fed76692918a18be5315ef464be384bef279eb3850efd3c60977dcd3212aa",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.graphics.mapper@3.0.so",
+      "logical_source": "/system/lib64/android.hardware.graphics.mapper@3.0.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.graphics.common@1.0.so",
+        "android.hardware.graphics.common@1.1.so",
+        "android.hardware.graphics.common@1.2.so",
+        "libhidlbase.so",
+        "liblog.so",
+        "libutils.so",
+        "libcutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.graphics.mapper@3.0.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "a41fed76692918a18be5315ef464be384bef279eb3850efd3c60977dcd3212aa"
+    },
+    "android.hardware.graphics.mapper@2.1.so": {
+      "bytes": 106928,
+      "sha256": "7d6f6229f2a99cab84140d2f3409f831b574defba228f212c798ac77d20415e0",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.graphics.mapper@2.1.so",
+      "logical_source": "/system/lib64/android.hardware.graphics.mapper@2.1.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.graphics.common@1.0.so",
+        "android.hardware.graphics.common@1.1.so",
+        "android.hardware.graphics.mapper@2.0.so",
+        "libhidlbase.so",
+        "liblog.so",
+        "libutils.so",
+        "libcutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.graphics.mapper@2.1.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "7d6f6229f2a99cab84140d2f3409f831b574defba228f212c798ac77d20415e0"
+    },
+    "android.hardware.graphics.mapper@2.0.so": {
+      "bytes": 101800,
+      "sha256": "b08da625a99bfd863bd68f0606b1bee8b47a3a486f95327346ddde79cad362e7",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.graphics.mapper@2.0.so",
+      "logical_source": "/system/lib64/android.hardware.graphics.mapper@2.0.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.graphics.common@1.0.so",
+        "libhidlbase.so",
+        "liblog.so",
+        "libutils.so",
+        "libcutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.graphics.mapper@2.0.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "b08da625a99bfd863bd68f0606b1bee8b47a3a486f95327346ddde79cad362e7"
+    },
+    "android.hardware.graphics.allocator-V1-ndk.so": {
+      "bytes": 37776,
+      "sha256": "9a7024b476098a80de6a5e186ce1c9fdf51bd195e9cd46ec541beeef6fd06b03",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.graphics.allocator-V1-ndk.so",
+      "logical_source": "/system/lib64/android.hardware.graphics.allocator-V1-ndk.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libbinder_ndk.so",
+        "android.hardware.common-V2-ndk.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.graphics.allocator-V1-ndk.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "9a7024b476098a80de6a5e186ce1c9fdf51bd195e9cd46ec541beeef6fd06b03"
+    },
+    "android.hardware.graphics.allocator@4.0.so": {
+      "bytes": 84136,
+      "sha256": "cb015208ea09f1859907ac199ced7ce1dc79ebda098580824a129c6b0af6fe27",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.graphics.allocator@4.0.so",
+      "logical_source": "/system/lib64/android.hardware.graphics.allocator@4.0.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.graphics.common@1.0.so",
+        "android.hardware.graphics.common@1.1.so",
+        "android.hardware.graphics.common@1.2.so",
+        "android.hardware.graphics.mapper@4.0.so",
+        "libhidlbase.so",
+        "liblog.so",
+        "libutils.so",
+        "libcutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.graphics.allocator@4.0.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "cb015208ea09f1859907ac199ced7ce1dc79ebda098580824a129c6b0af6fe27"
+    },
+    "android.hardware.graphics.allocator@3.0.so": {
+      "bytes": 88736,
+      "sha256": "f3eae27471c0a86220f2c6dad9eab6ab9fcf11137e14f98c54ae20ed0c642cf3",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.graphics.allocator@3.0.so",
+      "logical_source": "/system/lib64/android.hardware.graphics.allocator@3.0.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.graphics.common@1.0.so",
+        "android.hardware.graphics.common@1.1.so",
+        "android.hardware.graphics.common@1.2.so",
+        "android.hardware.graphics.mapper@3.0.so",
+        "libhidlbase.so",
+        "liblog.so",
+        "libutils.so",
+        "libcutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.graphics.allocator@3.0.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "f3eae27471c0a86220f2c6dad9eab6ab9fcf11137e14f98c54ae20ed0c642cf3"
+    },
+    "android.hardware.graphics.allocator@2.0.so": {
+      "bytes": 88704,
+      "sha256": "f8ef7bafb22da5b515a010140ae5b3eeeac6077e073a09a0a394cf983a53c8e5",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.graphics.allocator@2.0.so",
+      "logical_source": "/system/lib64/android.hardware.graphics.allocator@2.0.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.graphics.common@1.0.so",
+        "android.hardware.graphics.mapper@2.0.so",
+        "libhidlbase.so",
+        "liblog.so",
+        "libutils.so",
+        "libcutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.graphics.allocator@2.0.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "f8ef7bafb22da5b515a010140ae5b3eeeac6077e073a09a0a394cf983a53c8e5"
+    },
+    "android.hardware.configstore@1.1.so": {
+      "bytes": 116576,
+      "sha256": "b26da3663e3ce1df9a95f8e34c375f981d1dc4a7a7dcee3ed4c997a3167cb95c",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.configstore@1.1.so",
+      "logical_source": "/system/lib64/android.hardware.configstore@1.1.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.configstore@1.0.so",
+        "libhidlbase.so",
+        "liblog.so",
+        "libutils.so",
+        "libcutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.configstore@1.1.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "b26da3663e3ce1df9a95f8e34c375f981d1dc4a7a7dcee3ed4c997a3167cb95c"
+    },
+    "android.hardware.configstore@1.0.so": {
+      "bytes": 147744,
+      "sha256": "e315c67f610c76aa537660097d918990500940ec68d6602f61c1bc862b9d2e9c",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.configstore@1.0.so",
+      "logical_source": "/system/lib64/android.hardware.configstore@1.0.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libhidlbase.so",
+        "liblog.so",
+        "libutils.so",
+        "libcutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.configstore@1.0.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "e315c67f610c76aa537660097d918990500940ec68d6602f61c1bc862b9d2e9c"
+    },
+    "android.hardware.configstore-utils.so": {
+      "bytes": 10984,
+      "sha256": "0ac2ab2ae8c7fcfc6bf8536f49f61fc0a68709158805f642911149e889888ed2",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/android.hardware.configstore-utils.so",
+      "logical_source": "/system/lib64/android.hardware.configstore-utils.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "android.hardware.configstore@1.0.so",
+        "android.hardware.configstore@1.1.so",
+        "libbase.so",
+        "libhidlbase.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "android.hardware.configstore-utils.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "0ac2ab2ae8c7fcfc6bf8536f49f61fc0a68709158805f642911149e889888ed2"
+    },
+    "libnativeloader_lazy.so": {
+      "bytes": 10648,
+      "sha256": "15cf69883070c83c3fa724a2469112151ab274a0e85882bf0548b0cae4852d30",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libnativeloader_lazy.so",
+      "logical_source": "/system/lib64/libnativeloader_lazy.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "liblog.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libnativeloader_lazy.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "15cf69883070c83c3fa724a2469112151ab274a0e85882bf0548b0cae4852d30"
+    },
+    "libnativebridge_lazy.so": {
+      "bytes": 10648,
+      "sha256": "ecbe1352ad86dd5f803cc123f9e8b33703b2b73d365581697dc6af414566da1f",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libnativebridge_lazy.so",
+      "logical_source": "/system/lib64/libnativebridge_lazy.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "liblog.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libnativebridge_lazy.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "ecbe1352ad86dd5f803cc123f9e8b33703b2b73d365581697dc6af414566da1f"
+    },
+    "libbacktrace.so": {
+      "bytes": 163776,
+      "sha256": "84eadd86d799b3e0fcdb87b9bf73b009382bb1e8bae3cda34b6876956e74abdc",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libbacktrace.so",
+      "logical_source": "/system/lib64/libbacktrace.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libbase.so",
+        "liblog.so",
+        "libunwindstack.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libbacktrace.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "84eadd86d799b3e0fcdb87b9bf73b009382bb1e8bae3cda34b6876956e74abdc"
+    },
+    "libunwindstack.so": {
+      "bytes": 547632,
+      "sha256": "8d4d2bf426826703f046b3d36df3009154068fe949c30f8e8c565ca2591c3483",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libunwindstack.so",
+      "logical_source": "/system/lib64/libunwindstack.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libbase.so",
+        "liblog.so",
+        "liblzma.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libunwindstack.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "8d4d2bf426826703f046b3d36df3009154068fe949c30f8e8c565ca2591c3483"
+    },
+    "liblzma.so": {
+      "bytes": 160376,
+      "sha256": "62e5b41ac50fd256938a279cde990ac691dd9404a34ef67d7d4ec82a666ef6ff",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/liblzma.so",
+      "logical_source": "/system/lib64/liblzma.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "liblzma.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "62e5b41ac50fd256938a279cde990ac691dd9404a34ef67d7d4ec82a666ef6ff"
+    },
+    "libnativewindow.so": {
+      "bytes": 31784,
+      "sha256": "e65c915b393a47a54f67e03918cb835e219d22613f188793b3ee06e9bacff0e5",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libnativewindow.so",
+      "logical_source": "/system/lib64/libnativewindow.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libcutils.so",
+        "liblog.so",
+        "libutils.so",
+        "libui.so",
+        "android.hardware.graphics.common@1.1.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libnativewindow.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "e65c915b393a47a54f67e03918cb835e219d22613f188793b3ee06e9bacff0e5"
+    },
+    "libgraphicsenv.so": {
+      "bytes": 48864,
+      "sha256": "0e40b1f3c418cff23aeb13cf5df603be3227d7adf665a9c2d5e8c884a06a2a12",
+      "source_path": "/home/eugen/n100-build/android/out/target/product/billie2/system/lib64/libgraphicsenv.so",
+      "logical_source": "/system/lib64/libgraphicsenv.so",
+      "elf": {
+        "elf_class": 2,
+        "elf_machine": 183,
+        "elf_type": 3,
+        "elf_interpreter": null,
+        "static_executable": false
+      },
+      "needed": [
+        "libbase.so",
+        "libbinder.so",
+        "libcutils.so",
+        "libdl_android.so",
+        "liblog.so",
+        "libutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "soname": "libgraphicsenv.so",
+      "matches_device_tested_hal": true,
+      "previous_hal_sha256": "0e40b1f3c418cff23aeb13cf5df603be3227d7adf665a9c2d5e8c884a06a2a12"
+    }
+  },
+  "required_exports_verified": [
+    "glBindVertexArray",
+    "glDispatchCompute",
+    "glDrawArraysInstanced",
+    "glGetString",
+    "glGetStringi"
+  ],
+  "new_library_names": [
+    "libGLESv3.so"
+  ],
+  "changed_library_names": [],
+  "staged_paths": [
+    "lib64/libGLESv3.so"
+  ],
+  "archive": {
+    "bytes": 38589,
+    "sha256": "49d034582595e570ef41d2ec8f175b80891a0c382da9fccdb795f27859e3a169",
+    "path": "/home/eugen/n100-build/graphics-runtime-20261111T175514Z/graphics-runtime.tar.gz"
+  },
+  "runtime_apex_matches_tested_build": true,
+  "bionic_matches_tested_build": true,
+  "checked_bionic_libraries": [
+    "libc.so",
+    "libdl.so",
+    "libdl_android.so",
+    "libm.so"
+  ],
+  "dependency_closure_complete": true,
+  "phone_modified": false,
+  "rpm_rebuilt": false,
+  "device_tested": false,
+  "nnapi_requirement_resolved": false,
+  "flashable_release": false
+}

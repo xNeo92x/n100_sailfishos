@@ -32,7 +32,9 @@ Abhängigkeitsketten der drei Dienste. Die generierte Konfiguration ist nun für
 Systemdienste auch ohne LD_LIBRARY_PATH am Gerät geprüft. Die strenge
 NNAPI-Diagnose und der vollständige Start bleiben offen. Die
 Abhängigkeitslisten von Allocator und beiden ausgewählten Sensordiensten sind
-bestätigt; dem Composer fehlt `libGLESv3.so`. Audio bleibt ungeprüft.
+bestätigt; dem Composer fehlte `libGLESv3.so`. Audio bleibt ungeprüft.
+Die echte `libGLESv3.so` ist inzwischen [gezielt gebaut und geprüft](validation/graphics-runtime-build-user-20261111.json);
+weiter mit der [Vendor-Probe V3](docs/GRAPHICS_VENDOR_PROBE.md).
 
 Das Repository enthält die erste gerätespezifische Anpassung und Werkzeuge für
 einen Sailfish-OS-Port mit **Android 13 als HAL-Buildbasis** (`hybris-20.0`,
