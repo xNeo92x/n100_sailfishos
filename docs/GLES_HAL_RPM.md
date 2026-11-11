@@ -25,3 +25,10 @@ bash ~/n100_sailfishos/tools/run-hal-rpm-build.sh
 
 Das Telefon wird nicht benötigt und nicht verändert. Das neue RPM ist danach weder am
 Gerät getestet noch in einem Userdata-Image enthalten.
+
+## Ergebnis (11.11.2026)
+
+[Bestanden](../validation/gles-hal-rpm-user-20261111.json):
+`droid-hal-billie2-0.0.6-202611111819.aarch64.rpm` (SHA-256 `ecef6f4c…50ca`) enthält
+gegenüber dem getesteten Paket genau die zwei neuen Dateien; die 64-Bit-Bibliothek ist
+die am Gerät geprüfte (`e1efbb5b…f958`). Beide Pakete liegen in `~/n100-build/rpm-archive/`.

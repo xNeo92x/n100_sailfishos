@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "kind": "gles-hal-rpm-comparison",
+  "passed": true,
+  "reference_rpm": {
+    "name": "droid-hal-billie2-0.0.6-202610262022.aarch64.rpm",
+    "sha256": "b6714b06b16f38e25d0298e4efe4e39b63b1b92128678e49c00b49b7fd5a3bc6"
+  },
+  "new_rpm": {
+    "name": "droid-hal-billie2-0.0.6-202611111819.aarch64.rpm",
+    "bytes": 23067960,
+    "sha256": "ecef6f4c79ab073ef6411148490a696bcc6e25a68975433122eb2b2f92d550ca",
+    "lead_name": "droid-hal-billie2-0.0.6-202611111819"
+  },
+  "payload_entries": 475,
+  "added": {
+    "./usr/libexec/droid-hybris/system/lib/libGLESv3.so": {
+      "mode": "0o644",
+      "type": "file",
+      "bytes": 110432,
+      "sha256": "f2d978f86c7c87f2aa38187101975e6fce518009daabf655e0b93c38b0e6befc"
+    },
+    "./usr/libexec/droid-hybris/system/lib64/libGLESv3.so": {
+      "mode": "0o644",
+      "type": "file",
+      "bytes": 170224,
+      "sha256": "e1efbb5b54f0bac9d770c3c01dbfc39cee9d377fba7c87b7306e7fc2466df958"
+    }
+  },
+  "removed": [],
+  "changed": {},
+  "problems": [],
+  "graphics_report_sha256": "41cde56a39704d60e1ddd30e9f40878558dcfab2de9c568464818bb62a01424b",
+  "device_tested": false,
+  "flashable_release": false
+}
